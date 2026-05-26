@@ -1,4 +1,4 @@
-import { Solar, Lunar } from 'lunar-typescript'
+import { Solar, Lunar } from 'https://esm.sh/lunar-typescript@1.8.6'
 import { HolidayService } from './holiday-service.js'
 
 const DAYS_IN_WEEK = 7

@@ -1,3 +1,5 @@
+import { HolidayUtil } from 'https://esm.sh/lunar-typescript@1.8.6'
+
 export class HolidayService {
   constructor() {
     this.cache = new Map()
@@ -30,7 +32,6 @@ export class HolidayService {
       
       const data = await response.json()
       
-      // 检查版本更新
       if (data.version && this.dataVersion && data.version !== this.dataVersion) {
         this.updateAvailable = true
       }
@@ -53,12 +54,11 @@ export class HolidayService {
   }
 
   getFallbackHolidays(year) {
-    const { HolidayUtil } = require('lunar-typescript')
     const holidays = []
-    for (let m = 1; m <= 12; m++) {
-      const daysInMonth = new Date(year, m, 0).getDate()
-      for (let d = 1; d <= daysInMonth; d++) {
-        try {
+    try {
+      for (let m = 1; m <= 12; m++) {
+        const daysInMonth = new Date(year, m, 0).getDate()
+        for (let d = 1; d <= daysInMonth; d++) {
           const holiday = HolidayUtil.getHoliday(year, m, d)
           if (holiday) {
             holidays.push({
@@ -67,10 +67,12 @@ export class HolidayService {
               isWork: holiday.isWork()
             })
           }
-        } catch {}
+        }
       }
+    } catch (e) {
+      console.warn('Fallback holiday generation failed:', e)
     }
-    return { holidays }
+    return { holidays, version: 'fallback' }
   }
 
   async isHoliday(year, month, day) {
