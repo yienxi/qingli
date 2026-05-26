@@ -3,8 +3,9 @@ import { HolidayUtil } from 'lunar-typescript'
 // 数据版本号，更新节假日数据时递增
 const DATA_VERSION = '2026.05'
 
-export default async function handler(req, res) {
-  const year = parseInt(req.query.year) || new Date().getFullYear()
+export async function GET(request) {
+  const url = new URL(request.url)
+  const year = parseInt(url.searchParams.get('year')) || new Date().getFullYear()
   
   const holidays = []
   for (let m = 1; m <= 12; m++) {
@@ -24,13 +25,15 @@ export default async function handler(req, res) {
     }
   }
 
-  res.setHeader('Cache-Control', 'public, max-age=21600, s-maxage=43200')
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  
-  res.status(200).json({
+  return Response.json({
     version: DATA_VERSION,
     year,
     holidays,
     updatedAt: new Date().toISOString()
+  }, {
+    headers: {
+      'Cache-Control': 'public, max-age=21600, s-maxage=43200',
+      'Access-Control-Allow-Origin': '*',
+    }
   })
 }

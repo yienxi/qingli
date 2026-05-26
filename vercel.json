@@ -1,43 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/ical.js",
-      "use": "@vercel/node"
+  "functions": {
+    "api/ical.js": {
+      "runtime": "edge"
     },
-    {
-      "src": "api/holidays.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "css/*.css",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "js/*.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "public/*.*",
-      "use": "@vercel/static"
+    "api/holidays.js": {
+      "runtime": "edge"
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/ical(.*)",
-      "dest": "/api/ical.js"
-    },
-    {
-      "src": "/api/holidays(.*)",
-      "dest": "/api/holidays.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ]
+  }
 }
