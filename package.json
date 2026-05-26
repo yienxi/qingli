@@ -1,6 +1,6 @@
 {
   "name": "qingli",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "轻历 — 轻量级中国日历工具",
   "type": "module",
   "scripts": {
