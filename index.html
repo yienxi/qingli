@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="轻历 — 轻量中国日历，一眼看清农历、节气、节假日">
+  <meta name="description" content="轻历 — 轻量中国日历，一眼看清农历、节气、节假日、宜忌">
   <meta name="theme-color" content="#F7F3EE">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="/public/manifest.json">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23C73B2B'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='serif'>历</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
+  <link rel="apple-touch-icon" href="/public/logo.svg">
   <title>轻历 — 中国日历</title>
   <link rel="stylesheet" href="/css/design-system.css">
   <link rel="stylesheet" href="/css/calendar.css">
@@ -16,11 +17,10 @@
 </head>
 <body>
   <div class="app" id="app">
-    <!-- Header -->
     <header class="app-header">
       <div class="app-brand">
-        <span class="seal">历</span>
-        <span>轻历</span>
+        <img src="/public/logo.svg" alt="轻历" class="app-logo" width="32" height="32">
+        <span class="brand-text">轻历</span>
       </div>
       <div class="app-actions">
         <button class="icon-btn" id="themeToggle" aria-label="切换主题" title="切换主题">
@@ -32,13 +32,23 @@
       </div>
     </header>
 
-    <!-- Search Panel -->
     <div class="search-panel" id="searchPanel" style="display: none;">
       <input type="text" id="searchInput" placeholder="搜索事件..." class="search-input">
       <div id="searchResults" class="search-results"></div>
     </div>
 
-    <!-- Calendar Navigation -->
+    <div class="today-card" id="todayCard">
+      <div class="today-card-left">
+        <div class="today-card-date" id="todayCardDate"></div>
+        <div class="today-card-lunar" id="todayCardLunar"></div>
+        <div class="today-card-ganzhi" id="todayCardGanzhi"></div>
+      </div>
+      <div class="today-card-right">
+        <div class="today-card-yi" id="todayCardYi"></div>
+        <div class="today-card-ji" id="todayCardJi"></div>
+      </div>
+    </div>
+
     <nav class="cal-nav" id="calNav">
       <div class="cal-nav-title">
         <span class="year" id="navYear"></span>
@@ -57,7 +67,6 @@
       </div>
     </nav>
 
-    <!-- Weekday Header -->
     <div class="weekday-header" id="weekdayHeader">
       <div class="weekday-cell">一</div>
       <div class="weekday-cell">二</div>
@@ -68,31 +77,26 @@
       <div class="weekday-cell weekend">日</div>
     </div>
 
-    <!-- Calendar Grid -->
-    <div class="cal-grid" id="calGrid">
-      <!-- Rendered by JS -->
-    </div>
+    <div class="cal-grid" id="calGrid"></div>
 
-    <!-- Legend -->
-    <div style="display:flex; gap: var(--space-4); margin-top: var(--space-3); font-size: var(--text-xs); color: var(--color-text-tertiary); flex-wrap: wrap;">
-      <span style="display:flex; align-items: center; gap: 4px;">
-        <span style="width:6px; height:6px; border-radius:50%; background:var(--color-accent-red);"></span> 节假日
+    <div class="legend-bar">
+      <span class="legend-item">
+        <span class="legend-dot" style="background:var(--color-accent-red)"></span> 节假日
       </span>
-      <span style="display:flex; align-items: center; gap: 4px;">
-        <span style="width:6px; height:6px; border-radius:50%; background:var(--color-accent-brown);"></span> 节气
+      <span class="legend-item">
+        <span class="legend-dot" style="background:var(--color-accent-brown)"></span> 节气
       </span>
-      <span style="display:flex; align-items: center; gap: 4px;">
-        <span style="width:6px; height:6px; border-radius:50%; background:var(--color-accent-green);"></span> 个人事件
+      <span class="legend-item">
+        <span class="legend-dot" style="background:var(--color-accent-green)"></span> 个人事件
       </span>
-      <span id="dataVersion" style="display:none; align-items: center; gap: 4px; color: var(--color-accent-green);">
-        数据版本: <span id="versionNumber">-</span>
+      <span class="legend-item" id="dataVersion" style="display:none">
+        <span class="legend-dot" style="background:var(--color-accent-gold)"></span> 数据: <span id="versionNumber">-</span>
       </span>
     </div>
 
-    <!-- iCal Section -->
     <section class="ical-section" id="icalSection">
       <h2 class="ical-section-title">订阅到你的日历</h2>
-      <p style="font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-3);">
+      <p class="ical-section-desc">
         复制下面的链接，添加到 Apple 日历 / Google Calendar / Outlook，节假日和节气自动同步。
       </p>
       <div class="ical-links">
@@ -119,7 +123,6 @@
       </div>
     </section>
 
-    <!-- Footer -->
     <footer class="app-footer">
       <span>轻历 · 开源 · MIT</span>
       <span>
@@ -128,13 +131,52 @@
     </footer>
   </div>
 
-  <!-- Detail Panel (slide-up) -->
   <div class="detail-overlay" id="detailOverlay"></div>
   <div class="detail-panel" id="detailPanel">
     <div class="panel-handle"></div>
-    <div class="panel-date" id="panelDate"></div>
-    <div class="panel-lunar" id="panelLunar"></div>
-    <div id="panelTags" style="display:flex; gap: var(--space-1); flex-wrap: wrap; margin-bottom: var(--space-3);"></div>
+    <div class="panel-header">
+      <div class="panel-date" id="panelDate"></div>
+      <div class="panel-lunar" id="panelLunar"></div>
+    </div>
+    <div id="panelTags" class="panel-tags"></div>
+
+    <div class="panel-almanac" id="panelAlmanac">
+      <div class="almanac-section">
+        <div class="almanac-label almanac-yi">宜</div>
+        <div class="almanac-content" id="panelYi"></div>
+      </div>
+      <div class="almanac-section">
+        <div class="almanac-label almanac-ji">忌</div>
+        <div class="almanac-content" id="panelJi"></div>
+      </div>
+    </div>
+
+    <div class="panel-info-grid" id="panelInfoGrid">
+      <div class="info-item">
+        <span class="info-label">冲煞</span>
+        <span class="info-value" id="panelChongsha"></span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">值神</span>
+        <span class="info-value" id="panelZhishen"></span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">纳音</span>
+        <span class="info-value" id="panelNayin"></span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">星宿</span>
+        <span class="info-value" id="panelXingxiu"></span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">喜神</span>
+        <span class="info-value" id="panelXishen"></span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">财神</span>
+        <span class="info-value" id="panelCaishen"></span>
+      </div>
+    </div>
 
     <div class="panel-section-title">日程事件</div>
     <div id="panelEvents" class="event-list"></div>
@@ -152,10 +194,8 @@
     </form>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <!-- Scripts -->
   <script type="module" src="/js/calendar.js"></script>
   <script type="module" src="/js/events.js"></script>
   <script type="module" src="/js/app.js"></script>

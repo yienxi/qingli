@@ -148,18 +148,33 @@ export class Calendar {
       buildSolarTermCache(this.year)
       const solar = Solar.fromYmd(year, month, day)
       const lunar = solar.getLunar()
+
+      const yiList = lunar.getDayYi()
+      const jiList = lunar.getDayJi()
+
       const data = {
         lunarDayStr: lunar.getDayInChinese(),
         lunarMonthStr: lunar.getMonthInChinese(),
         lunarYearStr: lunar.getYearInChinese(),
         shengXiao: lunar.getYearShengXiao(),
-        ganZhi: lunar.getYearGanZhi(),
+        ganZhiYear: lunar.getYearGanZhi(),
+        ganZhiMonth: lunar.getMonthGanZhi(),
+        ganZhiDay: lunar.getDayGanZhi(),
         lunarMonth: lunar.getMonth(),
         lunarDay: lunar.getDay(),
         isLeap: false,
         festival: null,
         solarTerm: null,
+        yi: yiList,
+        ji: jiList,
+        chongSha: lunar.getDayChongShu() + ' ' + lunar.getDaySha(),
+        zhiShen: lunar.getDayZhiXing(),
+        naYin: lunar.getDayNaYin(),
+        xingXiu: lunar.getDayXiu(),
+        xiShen: lunar.getDayXiShen(),
+        caiShen: lunar.getDayCaiShen(),
       }
+
       const lunarKey = `${lunar.getMonth()}/${lunar.getDay()}`
       data.festival = TRADITIONAL_FESTIVALS[lunarKey] || null
       const termKey = `${year}-${month}-${day}`
@@ -244,10 +259,10 @@ export class Calendar {
 
       let lunarDisplay = ''
       if (lunarData) {
-        const ld = lunarData.lunarDayStr
-        lunarDisplay = ld === '初一' ? (lunarData.lunarMonthStr + '月').replace(/^[^\d]*(二十)?/, '') + '月' : ld
         if (lunarData.lunarDay === 1) {
           lunarDisplay = lunarData.lunarMonthStr + '月'
+        } else {
+          lunarDisplay = lunarData.lunarDayStr
         }
       }
 
@@ -261,62 +276,87 @@ export class Calendar {
 
     this.hideLoading()
     this.renderGrid(cells)
+    this.updateTodayCard()
     if (this.onRender) this.onRender(cells)
+  }
+
+  updateTodayCard() {
+    const todayData = this.computeLunarData(this.today.year, this.today.month, this.today.day)
+    if (!todayData) return
+
+    const dateEl = document.getElementById('todayCardDate')
+    const lunarEl = document.getElementById('todayCardLunar')
+    const ganzhiEl = document.getElementById('todayCardGanzhi')
+    const yiEl = document.getElementById('todayCardYi')
+    const jiEl = document.getElementById('todayCardJi')
+
+    if (dateEl) {
+      dateEl.textContent = `${this.today.month}月${this.today.day}日`
+    }
+    if (lunarEl) {
+      let lunarText = `农历${todayData.lunarMonthStr}月${todayData.lunarDayStr}`
+      if (todayData.solarTerm) {
+        lunarText += ` · ${todayData.solarTerm}`
+      }
+      if (todayData.festival) {
+        lunarText += ` · ${todayData.festival}`
+      }
+      lunarEl.textContent = lunarText
+    }
+    if (ganzhiEl) {
+      ganzhiEl.textContent = `${todayData.ganZhiYear}年 ${todayData.ganZhiMonth}月 ${todayData.ganZhiDay}日 [${todayData.shengXiao}]`
+    }
+    if (yiEl) {
+      const yiText = todayData.yi && todayData.yi.length > 0 ? todayData.yi.slice(0, 8).join(' ') : '无'
+      yiEl.textContent = yiText
+    }
+    if (jiEl) {
+      const jiText = todayData.ji && todayData.ji.length > 0 ? todayData.ji.slice(0, 8).join(' ') : '无'
+      jiEl.textContent = jiText
+    }
   }
 
   renderGrid(cells) {
     const fragment = document.createDocumentFragment()
-    const rows = []
-    let currentRow = []
 
     for (const cell of cells) {
-      currentRow.push(cell)
-      if (currentRow.length === 7) {
-        rows.push(currentRow)
-        currentRow = []
+      const el = document.createElement('div')
+      el.className = 'day-cell'
+      el.dataset.date = cell.dayDate
+      el.dataset.day = cell.day
+      el.dataset.month = cell.month
+      el.dataset.year = cell.year
+
+      if (cell.isOtherMonth) el.classList.add('other-month')
+      if (cell.isCurrentDay) el.classList.add('today')
+      if (cell.weekend) el.classList.add('weekend')
+      if (cell.isSelected) el.classList.add('selected')
+
+      let tagsHtml = ''
+      if (cell.holidayTag) {
+        tagsHtml += `<span class="day-tag holiday">${cell.holidayTag.name}</span>`
       }
-    }
-
-    for (const row of rows) {
-      for (const cell of row) {
-        const el = document.createElement('div')
-        el.className = 'day-cell'
-        el.dataset.date = cell.dayDate
-        el.dataset.day = cell.day
-        el.dataset.month = cell.month
-        el.dataset.year = cell.year
-
-        if (cell.isOtherMonth) el.classList.add('other-month')
-        if (cell.isCurrentDay) el.classList.add('today')
-        if (cell.weekend) el.classList.add('weekend')
-        if (cell.isSelected) el.classList.add('selected')
-
-        let tagsHtml = ''
-        if (cell.holidayTag) {
-          tagsHtml += `<span class="day-tag holiday">${cell.holidayTag.name}</span>`
-        }
-        if (cell.lunarData && cell.lunarData.solarTerm) {
-          tagsHtml += `<span class="day-tag solar-term">${cell.lunarData.solarTerm}</span>`
-        } else if (cell.lunarData && cell.lunarData.festival && !cell.holidayTag) {
-          tagsHtml += `<span class="day-tag festival">${cell.lunarData.festival}</span>`
-        }
-
-        el.innerHTML = `
-          <div class="day-number">${cell.day}</div>
-          ${cell.isCurrentDay ? '<div class="today-seal"></div>' : ''}
-          <div class="lunar-date">${cell.lunarDisplay}</div>
-          ${tagsHtml ? `<div>${tagsHtml}</div>` : ''}
-          <div class="event-dots" data-date="${cell.dayDate}"></div>
-        `
-
-        el.addEventListener('click', () => {
-          if (this.onDayClick) {
-            this.onDayClick(cell)
-          }
-        })
-
-        fragment.appendChild(el)
+      if (cell.lunarData && cell.lunarData.solarTerm) {
+        tagsHtml += `<span class="day-tag solar-term">${cell.lunarData.solarTerm}</span>`
+      } else if (cell.lunarData && cell.lunarData.festival && !cell.holidayTag) {
+        tagsHtml += `<span class="day-tag festival">${cell.lunarData.festival}</span>`
       }
+
+      el.innerHTML = `
+        <div class="day-number">${cell.day}</div>
+        ${cell.isCurrentDay ? '<div class="today-seal"></div>' : ''}
+        <div class="lunar-date">${cell.lunarDisplay}</div>
+        ${tagsHtml ? `<div>${tagsHtml}</div>` : ''}
+        <div class="event-dots" data-date="${cell.dayDate}"></div>
+      `
+
+      el.addEventListener('click', () => {
+        if (this.onDayClick) {
+          this.onDayClick(cell)
+        }
+      })
+
+      fragment.appendChild(el)
     }
 
     this.grid.innerHTML = ''

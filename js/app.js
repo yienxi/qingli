@@ -14,6 +14,14 @@ const detailPanel = document.getElementById('detailPanel')
 const panelDate = document.getElementById('panelDate')
 const panelLunar = document.getElementById('panelLunar')
 const panelTags = document.getElementById('panelTags')
+const panelYi = document.getElementById('panelYi')
+const panelJi = document.getElementById('panelJi')
+const panelChongsha = document.getElementById('panelChongsha')
+const panelZhishen = document.getElementById('panelZhishen')
+const panelNayin = document.getElementById('panelNayin')
+const panelXingxiu = document.getElementById('panelXingxiu')
+const panelXishen = document.getElementById('panelXishen')
+const panelCaishen = document.getElementById('panelCaishen')
 const panelEvents = document.getElementById('panelEvents')
 const eventForm = document.getElementById('eventForm')
 const eventTitleInput = document.getElementById('eventTitleInput')
@@ -33,10 +41,6 @@ function showToast(msg) {
   toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 2000)
 }
 
-function getISODateStr(year, month, day) {
-  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-}
-
 function openPanel(cellData) {
   selectedCell = cellData
   isPanelOpen = true
@@ -46,7 +50,9 @@ function openPanel(cellData) {
 
   const lunarInfo = cellData.lunarData
   if (lunarInfo) {
-    panelLunar.textContent = `农历${lunarInfo.lunarMonthStr}${lunarInfo.lunarDayStr} · ${lunarInfo.ganZhi}年[${lunarInfo.shengXiao}]`
+    let lunarText = `农历${lunarInfo.lunarMonthStr}月${lunarInfo.lunarDayStr} · ${lunarInfo.ganZhiYear}年[${lunarInfo.shengXiao}]`
+    lunarText += ` · ${lunarInfo.ganZhiMonth}月 ${lunarInfo.ganZhiDay}日`
+    panelLunar.textContent = lunarText
   } else {
     panelLunar.textContent = ''
   }
@@ -62,6 +68,25 @@ function openPanel(cellData) {
     tagsHtml += `<span class="day-tag festival">${lunarInfo.festival}</span>`
   }
   panelTags.innerHTML = tagsHtml
+
+  if (lunarInfo) {
+    if (panelYi) {
+      panelYi.textContent = lunarInfo.yi && lunarInfo.yi.length > 0
+        ? lunarInfo.yi.join('、')
+        : '无'
+    }
+    if (panelJi) {
+      panelJi.textContent = lunarInfo.ji && lunarInfo.ji.length > 0
+        ? lunarInfo.ji.join('、')
+        : '无'
+    }
+    if (panelChongsha) panelChongsha.textContent = lunarInfo.chongSha || '-'
+    if (panelZhishen) panelZhishen.textContent = lunarInfo.zhiShen || '-'
+    if (panelNayin) panelNayin.textContent = lunarInfo.naYin || '-'
+    if (panelXingxiu) panelXingxiu.textContent = lunarInfo.xingXiu || '-'
+    if (panelXishen) panelXishen.textContent = lunarInfo.xiShen || '-'
+    if (panelCaishen) panelCaishen.textContent = lunarInfo.caiShen || '-'
+  }
 
   renderEventsForDate(dateStr)
   eventTitleInput.value = ''
@@ -173,9 +198,6 @@ function handleSwipe() {
 }
 
 function getBaseUrl() {
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return window.location.origin
-  }
   return window.location.origin
 }
 
@@ -251,17 +273,15 @@ if ('serviceWorker' in navigator) {
   })
 }
 
-// 显示数据版本
 function setupVersionDisplay() {
   const versionEl = document.getElementById('dataVersion')
   const versionNumberEl = document.getElementById('versionNumber')
-  
+
   if (cal.holidayService.dataVersion) {
     versionNumberEl.textContent = cal.holidayService.dataVersion
     versionEl.style.display = 'flex'
   }
-  
-  // 监听版本更新
+
   setTimeout(() => {
     if (cal.holidayService.updateAvailable) {
       showToast('节假日数据已更新')
@@ -269,7 +289,6 @@ function setupVersionDisplay() {
   }, 1000)
 }
 
-// 搜索功能
 const searchBtn = document.getElementById('searchBtn')
 const searchPanel = document.getElementById('searchPanel')
 const searchInput = document.getElementById('searchInput')
@@ -291,17 +310,17 @@ searchInput.addEventListener('input', (e) => {
     searchResults.innerHTML = ''
     return
   }
-  
+
   const allEvents = eventStore.getAllEvents()
-  const matches = allEvents.filter(e => 
+  const matches = allEvents.filter(e =>
     e.title.toLowerCase().includes(query)
   ).sort((a, b) => a.date.localeCompare(b.date))
-  
+
   if (matches.length === 0) {
     searchResults.innerHTML = '<div class="search-results empty">未找到匹配的事件</div>'
     return
   }
-  
+
   searchResults.innerHTML = matches.map(e => {
     const [year, month, day] = e.date.split('-')
     return `
@@ -314,7 +333,7 @@ searchInput.addEventListener('input', (e) => {
       </div>
     `
   }).join('')
-  
+
   searchResults.querySelectorAll('.search-result-item').forEach(item => {
     item.addEventListener('click', () => {
       const date = item.dataset.date
@@ -325,7 +344,7 @@ searchInput.addEventListener('input', (e) => {
         isSearchOpen = false
         searchPanel.style.display = 'none'
         searchInput.value = ''
-        
+
         const cell = document.querySelector(`[data-date="${date}"]`)
         if (cell) {
           cell.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -336,7 +355,6 @@ searchInput.addEventListener('input', (e) => {
   })
 })
 
-// 在日历初始化后显示版本
 cal.init().then(() => {
   setupVersionDisplay()
 }).catch(console.error)

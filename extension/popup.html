@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 320px;
+      min-height: 200px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #F7F3EE;
+      color: #2C2416;
+      padding: 16px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #E8E2DA;
+    }
+    .header img {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+    }
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2C2416;
+    }
+    .date-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .solar-date {
+      font-size: 28px;
+      font-weight: 700;
+      color: #C73B2B;
+      font-family: 'Noto Serif SC', 'Songti SC', Georgia, serif;
+    }
+    .solar-month-year {
+      font-size: 13px;
+      color: #6E6356;
+    }
+    .lunar-info {
+      font-size: 13px;
+      color: #6E6356;
+      margin-bottom: 8px;
+      font-family: 'Noto Serif SC', 'Songti SC', Georgia, serif;
+    }
+    .ganzhi-info {
+      font-size: 11px;
+      color: #8C7F70;
+      margin-bottom: 12px;
+    }
+    .almanac {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .almanac-col {
+      flex: 1;
+      min-width: 0;
+    }
+    .almanac-label {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      text-align: center;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .almanac-label.yi {
+      background: #F0F5F2;
+      color: #5B8F7A;
+    }
+    .almanac-label.ji {
+      background: #FBF0ED;
+      color: #C73B2B;
+    }
+    .almanac-text {
+      font-size: 12px;
+      color: #6E6356;
+      line-height: 1.5;
+      word-break: break-all;
+    }
+    .tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+    .tag.holiday { background: #FBF0ED; color: #C73B2B; }
+    .tag.term { background: #F3F0EC; color: #8B7E6C; }
+    .tag.festival { background: #FDF8ED; color: #B8860B; }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 4px;
+    }
+    .info-cell {
+      padding: 4px 6px;
+      background: #FCFAF7;
+      border-radius: 3px;
+    }
+    .info-cell .label {
+      font-size: 9px;
+      color: #8C7F70;
+    }
+    .info-cell .value {
+      font-size: 11px;
+      color: #2C2416;
+      font-weight: 500;
+    }
+    .open-full {
+      display: block;
+      margin-top: 12px;
+      text-align: center;
+      font-size: 12px;
+      color: #C73B2B;
+      text-decoration: none;
+      padding: 6px;
+      border: 1px solid #C73B2B;
+      border-radius: 999px;
+      transition: all 0.15s;
+    }
+    .open-full:hover {
+      background: #FBF0ED;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icon.svg" alt="轻历">
+    <h1>轻历</h1>
+  </div>
+  <div id="content">加载中...</div>
+  <a class="open-full" href="https://qingli.suanqiu.fun/" target="_blank">打开完整日历 →</a>
+
+  <script type="module">
+    import { Solar, Lunar } from 'https://esm.sh/lunar-typescript@1.8.6'
+
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = now.getMonth() + 1
+    const day = now.getDate()
+
+    try {
+      const solar = Solar.fromYmd(year, month, day)
+      const lunar = solar.getLunar()
+
+      const yiList = lunar.getDayYi()
+      const jiList = lunar.getDayJi()
+
+      const data = {
+        lunarMonthStr: lunar.getMonthInChinese(),
+        lunarDayStr: lunar.getDayInChinese(),
+        ganZhiYear: lunar.getYearGanZhi(),
+        ganZhiMonth: lunar.getMonthGanZhi(),
+        ganZhiDay: lunar.getDayGanZhi(),
+        shengXiao: lunar.getYearShengXiao(),
+        yi: yiList,
+        ji: jiList,
+        chongSha: lunar.getDayChongShu() + ' ' + lunar.getDaySha(),
+        zhiShen: lunar.getDayZhiXing(),
+        naYin: lunar.getDayNaYin(),
+        xiShen: lunar.getDayXiShen(),
+        caiShen: lunar.getDayCaiShen(),
+      }
+
+      let tagsHtml = ''
+      const jieQi = lunar.getJieQi()
+      if (jieQi) {
+        tagsHtml += `<span class="tag term">${jieQi}</span>`
+      }
+
+      const FESTIVALS = {
+        '1/1': '春节', '1/15': '元宵节', '2/2': '龙抬头', '5/5': '端午节',
+        '7/7': '七夕节', '8/15': '中秋节', '9/9': '重阳节', '12/8': '腊八节',
+        '12/23': '小年', '12/30': '除夕',
+      }
+      const lunarKey = `${lunar.getMonth()}/${lunar.getDay()}`
+      if (FESTIVALS[lunarKey]) {
+        tagsHtml += `<span class="tag festival">${FESTIVALS[lunarKey]}</span>`
+      }
+
+      document.getElementById('content').innerHTML = `
+        <div class="date-row">
+          <span class="solar-date">${day}</span>
+          <span class="solar-month-year">${month}月 ${year}</span>
+        </div>
+        <div class="lunar-info">农历${data.lunarMonthStr}月${data.lunarDayStr}</div>
+        <div class="ganzhi-info">${data.ganZhiYear}年 ${data.ganZhiMonth}月 ${data.ganZhiDay}日 [${data.shengXiao}]</div>
+        ${tagsHtml ? `<div class="tags">${tagsHtml}</div>` : ''}
+        <div class="almanac">
+          <div class="almanac-col">
+            <div class="almanac-label yi">宜</div>
+            <div class="almanac-text">${data.yi.length > 0 ? data.yi.slice(0, 6).join(' ') : '无'}</div>
+          </div>
+          <div class="almanac-col">
+            <div class="almanac-label ji">忌</div>
+            <div class="almanac-text">${data.ji.length > 0 ? data.ji.slice(0, 6).join(' ') : '无'}</div>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-cell"><div class="label">冲煞</div><div class="value">${data.chongSha}</div></div>
+          <div class="info-cell"><div class="label">值神</div><div class="value">${data.zhiShen}</div></div>
+          <div class="info-cell"><div class="label">纳音</div><div class="value">${data.naYin}</div></div>
+          <div class="info-cell"><div class="label">喜神</div><div class="value">${data.xiShen}</div></div>
+          <div class="info-cell"><div class="label">财神</div><div class="value">${data.caiShen}</div></div>
+        </div>
+      `
+    } catch (e) {
+      document.getElementById('content').innerHTML = `<div style="color:#C73B2B;">加载失败: ${e.message}</div>`
+    }
+  </script>
+</body>
+</html>

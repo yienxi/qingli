@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "轻历 — 中国日历",
+  "short_name": "轻历",
+  "version": "1.0.0",
+  "description": "轻量中国日历，一眼看清农历、节气、节假日、宜忌。点击图标快速查看今日信息。",
+  "homepage_url": "https://qingli.suanqiu.fun/",
+  "permissions": [],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.svg"
+  },
+  "icons": {
+    "16": "icon.svg",
+    "32": "icon.svg",
+    "48": "icon.svg",
+    "128": "icon.svg"
+  }
+}

@@ -4,7 +4,20 @@
    ============================================================ */
 
 /* ----- Font Loading ----- */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+@font-face {
+  font-family: 'QingLi Serif';
+  src: local('Noto Serif SC'),
+       local('Source Han Serif SC'),
+       local('Songti SC'),
+       local('STSong'),
+       local('SimSun'),
+       local('PMingLiU');
+  font-display: swap;
+  font-weight: 400 700;
+  unicode-range: U+4E00-9FFF, U+3400-4DBF, U+20000-2A6DF, U+2A700-2B73F, U+2B740-2B81F, U+2B820-2CEAF, U+F900-FAFF, U+2F800-2FA1F;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 /* ----- CSS Reset ----- */
 *, *::before, *::after {
@@ -23,10 +36,10 @@
   --color-bg-today:       #FDF6F4;
 
   --color-text-primary:   #2C2416;
-  --color-text-secondary: #8C7F70;
-  --color-text-tertiary:  #B0A597;
-  --color-text-lunar:     #A69988;
-  --color-text-muted:     #C8BFB3;
+  --color-text-secondary: #6E6356;
+  --color-text-tertiary:  #8C7F70;
+  --color-text-lunar:     #7A6E60;
+  --color-text-muted:     #A89B8E;
 
   --color-accent-red:     #C73B2B;
   --color-accent-red-bg:  #FBF0ED;
@@ -34,20 +47,22 @@
   --color-accent-green-bg:#F0F5F2;
   --color-accent-brown:   #8B7E6C;
   --color-accent-brown-bg:#F3F0EC;
+  --color-accent-gold:    #B8860B;
+  --color-accent-gold-bg: #FDF8ED;
 
   --color-border:         #E8E2DA;
   --color-border-light:   #F0EBE4;
 
   /* ██ Typography */
-  --font-ui:       'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-serif:    'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', Georgia, 'Times New Roman', serif;
+  --font-ui:       'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-serif:    'QingLi Serif', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
   --font-mono:     'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
 
-  --text-xs:       0.6875rem;   /* 11px */
-  --text-sm:       0.75rem;     /* 12px */
-  --text-base:     0.875rem;    /* 14px */
-  --text-lg:       1rem;        /* 16px */
-  --text-xl:       1.125rem;    /* 18px */
+  --text-xs:       0.75rem;     /* 12px */
+  --text-sm:       0.8125rem;   /* 13px */
+  --text-base:     0.9375rem;   /* 15px */
+  --text-lg:       1.0625rem;   /* 17px */
+  --text-xl:       1.25rem;     /* 20px */
   --text-2xl:      1.5rem;      /* 24px */
   --text-3xl:      2rem;        /* 32px */
 
@@ -84,9 +99,9 @@
   --shadow-red:   0 0 0 2px var(--color-accent-red);
 
   /* ██ Calendar Grid */
-  --calendar-max-width: 880px;
-  --cell-min-height-desktop: 72px;
-  --cell-min-height-mobile: 48px;
+  --calendar-max-width: 920px;
+  --cell-min-height-desktop: 80px;
+  --cell-min-height-mobile: 56px;
   --weekday-header-height: 32px;
 
   /* ██ Transitions */
@@ -111,10 +126,10 @@
   --color-bg-today:       #2D1F1C;
 
   --color-text-primary:   #E6DDD4;
-  --color-text-secondary: #A89B8E;
-  --color-text-tertiary:  #7A7064;
-  --color-text-lunar:     #6B6257;
-  --color-text-muted:     #4D463E;
+  --color-text-secondary: #B8ADA0;
+  --color-text-tertiary:  #8C8072;
+  --color-text-lunar:     #9A8E80;
+  --color-text-muted:     #6B6257;
 
   --color-accent-red:     #E05442;
   --color-accent-red-bg:  #2D1F1C;
@@ -122,6 +137,8 @@
   --color-accent-green-bg:#1D2A24;
   --color-accent-brown:   #A99A86;
   --color-accent-brown-bg:#2A2520;
+  --color-accent-gold:    #D4A017;
+  --color-accent-gold-bg: #2A2518;
 
   --color-border:         #322C24;
   --color-border-light:   #2A2520;
@@ -147,6 +164,7 @@ body {
   background-color: var(--color-bg-page);
   min-height: 100vh;
   transition: background-color var(--transition-base), color var(--transition-base);
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 a {
@@ -157,7 +175,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ----- Utility Classes ----- */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -169,7 +186,6 @@ a:hover {
   border: 0;
 }
 
-/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -184,15 +200,41 @@ a:hover {
   background: var(--color-text-tertiary);
 }
 
-/* Selection */
 ::selection {
   background: var(--color-accent-red);
   color: white;
 }
 
-/* Focus visible for keyboard navigation */
 :focus-visible {
   outline: 2px solid var(--color-accent-red);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg-page:        #1C1814;
+    --color-bg-card:        #25201A;
+    --color-bg-hover:       #322C24;
+    --color-bg-active:      #3D352C;
+    --color-bg-today:       #2D1F1C;
+    --color-text-primary:   #E6DDD4;
+    --color-text-secondary: #B8ADA0;
+    --color-text-tertiary:  #8C8072;
+    --color-text-lunar:     #9A8E80;
+    --color-text-muted:     #6B6257;
+    --color-accent-red:     #E05442;
+    --color-accent-red-bg:  #2D1F1C;
+    --color-accent-green:   #6BAF95;
+    --color-accent-green-bg:#1D2A24;
+    --color-accent-brown:   #A99A86;
+    --color-accent-brown-bg:#2A2520;
+    --color-accent-gold:    #D4A017;
+    --color-accent-gold-bg: #2A2518;
+    --color-border:         #322C24;
+    --color-border-light:   #2A2520;
+    --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md:    0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg:    0 4px 16px rgba(0, 0, 0, 0.4);
+  }
 }
