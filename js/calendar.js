@@ -284,14 +284,18 @@ export class Calendar {
     const todayData = this.computeLunarData(this.today.year, this.today.month, this.today.day)
     if (!todayData) return
 
-    const dateEl = document.getElementById('todayCardDate')
+    const dayEl = document.getElementById('todayCardDay')
+    const monthYearEl = document.getElementById('todayCardMonthYear')
     const lunarEl = document.getElementById('todayCardLunar')
     const ganzhiEl = document.getElementById('todayCardGanzhi')
     const yiEl = document.getElementById('todayCardYi')
     const jiEl = document.getElementById('todayCardJi')
 
-    if (dateEl) {
-      dateEl.textContent = `${this.today.month}月${this.today.day}日`
+    if (dayEl) {
+      dayEl.textContent = this.today.day
+    }
+    if (monthYearEl) {
+      monthYearEl.textContent = `${this.today.month}月 ${this.today.year}`
     }
     if (lunarEl) {
       let lunarText = `农历${todayData.lunarMonthStr}月${todayData.lunarDayStr}`
@@ -307,11 +311,11 @@ export class Calendar {
       ganzhiEl.textContent = `${todayData.ganZhiYear}年 ${todayData.ganZhiMonth}月 ${todayData.ganZhiDay}日 [${todayData.shengXiao}]`
     }
     if (yiEl) {
-      const yiText = todayData.yi && todayData.yi.length > 0 ? todayData.yi.slice(0, 8).join(' ') : '无'
+      const yiText = todayData.yi && todayData.yi.length > 0 ? todayData.yi.slice(0, 8).join('、') : '无'
       yiEl.textContent = yiText
     }
     if (jiEl) {
-      const jiText = todayData.ji && todayData.ji.length > 0 ? todayData.ji.slice(0, 8).join(' ') : '无'
+      const jiText = todayData.ji && todayData.ji.length > 0 ? todayData.ji.slice(0, 8).join('、') : '无'
       jiEl.textContent = jiText
     }
   }

@@ -50,8 +50,14 @@ function openPanel(cellData) {
 
   const lunarInfo = cellData.lunarData
   if (lunarInfo) {
-    let lunarText = `农历${lunarInfo.lunarMonthStr}月${lunarInfo.lunarDayStr} · ${lunarInfo.ganZhiYear}年[${lunarInfo.shengXiao}]`
-    lunarText += ` · ${lunarInfo.ganZhiMonth}月 ${lunarInfo.ganZhiDay}日`
+    let lunarText = `农历${lunarInfo.lunarMonthStr}月${lunarInfo.lunarDayStr}`
+    if (lunarInfo.solarTerm) {
+      lunarText += ` · ${lunarInfo.solarTerm}`
+    }
+    if (lunarInfo.festival) {
+      lunarText += ` · ${lunarInfo.festival}`
+    }
+    lunarText += `\n${lunarInfo.ganZhiYear}年 [${lunarInfo.shengXiao}] ${lunarInfo.ganZhiMonth}月 ${lunarInfo.ganZhiDay}日`
     panelLunar.textContent = lunarText
   } else {
     panelLunar.textContent = ''

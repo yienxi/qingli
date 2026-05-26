@@ -38,14 +38,23 @@
     </div>
 
     <div class="today-card" id="todayCard">
-      <div class="today-card-left">
-        <div class="today-card-date" id="todayCardDate"></div>
-        <div class="today-card-lunar" id="todayCardLunar"></div>
-        <div class="today-card-ganzhi" id="todayCardGanzhi"></div>
+      <div class="today-main">
+        <div class="today-date-row">
+          <span class="today-day" id="todayCardDay"></span>
+          <span class="today-month-year" id="todayCardMonthYear"></span>
+        </div>
+        <div class="today-lunar" id="todayCardLunar"></div>
+        <div class="today-ganzhi" id="todayCardGanzhi"></div>
       </div>
-      <div class="today-card-right">
-        <div class="today-card-yi" id="todayCardYi"></div>
-        <div class="today-card-ji" id="todayCardJi"></div>
+      <div class="today-almanac">
+        <div class="today-yi-row">
+          <span class="today-almanac-tag tag-yi">宜</span>
+          <span class="today-almanac-text" id="todayCardYi"></span>
+        </div>
+        <div class="today-ji-row">
+          <span class="today-almanac-tag tag-ji">忌</span>
+          <span class="today-almanac-text" id="todayCardJi"></span>
+        </div>
       </div>
     </div>
 
@@ -134,62 +143,65 @@
   <div class="detail-overlay" id="detailOverlay"></div>
   <div class="detail-panel" id="detailPanel">
     <div class="panel-handle"></div>
+    <button class="panel-close-btn" id="panelCloseBtn" aria-label="关闭">✕</button>
+
     <div class="panel-header">
       <div class="panel-date" id="panelDate"></div>
       <div class="panel-lunar" id="panelLunar"></div>
+      <div id="panelTags" class="panel-tags"></div>
     </div>
-    <div id="panelTags" class="panel-tags"></div>
 
     <div class="panel-almanac" id="panelAlmanac">
-      <div class="almanac-section">
-        <div class="almanac-label almanac-yi">宜</div>
-        <div class="almanac-content" id="panelYi"></div>
+      <div class="almanac-col almanac-yi-col">
+        <span class="almanac-badge badge-yi">宜</span>
+        <span class="almanac-text" id="panelYi"></span>
       </div>
-      <div class="almanac-section">
-        <div class="almanac-label almanac-ji">忌</div>
-        <div class="almanac-content" id="panelJi"></div>
+      <div class="almanac-divider"></div>
+      <div class="almanac-col almanac-ji-col">
+        <span class="almanac-badge badge-ji">忌</span>
+        <span class="almanac-text" id="panelJi"></span>
       </div>
     </div>
 
-    <div class="panel-info-grid" id="panelInfoGrid">
-      <div class="info-item">
-        <span class="info-label">冲煞</span>
-        <span class="info-value" id="panelChongsha"></span>
+    <details class="panel-traditional" id="panelTraditional">
+      <summary class="traditional-toggle">传统黄历信息</summary>
+      <div class="traditional-grid">
+        <div class="trad-item">
+          <span class="trad-label">冲煞<span class="trad-hint">与当日地支相冲的生肖及方位</span></span>
+          <span class="trad-value" id="panelChongsha"></span>
+        </div>
+        <div class="trad-item">
+          <span class="trad-label">值神<span class="trad-hint">当日轮值的神煞</span></span>
+          <span class="trad-value" id="panelZhishen"></span>
+        </div>
+        <div class="trad-item">
+          <span class="trad-label">纳音<span class="trad-hint">干支五行属性</span></span>
+          <span class="trad-value" id="panelNayin"></span>
+        </div>
+        <div class="trad-item">
+          <span class="trad-label">星宿<span class="trad-hint">二十八宿之一</span></span>
+          <span class="trad-value" id="panelXingxiu"></span>
+        </div>
+        <div class="trad-item">
+          <span class="trad-label">喜神<span class="trad-hint">祈福吉方</span></span>
+          <span class="trad-value" id="panelXishen"></span>
+        </div>
+        <div class="trad-item">
+          <span class="trad-label">财神<span class="trad-hint">求财吉方</span></span>
+          <span class="trad-value" id="panelCaishen"></span>
+        </div>
       </div>
-      <div class="info-item">
-        <span class="info-label">值神</span>
-        <span class="info-value" id="panelZhishen"></span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">纳音</span>
-        <span class="info-value" id="panelNayin"></span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">星宿</span>
-        <span class="info-value" id="panelXingxiu"></span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">喜神</span>
-        <span class="info-value" id="panelXishen"></span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">财神</span>
-        <span class="info-value" id="panelCaishen"></span>
-      </div>
-    </div>
+    </details>
 
     <div class="panel-section-title">日程事件</div>
     <div id="panelEvents" class="event-list"></div>
 
     <form class="event-form" id="eventForm">
-      <input type="text" id="eventTitleInput" placeholder="事件标题" required>
-      <div style="display:flex; gap: var(--space-2);">
-        <input type="time" id="eventTimeInput" style="flex:1;">
-        <input type="color" id="eventColorInput" value="#5B8F7A" style="width:40px; height:36px; padding:2px; border-radius: var(--radius-md);">
-      </div>
-      <div class="event-form-actions">
-        <button type="button" class="today-btn" id="panelCloseBtn" style="border-color: var(--color-border); color: var(--color-text-secondary);">关闭</button>
-        <button type="submit" class="today-btn" id="eventSubmitBtn">添加事件</button>
+      <input type="text" id="eventTitleInput" placeholder="添加事件..." required>
+      <div class="event-form-row">
+        <input type="time" id="eventTimeInput">
+        <input type="color" id="eventColorInput" value="#5B8F7A">
+        <button type="submit" class="event-add-btn">添加</button>
       </div>
     </form>
   </div>
