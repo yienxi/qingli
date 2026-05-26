@@ -17,8 +17,6 @@ const SOLAR_TERM_NAMES = [
   '寒露', '霜降', '立冬', '小雪', '大雪', '冬至',
 ]
 
-export const config = { runtime: 'edge' }
-
 function esc(text) {
   return text.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
 }
