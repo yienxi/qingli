@@ -1,0 +1,189 @@
+/* ============================================================
+   轻历 — Responsive Breakpoints
+   ============================================================ */
+
+/* ----- Tablet & Below (< 768px) ----- */
+@media (max-width: 768px) {
+  .app {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .cal-nav-title .month {
+    font-size: var(--text-xl);
+  }
+
+  .day-cell {
+    min-height: var(--cell-min-height-mobile);
+    padding: var(--space-1);
+  }
+
+  .day-number {
+    font-size: var(--text-base);
+    margin-bottom: 0;
+  }
+
+  .lunar-date {
+    font-size: 10px;
+  }
+
+  .day-tag {
+    font-size: 9px;
+    padding: 1px 3px;
+  }
+
+  .event-dot {
+    width: 4px;
+    height: 4px;
+  }
+
+  .ical-link-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .ical-link-row .ical-label {
+    min-width: auto;
+  }
+
+  .ical-link-row .ical-url {
+    width: 100%;
+    font-size: 10px;
+  }
+
+  .copy-btn {
+    align-self: flex-end;
+  }
+
+  .app-footer {
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: center;
+  }
+}
+
+/* ----- Mobile (< 480px) ----- */
+@media (max-width: 480px) {
+  .app {
+    padding: var(--space-2) var(--space-2);
+  }
+
+  .app-header {
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+  }
+
+  .cal-nav {
+    margin-bottom: var(--space-3);
+  }
+
+  .cal-nav-title .month {
+    font-size: var(--text-lg);
+  }
+
+  .cal-nav-title .year {
+    font-size: var(--text-sm);
+  }
+
+  .today-btn {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+  }
+
+  .day-cell {
+    min-height: 44px;
+    padding: 2px;
+    padding-top: var(--space-1);
+  }
+
+  .day-number {
+    font-size: var(--text-sm);
+  }
+
+  .weekday-cell {
+    font-size: 10px;
+    padding: var(--space-1) 0;
+  }
+
+  .lunar-date {
+    display: none;   /* Hide lunar dates on mobile grid */
+  }
+
+  .day-cell.today .lunar-date {
+    display: block;  /* Show only on today */
+    font-size: 9px;
+  }
+
+  .day-cell .today-seal {
+    width: 4px;
+    height: 4px;
+    top: 2px;
+    right: 2px;
+  }
+
+  .day-tag {
+    display: none;  /* Hide tags on mobile grid */
+  }
+
+  .day-cell.today .day-tag,
+  .day-cell:active .day-tag {
+    display: inline-block;  /* Show only on today/active */
+  }
+
+  .detail-panel {
+    padding: var(--space-4);
+    max-height: 80vh;
+  }
+
+  .ical-section {
+    padding: var(--space-3);
+  }
+}
+
+/* ----- Desktop large (> 1200px) ----- */
+@media (min-width: 1200px) {
+  .day-cell {
+    min-height: 88px;
+    padding: var(--space-3);
+  }
+
+  .lunar-date {
+    font-size: var(--text-sm);
+  }
+
+  .day-cell:hover .day-number {
+    transform: scale(1.05);
+  }
+}
+
+/* ----- Reduced Motion ----- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ----- Print ----- */
+@media print {
+  .app-header,
+  .cal-nav-controls,
+  .ical-section,
+  .app-footer {
+    display: none;
+  }
+
+  .app {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .day-cell {
+    break-inside: avoid;
+    border-color: #ccc;
+  }
+
+  .day-cell.today {
+    background: #f5f5f5;
+  }
+}

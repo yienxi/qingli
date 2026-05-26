@@ -1,0 +1,13 @@
+{
+  "name": "qingli",
+  "version": "1.0.0",
+  "description": "轻历 — 轻量级中国日历工具",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "dependencies": {
+    "lunar-typescript": "^1.8.6"
+  }
+}

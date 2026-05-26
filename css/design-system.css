@@ -1,0 +1,198 @@
+/* ============================================================
+   轻历 (QingLi) — Design System Tokens
+   纸墨 · 轻历 | Paper & Ink Aesthetic
+   ============================================================ */
+
+/* ----- Font Loading ----- */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+/* ----- CSS Reset ----- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ----- Design Tokens ----- */
+:root {
+  /* ██ Color — Paper & Ink Palette */
+  --color-bg-page:        #F7F3EE;
+  --color-bg-card:        #FCFAF7;
+  --color-bg-hover:       #F0EBE4;
+  --color-bg-active:      #E8E2DA;
+  --color-bg-today:       #FDF6F4;
+
+  --color-text-primary:   #2C2416;
+  --color-text-secondary: #8C7F70;
+  --color-text-tertiary:  #B0A597;
+  --color-text-lunar:     #A69988;
+  --color-text-muted:     #C8BFB3;
+
+  --color-accent-red:     #C73B2B;
+  --color-accent-red-bg:  #FBF0ED;
+  --color-accent-green:   #5B8F7A;
+  --color-accent-green-bg:#F0F5F2;
+  --color-accent-brown:   #8B7E6C;
+  --color-accent-brown-bg:#F3F0EC;
+
+  --color-border:         #E8E2DA;
+  --color-border-light:   #F0EBE4;
+
+  /* ██ Typography */
+  --font-ui:       'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif:    'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', Georgia, 'Times New Roman', serif;
+  --font-mono:     'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
+
+  --text-xs:       0.6875rem;   /* 11px */
+  --text-sm:       0.75rem;     /* 12px */
+  --text-base:     0.875rem;    /* 14px */
+  --text-lg:       1rem;        /* 16px */
+  --text-xl:       1.125rem;    /* 18px */
+  --text-2xl:      1.5rem;      /* 24px */
+  --text-3xl:      2rem;        /* 32px */
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+
+  --weight-normal:  400;
+  --weight-medium:  500;
+  --weight-semibold: 600;
+  --weight-bold:    700;
+
+  /* ██ Spacing */
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-5:   1.25rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-10:  2.5rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+
+  /* ██ Layout */
+  --radius-sm:    3px;
+  --radius-md:    6px;
+  --radius-lg:    12px;
+  --radius-full:  9999px;
+
+  --shadow-sm:    0 1px 2px rgba(44, 36, 22, 0.04);
+  --shadow-md:    0 2px 8px rgba(44, 36, 22, 0.06);
+  --shadow-lg:    0 4px 16px rgba(44, 36, 22, 0.08);
+  --shadow-red:   0 0 0 2px var(--color-accent-red);
+
+  /* ██ Calendar Grid */
+  --calendar-max-width: 880px;
+  --cell-min-height-desktop: 72px;
+  --cell-min-height-mobile: 48px;
+  --weekday-header-height: 32px;
+
+  /* ██ Transitions */
+  --transition-fast:    150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base:    200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow:    300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring:  400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ██ Z-Index Scale */
+  --z-base:      1;
+  --z-panel:     10;
+  --z-overlay:   100;
+  --z-modal:     200;
+}
+
+/* ----- Dark Theme (墨色 · 暗夜) ----- */
+[data-theme="dark"] {
+  --color-bg-page:        #1C1814;
+  --color-bg-card:        #25201A;
+  --color-bg-hover:       #322C24;
+  --color-bg-active:      #3D352C;
+  --color-bg-today:       #2D1F1C;
+
+  --color-text-primary:   #E6DDD4;
+  --color-text-secondary: #A89B8E;
+  --color-text-tertiary:  #7A7064;
+  --color-text-lunar:     #6B6257;
+  --color-text-muted:     #4D463E;
+
+  --color-accent-red:     #E05442;
+  --color-accent-red-bg:  #2D1F1C;
+  --color-accent-green:   #6BAF95;
+  --color-accent-green-bg:#1D2A24;
+  --color-accent-brown:   #A99A86;
+  --color-accent-brown-bg:#2A2520;
+
+  --color-border:         #322C24;
+  --color-border-light:   #2A2520;
+
+  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md:    0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg:    0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ----- Base Elements ----- */
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-page);
+  min-height: 100vh;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+a {
+  color: var(--color-accent-red);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* ----- Utility Classes ----- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-muted);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* Selection */
+::selection {
+  background: var(--color-accent-red);
+  color: white;
+}
+
+/* Focus visible for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--color-accent-red);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
