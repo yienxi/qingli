@@ -2,10 +2,10 @@
   "version": 2,
   "functions": {
     "api/ical.js": {
-      "runtime": "edge"
+      "runtime": "@vercel/edge@4"
     },
     "api/holidays.js": {
-      "runtime": "edge"
+      "runtime": "@vercel/edge@4"
     }
   }
 }
