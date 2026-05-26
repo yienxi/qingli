@@ -130,7 +130,7 @@ function generateICal(type, year) {
 }
 
 export default async function handler(request) {
-  const url = new URL(request.url)
+  const url = new URL(request.url, `https://${request.headers.get('host') || 'qingli.suanqiu.fun'}`)
   const type = url.searchParams.get('type') || 'all'
 
   if (!['all', 'holidays', 'lunar', 'terms'].includes(type)) {
