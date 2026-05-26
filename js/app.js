@@ -150,8 +150,6 @@ cal.onRender = () => {
   cal.refreshEvents()
 }
 
-cal.init()
-
 const grid = document.getElementById('calGrid')
 grid.addEventListener('touchstart', (e) => {
   touchStartX = e.changedTouches[0].screenX
@@ -252,3 +250,93 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/public/sw.js').catch(() => {})
   })
 }
+
+// 显示数据版本
+function setupVersionDisplay() {
+  const versionEl = document.getElementById('dataVersion')
+  const versionNumberEl = document.getElementById('versionNumber')
+  
+  if (cal.holidayService.dataVersion) {
+    versionNumberEl.textContent = cal.holidayService.dataVersion
+    versionEl.style.display = 'flex'
+  }
+  
+  // 监听版本更新
+  setTimeout(() => {
+    if (cal.holidayService.updateAvailable) {
+      showToast('节假日数据已更新')
+    }
+  }, 1000)
+}
+
+// 搜索功能
+const searchBtn = document.getElementById('searchBtn')
+const searchPanel = document.getElementById('searchPanel')
+const searchInput = document.getElementById('searchInput')
+const searchResults = document.getElementById('searchResults')
+
+let isSearchOpen = false
+
+searchBtn.addEventListener('click', () => {
+  isSearchOpen = !isSearchOpen
+  searchPanel.style.display = isSearchOpen ? 'block' : 'none'
+  if (isSearchOpen) {
+    searchInput.focus()
+  }
+})
+
+searchInput.addEventListener('input', (e) => {
+  const query = e.target.value.trim().toLowerCase()
+  if (!query) {
+    searchResults.innerHTML = ''
+    return
+  }
+  
+  const allEvents = eventStore.getAllEvents()
+  const matches = allEvents.filter(e => 
+    e.title.toLowerCase().includes(query)
+  ).sort((a, b) => a.date.localeCompare(b.date))
+  
+  if (matches.length === 0) {
+    searchResults.innerHTML = '<div class="search-results empty">未找到匹配的事件</div>'
+    return
+  }
+  
+  searchResults.innerHTML = matches.map(e => {
+    const [year, month, day] = e.date.split('-')
+    return `
+      <div class="search-result-item" data-date="${e.date}">
+        <span class="event-color" style="background:${e.color}"></span>
+        <div class="event-info">
+          <div class="event-title">${escapeHtml(e.title)}</div>
+          <div class="event-date">${year}年${parseInt(month)}月${parseInt(day)}日${e.time ? ` ${e.time}` : ''}</div>
+        </div>
+      </div>
+    `
+  }).join('')
+  
+  searchResults.querySelectorAll('.search-result-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const date = item.dataset.date
+      const [year, month, day] = date.split('-').map(Number)
+      cal.year = year
+      cal.month = month
+      cal.render().then(() => {
+        isSearchOpen = false
+        searchPanel.style.display = 'none'
+        searchInput.value = ''
+        
+        const cell = document.querySelector(`[data-date="${date}"]`)
+        if (cell) {
+          cell.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          cell.classList.add('selected')
+        }
+      })
+    })
+  })
+})
+
+// 在日历初始化后显示版本
+cal.init().then(() => {
+  setupVersionDisplay()
+}).catch(console.error)

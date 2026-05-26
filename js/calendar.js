@@ -1,4 +1,5 @@
-import { Solar, Lunar, HolidayUtil } from 'https://esm.sh/lunar-typescript@1.8.6'
+import { Solar, Lunar } from 'lunar-typescript'
+import { HolidayService } from './holiday-service.js'
 
 const DAYS_IN_WEEK = 7
 const MONTH_NAMES = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
@@ -55,6 +56,8 @@ export class Calendar {
     this.onRender = null
     this.grid = document.getElementById('calGrid')
     this.cachedLunarData = new Map()
+    this.holidayService = new HolidayService()
+    this.isLoading = false
 
     this.navYear = document.getElementById('navYear')
     this.navMonth = document.getElementById('navMonth')
@@ -63,7 +66,7 @@ export class Calendar {
     this.todayBtn = document.getElementById('todayBtn')
   }
 
-  init() {
+  async init() {
     this.prevBtn.addEventListener('click', () => this.prevMonth())
     this.nextBtn.addEventListener('click', () => this.nextMonth())
     this.todayBtn.addEventListener('click', () => this.goToToday())
@@ -73,35 +76,49 @@ export class Calendar {
       if (e.key === 'ArrowRight') this.nextMonth()
     })
 
-    this.render()
+    await this.render()
   }
 
-  prevMonth() {
+  showLoading() {
+    this.isLoading = true
+    this.grid.innerHTML = `
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">加载中...</span>
+      </div>
+    `
+  }
+
+  hideLoading() {
+    this.isLoading = false
+  }
+
+  async prevMonth() {
     if (this.month === 1) {
       this.month = 12
       this.year--
     } else {
       this.month--
     }
-    this.render()
+    await this.render()
   }
 
-  nextMonth() {
+  async nextMonth() {
     if (this.month === 12) {
       this.month = 1
       this.year++
     } else {
       this.month++
     }
-    this.render()
+    await this.render()
   }
 
-  goToToday() {
+  async goToToday() {
     const now = new Date()
     this.year = now.getFullYear()
     this.month = now.getMonth() + 1
     this.selectedDate = this.today
-    this.render()
+    await this.render()
 
     const dayCells = this.grid.querySelectorAll('.day-cell')
     for (const cell of dayCells) {
@@ -157,9 +174,9 @@ export class Calendar {
     }
   }
 
-  getHoliday(year, month, day) {
+  async getHoliday(year, month, day) {
     try {
-      return HolidayUtil.getHoliday(year, month, day) || null
+      return await this.holidayService.isHoliday(year, month, day)
     } catch {
       return null
     }
@@ -173,7 +190,9 @@ export class Calendar {
     return dayIndex === 5 || dayIndex === 6
   }
 
-  render() {
+  async render() {
+    this.showLoading()
+
     const daysInMonth = this.getDaysInMonth(this.year, this.month)
     const firstDayIndex = this.getFirstDayOfMonth(this.year, this.month)
     const prevMonth = this.month === 1 ? 12 : this.month - 1
@@ -210,7 +229,7 @@ export class Calendar {
 
       const dayIndex = i % 7
       const lunarData = this.computeLunarData(year, month, day)
-      const holiday = this.getHoliday(year, month, day)
+      const holiday = await this.getHoliday(year, month, day)
       const isCurrentDay = this.isToday(year, month, day)
       const weekend = this.isWeekend(dayIndex)
       const isSelected = this.selectedDate &&
@@ -220,7 +239,7 @@ export class Calendar {
 
       let holidayTag = null
       if (holiday) {
-        holidayTag = { name: holiday.getName() }
+        holidayTag = { name: holiday.isWork ? `${holiday.name}（调休）` : holiday.name }
       }
 
       let lunarDisplay = ''
@@ -236,10 +255,11 @@ export class Calendar {
 
       cells.push({
         day, month, year, dayDate, isOtherMonth, isCurrentDay, weekend, isSelected,
-        lunarDisplay, lunarData, holidayTag, holidays, dayIndex,
+        lunarDisplay, lunarData, holidayTag, dayIndex,
       })
     }
 
+    this.hideLoading()
     this.renderGrid(cells)
     if (this.onRender) this.onRender(cells)
   }

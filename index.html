@@ -26,8 +26,17 @@
         <button class="icon-btn" id="themeToggle" aria-label="切换主题" title="切换主题">
           <span id="themeIcon">☀</span>
         </button>
+        <button class="icon-btn" id="searchBtn" aria-label="搜索事件" title="搜索事件">
+          <span>🔍</span>
+        </button>
       </div>
     </header>
+
+    <!-- Search Panel -->
+    <div class="search-panel" id="searchPanel" style="display: none;">
+      <input type="text" id="searchInput" placeholder="搜索事件..." class="search-input">
+      <div id="searchResults" class="search-results"></div>
+    </div>
 
     <!-- Calendar Navigation -->
     <nav class="cal-nav" id="calNav">
@@ -74,6 +83,9 @@
       </span>
       <span style="display:flex; align-items: center; gap: 4px;">
         <span style="width:6px; height:6px; border-radius:50%; background:var(--color-accent-green);"></span> 个人事件
+      </span>
+      <span id="dataVersion" style="display:none; align-items: center; gap: 4px; color: var(--color-accent-green);">
+        数据版本: <span id="versionNumber">-</span>
       </span>
     </div>
 
