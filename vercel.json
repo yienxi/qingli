@@ -1,6 +1,14 @@
 {
-  "version": 3,
+  "version": 2,
   "builds": [
+    {
+      "src": "api/ical.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/holidays.js",
+      "use": "@vercel/node"
+    },
     {
       "src": "*.html",
       "use": "@vercel/static"
@@ -18,14 +26,6 @@
       "use": "@vercel/static"
     }
   ],
-  "functions": {
-    "api/ical.js": {
-      "runtime": "@vercel/node@3"
-    },
-    "api/holidays.js": {
-      "runtime": "@vercel/node@3"
-    }
-  },
   "routes": [
     {
       "src": "/api/ical(.*)",
