@@ -1,3 +1,5 @@
+export const runtime = 'edge'
+
 import { Solar, Lunar, HolidayUtil } from 'lunar-typescript'
 
 const TRADITIONAL_FESTIVALS = {

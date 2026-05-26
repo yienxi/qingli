@@ -1,3 +1,5 @@
+export const runtime = 'edge'
+
 import { HolidayUtil } from 'lunar-typescript'
 
 // 数据版本号，更新节假日数据时递增
