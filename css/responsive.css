@@ -1,427 +1,96 @@
 /* ============================================================
-   轻历 — Responsive Layout
-   纸墨 · 轻历 | Paper & Ink Aesthetic
+   轻历 — Responsive Layout Rules
+   断点: 360 / 480 / 768 / 1024
    ============================================================ */
 
-/* ----- Tablet (768px) ----- */
-@media (max-width: 768px) {
-  .app {
-    padding: var(--space-4) var(--space-3);
-    padding-top: calc(var(--space-4) + env(safe-area-inset-top, 0px));
-  }
-
-  .today-card {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-3);
-    padding: var(--space-4);
-  }
-
-  .today-almanac {
-    padding-left: 0;
-    border-left: none;
-    border-top: 1px solid var(--color-border-light);
-    padding-top: var(--space-3);
-  }
-
-  .today-day {
-    font-size: 2rem;
-  }
-
-  .ical-link-row {
-    flex-wrap: wrap;
-  }
-
-  .ical-link-row .ical-url {
-    order: 3;
-    flex-basis: 100%;
-    margin-top: var(--space-1);
-  }
-
-  .detail-panel {
-    padding: var(--space-5) var(--space-4);
-  }
-
-  .panel-almanac {
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .almanac-divider {
-    width: 100%;
-    height: 1px;
-  }
-
-  .almanac-col {
-    padding: var(--space-1) 0;
-  }
-
-  .traditional-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* ----- Mobile (480px) ----- */
+/* ---- 360px 小屏手机 ---- */
 @media (max-width: 480px) {
-  .app {
-    padding: var(--space-3) var(--space-2);
-    padding-top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
-  }
+  .app { padding: var(--space-4) var(--space-3); }
+  .brand-text { font-size: var(--text-lg); }
+  .app-logo { width: 28px; height: 28px; }
 
-  .app-header {
-    margin-bottom: var(--space-3);
-    padding-bottom: var(--space-2);
-  }
+  .today-card { flex-direction: column; }
+  .today-head { padding: var(--space-4); min-width: 0; }
+  .today-day { font-size: 2.5rem; }
+  .today-divider { width: 100%; height: 1px; }
+  .today-almanac { padding: var(--space-3) var(--space-4); }
 
-  .app-logo {
-    width: 28px;
-    height: 28px;
-  }
-
-  .brand-text {
-    font-size: var(--text-lg);
-  }
-
-  .today-card {
-    padding: var(--space-3);
-    gap: var(--space-2);
-  }
-
-  .today-day {
-    font-size: 1.75rem;
-  }
-
-  .today-month-year {
-    font-size: var(--text-sm);
-  }
-
-  .today-lunar {
-    font-size: var(--text-xs);
-  }
-
-  .today-ganzhi {
-    font-size: 10px;
-  }
-
-  .today-almanac-tag {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
-  }
-
-  .today-almanac-text {
-    font-size: var(--text-xs);
-    line-height: 1.5;
-  }
-
-  .cal-nav-title .month {
-    font-size: var(--text-xl);
-  }
-
-  .cal-nav-title .year {
-    font-size: var(--text-sm);
-  }
+  .cal-nav-title .year { font-size: var(--text-sm); }
+  .cal-nav-title .month { font-size: var(--text-xl); }
 
   .day-cell {
-    min-height: var(--cell-min-height-mobile);
-    padding: var(--space-1);
+    min-height: 62px;
+    padding: var(--space-1) 2px;
   }
-
-  .day-number {
-    font-size: var(--text-base);
-    margin-bottom: 1px;
-  }
-
-  .lunar-date {
-    font-size: 9px;
-  }
-
-  .day-tag {
-    font-size: 8px;
-    padding: 0 2px;
-  }
-
-  .event-dots {
-    gap: 2px;
-  }
-
-  .event-dot {
-    width: 4px;
-    height: 4px;
-  }
-
-  .legend-bar {
-    gap: var(--space-2);
-    font-size: 9px;
-  }
-
-  .ical-section {
-    margin-top: var(--space-5);
-    padding: var(--space-3);
-  }
-
-  .ical-section-title {
-    font-size: var(--text-sm);
-  }
-
-  .ical-section-desc {
-    font-size: var(--text-xs);
-  }
-
-  .ical-link-row .ical-label {
-    min-width: 70px;
-    font-size: var(--text-xs);
-  }
-
-  .ical-link-row .ical-url {
-    font-size: 9px;
-  }
+  .day-number { font-size: var(--text-sm); }
+  .lunar-date { font-size: 10px; }
+  .day-tag { font-size: 8px; padding: 0 3px; }
 
   .detail-panel {
     padding: var(--space-4) var(--space-3);
+    padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
     max-height: 95vh;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
+  .panel-date { font-size: var(--text-xl); }
+  .panel-lunar { font-size: var(--text-sm); }
 
-  .panel-date {
-    font-size: var(--text-xl);
-  }
+  .panel-yiji { flex-direction: column; padding: var(--space-3) var(--space-2); }
+  .yiji-divider { width: 100%; height: 1px; margin: var(--space-3) 0; }
+  .panel-yiji-section { padding: 0; }
 
-  .panel-lunar {
-    font-size: var(--text-sm);
-  }
+  .traditional-grid { grid-template-columns: 1fr; }
+  .trad-item:nth-child(odd) { border-right: none; }
 
-  .panel-almanac {
-    padding: var(--space-3);
-  }
-
-  .almanac-badge {
-    width: 24px;
-    height: 24px;
-    font-size: var(--text-xs);
-  }
-
-  .almanac-text {
-    font-size: var(--text-sm);
-    line-height: 1.6;
-  }
-
-  .traditional-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .trad-item:nth-child(odd) {
-    border-right: none;
-  }
-
-  .trad-value {
-    font-size: var(--text-sm);
-  }
-
-  .event-form input {
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--text-sm);
-  }
-
-  .event-form-row input[type="color"] {
-    width: 36px;
-    height: 36px;
-  }
-
-  .event-add-btn {
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--text-xs);
-  }
-
-  .app-footer {
-    margin-top: var(--space-6);
-    flex-direction: column;
-    gap: var(--space-1);
-    text-align: center;
-  }
+  .ical-section { padding: var(--space-4); }
+  .ical-grid { grid-template-columns: 1fr; }
+  .ical-card-full { flex-direction: column; align-items: flex-start; }
 }
 
-/* ----- Small Mobile (360px) ----- */
+/* ---- 360px 超小屏 ---- */
 @media (max-width: 360px) {
-  .day-cell {
-    min-height: 48px;
-    padding: 2px;
-  }
+  .today-day { font-size: 2rem; }
+  .today-almanac-text { font-size: var(--text-xs); }
+  .today-chongsha-text { font-size: 10px; }
 
-  .day-number {
-    font-size: var(--text-sm);
-  }
+  .day-cell { min-height: 52px; }
+  .day-number { font-size: var(--text-xs); }
+  .lunar-date { display: none; }
+  .event-dots { display: none; }
 
-  .lunar-date {
-    font-size: 8px;
-  }
-
-  .day-tag {
-    font-size: 7px;
-    padding: 0 1px;
-  }
-
-  .today-card {
-    padding: var(--space-2);
-  }
-
-  .today-day {
-    font-size: 1.5rem;
-  }
-
-  .panel-almanac {
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .almanac-divider {
-    width: 100%;
-    height: 1px;
-  }
+  .yiji-term { font-size: var(--text-xs); }
 }
 
-/* ----- Desktop Enhancements (1024px+) ----- */
+/* ---- 768px 平板 ---- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .detail-panel {
+    max-width: 640px; left: 50%; right: auto;
+    transform: translate(-50%, 100%); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  .detail-panel.open { transform: translate(-50%, 0); }
+
+  .ical-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---- 1024px+ 桌面端 ---- */
 @media (min-width: 1024px) {
-  .day-cell {
-    min-height: 90px;
-  }
+  .today-card { flex-direction: row; }
+  .today-head { flex: 0 0 220px; }
 
-  .day-number {
-    font-size: var(--text-xl);
-  }
-
-  .lunar-date {
-    font-size: var(--text-sm);
-  }
-
-  .day-tag {
-    font-size: var(--text-xs);
-    padding: 2px 6px;
-  }
+  .day-cell { min-height: var(--cell-min-height-desktop); }
 
   .detail-panel {
     max-width: 520px;
-    left: auto;
-    right: var(--space-8);
+    left: auto; right: var(--space-8);
     bottom: var(--space-8);
     border-radius: var(--radius-lg);
     max-height: 85vh;
     transform: translateY(20px) scale(0.95);
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0; pointer-events: none;
   }
+  .detail-panel.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+  .detail-panel .panel-handle { display: none; }
 
-  .detail-panel.open {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-
-  .detail-panel .panel-handle {
-    display: none;
-  }
-
-  .panel-close-btn {
-    display: flex;
-  }
-
-  .traditional-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .trad-item:nth-child(odd) {
-    border-right: 1px solid var(--color-border-light);
-  }
-  .trad-item:nth-child(3n) {
-    border-right: none;
-  }
-  .trad-item:nth-child(n+3) {
-    border-top: 1px solid var(--color-border-light);
-  }
-}
-
-/* ----- Print ----- */
-@media print {
-  .app-header,
-  .app-actions,
-  .detail-panel,
-  .detail-overlay,
-  .ical-section,
-  .toast,
-  .search-panel,
-  .event-form {
-    display: none !important;
-  }
-
-  .app {
-    padding: 0;
-    max-width: none;
-  }
-
-  .day-cell {
-    min-height: 60px;
-    border-color: #ddd;
-  }
-
-  .today-card {
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
-}
-
-/* ----- Touch Targets (accessibility) ----- */
-@media (pointer: coarse) {
-  .icon-btn {
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  .today-btn {
-    min-height: 36px;
-    padding: var(--space-2) var(--space-4);
-  }
-
-  .copy-btn {
-    min-height: 32px;
-    padding: var(--space-2) var(--space-3);
-  }
-
-  .day-cell {
-    min-height: 60px;
-  }
-
-  .panel-close-btn {
-    width: 44px;
-    height: 44px;
-  }
-
-  .traditional-toggle {
-    min-height: 44px;
-  }
-}
-
-/* ----- Reduced Motion ----- */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ----- High Contrast ----- */
-@media (prefers-contrast: high) {
-  :root {
-    --color-text-primary: #000000;
-    --color-text-secondary: #333333;
-    --color-text-lunar: #555555;
-    --color-text-muted: #777777;
-    --color-border: #666666;
-    --color-border-light: #999999;
-  }
-
-  .day-cell {
-    border-width: 2px;
-  }
+  .ical-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .traditional-grid { grid-template-columns: repeat(3, 1fr); }
 }

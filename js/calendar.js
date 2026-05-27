@@ -11,15 +11,70 @@ const TRADITIONAL_FESTIVALS = {
   '3/3': '上巳节',
   '5/5': '端午节',
   '6/6': '天贶节',
-  '7/7': '七夕节',
-  '7/15': '中元节',
+  '7/7': '七夕节', '7/15': '中元节',
   '8/15': '中秋节',
   '9/9': '重阳节',
-  '10/1': '寒衣节',
-  '10/15': '下元节',
-  '12/8': '腊八节',
-  '12/23': '小年',
-  '12/30': '除夕',
+  '10/1': '寒衣节', '10/15': '下元节',
+  '12/8': '腊八节', '12/23': '小年', '12/30': '除夕',
+}
+
+const YIJI_CATEGORIES = {
+  '嫁娶': '婚嫁', '纳采': '婚嫁', '订盟': '婚嫁', '纳婿': '婚嫁', '冠笄': '婚嫁',
+  '出行': '出行', '旅游': '出行', '移徙': '出行', '入宅': '出行', '赴任': '出行',
+  '动土': '营建', '修造': '营建', '上梁': '营建', '安门': '营建', '作灶': '营建',
+  '开市': '商务', '交易': '商务', '立契': '商务', '纳财': '商务', '开张': '商务',
+  '祭祀': '祭祀', '祈福': '祭祀', '开光': '祭祀', '求嗣': '祭祀', '斋醮': '祭祀',
+  '安葬': '丧葬', '启攒': '丧葬', '破土': '丧葬', '行丧': '丧葬',
+  '理发': '生活', '沐浴': '生活', '扫舍': '生活', '解除': '生活', '栽种': '生活', '牧养': '生活',
+}
+
+const YIJI_EXPLAIN = {
+  '嫁娶': '结婚摆酒席', '纳采': '提亲过大礼', '订盟': '订婚仪式', '纳婿': '招女婿上门',
+  '出行': '外出远行', '旅游': '观光游览', '移徙': '搬家迁居', '入宅': '入住新居',
+  '动土': '开挖地基、装修拆墙', '修造': '动工营造、房屋修缮', '上梁': '建房封顶仪式', '安门': '安装大门',
+  '开市': '店铺开业、公司揭牌', '交易': '买卖签约', '立契': '签订合同', '纳财': '进货、收款、投资',
+  '祭祀': '拜神、祭祖、扫墓', '祈福': '祈求福运平安', '开光': '神像佛像开光仪式', '求嗣': '求子祈福',
+  '安葬': '下葬入土', '启攒': '迁坟、拾骨重葬', '破土': '挖掘墓地',
+  '理发': '剪发修面', '沐浴': '沐浴更衣', '扫舍': '打扫房屋', '解除': '解除灾厄',
+}
+
+const ZODIAC_NAMES = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪']
+const DIRECTION_NAMES = { '北': '北方', '南': '南方', '东': '东方', '西': '西方', '东北': '东北方', '西北': '西北方', '东南': '东南方', '西南': '西南方' }
+
+function categorizeYiji(rawList) {
+  const groups = {}
+  for (const item of rawList) {
+    const cat = YIJI_CATEGORIES[item] || '其他'
+    if (!groups[cat]) groups[cat] = []
+    groups[cat].push(item)
+  }
+  return groups
+}
+
+function interpretChongsha(raw) {
+  if (!raw || raw === '-') return { zodiac: '', direction: '', text: '' }
+  const parts = raw.trim().split(/\s+/)
+  const chongPart = parts[0] || ''
+  const shaPart = parts[1] || ''
+  const zodiac = chongPart.replace('冲', '')
+  const direction = shaPart.replace('煞', '')
+  const dirCn = DIRECTION_NAMES[direction] || direction
+  let text = ''
+  if (zodiac && ZODIAC_NAMES.includes(zodiac)) {
+    text += `今日与属${zodiac}的人地支相冲。属${zodiac}者大事（签约、出行、婚嫁）宜谨慎。`
+  }
+  if (direction) {
+    text += `煞气在${dirCn}，今日不宜从${dirCn}开始动工或远行。`
+  }
+  return { zodiac, direction: dirCn, text }
+}
+
+function formatYijiForCard(groups) {
+  const items = []
+  for (const [cat, terms] of Object.entries(groups)) {
+    items.push(terms.slice(0, 3).join('、'))
+  }
+  return items.join(' · ')
 }
 
 let solarTermCache = {}
@@ -45,7 +100,9 @@ function buildSolarTermCache(year) {
   }
 }
 
-export class Calendar {
+export { Calendar, categorizeYiji, interpretChongsha, YIJI_EXPLAIN, YIJI_CATEGORIES }
+
+class Calendar {
   constructor() {
     const now = new Date()
     this.year = now.getFullYear()
@@ -151,6 +208,10 @@ export class Calendar {
 
       const yiList = lunar.getDayYi()
       const jiList = lunar.getDayJi()
+      const yiGroups = categorizeYiji(yiList)
+      const jiGroups = categorizeYiji(jiList)
+      const rawChongsha = lunar.getDayChongShu() + ' ' + lunar.getDaySha()
+      const chongshaInfo = interpretChongsha(rawChongsha)
 
       const data = {
         lunarDayStr: lunar.getDayInChinese(),
@@ -167,7 +228,12 @@ export class Calendar {
         solarTerm: null,
         yi: yiList,
         ji: jiList,
-        chongSha: lunar.getDayChongShu() + ' ' + lunar.getDaySha(),
+        yiGroups,
+        jiGroups,
+        yiCardText: formatYijiForCard(yiGroups),
+        jiCardText: formatYijiForCard(jiGroups),
+        chongSha: rawChongsha,
+        chongshaInfo,
         zhiShen: lunar.getDayZhiXing(),
         naYin: lunar.getDayNaYin(),
         xingXiu: lunar.getDayXiu(),
@@ -286,37 +352,47 @@ export class Calendar {
 
     const dayEl = document.getElementById('todayCardDay')
     const monthYearEl = document.getElementById('todayCardMonthYear')
+    const weekdayEl = document.getElementById('todayCardWeekday')
     const lunarEl = document.getElementById('todayCardLunar')
     const ganzhiEl = document.getElementById('todayCardGanzhi')
-    const yiEl = document.getElementById('todayCardYi')
-    const jiEl = document.getElementById('todayCardJi')
+    const yiTextEl = document.getElementById('todayCardYiText')
+    const jiTextEl = document.getElementById('todayCardJiText')
+    const chongshaEl = document.getElementById('todayCardChongsha')
 
-    if (dayEl) {
-      dayEl.textContent = this.today.day
-    }
-    if (monthYearEl) {
-      monthYearEl.textContent = `${this.today.month}月 ${this.today.year}`
+    if (dayEl) dayEl.textContent = this.today.day
+    if (monthYearEl) monthYearEl.textContent = `${this.today.month}月 ${this.today.year}`
+    if (weekdayEl) {
+      const wdNames = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+      const wd = new Date(this.today.year, this.today.month - 1, this.today.day).getDay()
+      const idx = wd === 0 ? 6 : wd - 1
+      weekdayEl.textContent = wdNames[idx]
     }
     if (lunarEl) {
       let lunarText = `农历${todayData.lunarMonthStr}月${todayData.lunarDayStr}`
-      if (todayData.solarTerm) {
-        lunarText += ` · ${todayData.solarTerm}`
-      }
-      if (todayData.festival) {
-        lunarText += ` · ${todayData.festival}`
-      }
+      if (todayData.solarTerm) lunarText += ` · ${todayData.solarTerm}`
+      if (todayData.festival) lunarText += ` · ${todayData.festival}`
       lunarEl.textContent = lunarText
     }
     if (ganzhiEl) {
       ganzhiEl.textContent = `${todayData.ganZhiYear}年 ${todayData.ganZhiMonth}月 ${todayData.ganZhiDay}日 [${todayData.shengXiao}]`
     }
-    if (yiEl) {
-      const yiText = todayData.yi && todayData.yi.length > 0 ? todayData.yi.slice(0, 8).join('、') : '无'
-      yiEl.textContent = yiText
+    if (yiTextEl) {
+      yiTextEl.textContent = todayData.yi && todayData.yi.length > 0
+        ? todayData.yi.slice(0, 6).join('、')
+        : '无'
     }
-    if (jiEl) {
-      const jiText = todayData.ji && todayData.ji.length > 0 ? todayData.ji.slice(0, 8).join('、') : '无'
-      jiEl.textContent = jiText
+    if (jiTextEl) {
+      jiTextEl.textContent = todayData.ji && todayData.ji.length > 0
+        ? todayData.ji.slice(0, 5).join('、')
+        : '无'
+    }
+    if (chongshaEl) {
+      chongshaEl.textContent = todayData.chongshaInfo.text || ''
+      if (!todayData.chongshaInfo.text) {
+        chongshaEl.parentElement.style.display = 'none'
+      } else {
+        chongshaEl.parentElement.style.display = ''
+      }
     }
   }
 

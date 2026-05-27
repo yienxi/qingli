@@ -11,12 +11,13 @@
   <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
   <link rel="apple-touch-icon" href="/public/logo.svg">
   <title>轻历 — 中国日历</title>
-  <link rel="stylesheet" href="/css/design-system.css?v=1.2">
-  <link rel="stylesheet" href="/css/calendar.css?v=1.2">
-  <link rel="stylesheet" href="/css/responsive.css?v=1.2">
+  <link rel="stylesheet" href="/css/design-system.css?v=2.0">
+  <link rel="stylesheet" href="/css/calendar.css?v=2.0">
+  <link rel="stylesheet" href="/css/responsive.css?v=2.0">
 </head>
 <body>
   <div class="app" id="app">
+
     <header class="app-header">
       <div class="app-brand">
         <img src="/public/logo.svg" alt="轻历" class="app-logo" width="32" height="32">
@@ -38,22 +39,30 @@
     </div>
 
     <div class="today-card" id="todayCard">
-      <div class="today-main">
+      <div class="today-head">
         <div class="today-date-row">
           <span class="today-day" id="todayCardDay"></span>
-          <span class="today-month-year" id="todayCardMonthYear"></span>
+          <div class="today-date-meta">
+            <span class="today-month-year" id="todayCardMonthYear"></span>
+            <span class="today-weekday" id="todayCardWeekday"></span>
+          </div>
         </div>
         <div class="today-lunar" id="todayCardLunar"></div>
         <div class="today-ganzhi" id="todayCardGanzhi"></div>
       </div>
+      <div class="today-divider"></div>
       <div class="today-almanac">
         <div class="today-yi-row">
-          <span class="today-almanac-tag tag-yi">宜</span>
-          <span class="today-almanac-text" id="todayCardYi"></span>
+          <span class="today-almanac-label label-yi">宜</span>
+          <span class="today-almanac-text" id="todayCardYiText"></span>
         </div>
         <div class="today-ji-row">
-          <span class="today-almanac-tag tag-ji">忌</span>
-          <span class="today-almanac-text" id="todayCardJi"></span>
+          <span class="today-almanac-label label-ji">忌</span>
+          <span class="today-almanac-text" id="todayCardJiText"></span>
+        </div>
+        <div class="today-chongsha-row" id="todayCardChongshaRow">
+          <span class="today-almanac-label label-warn">冲</span>
+          <span class="today-chongsha-text" id="todayCardChongsha"></span>
         </div>
       </div>
     </div>
@@ -98,36 +107,48 @@
       <span class="legend-item">
         <span class="legend-dot" style="background:var(--color-accent-green)"></span> 个人事件
       </span>
-      <span class="legend-item" id="dataVersion" style="display:none">
-        <span class="legend-dot" style="background:var(--color-accent-gold)"></span> 数据: <span id="versionNumber">-</span>
-      </span>
     </div>
 
     <section class="ical-section" id="icalSection">
       <h2 class="ical-section-title">订阅到你的日历</h2>
       <p class="ical-section-desc">
-        复制下面的链接，添加到 Apple 日历 / Google Calendar / Outlook，节假日和节气自动同步。
+        复制链接，粘贴到 Apple 日历 / Google Calendar / Outlook 的「订阅日历」中，节假日和节气自动同步。
       </p>
-      <div class="ical-links">
-        <div class="ical-link-row">
-          <span class="ical-label">全部合并</span>
-          <span class="ical-url" data-url="all" id="icalUrlAll">加载中...</span>
-          <button class="copy-btn" data-type="all">复制</button>
+      <div class="ical-grid">
+        <div class="ical-card">
+          <div class="ical-card-icon">🏖</div>
+          <div class="ical-card-title">法定节假日</div>
+          <div class="ical-card-desc">春节、国庆、清明…含调休</div>
+          <span class="ical-card-url" id="icalUrlHolidays" data-url="holidays">加载中...</span>
+          <button class="ical-copy-btn" data-type="holidays">复制链接</button>
         </div>
-        <div class="ical-link-row">
-          <span class="ical-label">法定节假日</span>
-          <span class="ical-url" data-url="holidays" id="icalUrlHolidays">加载中...</span>
-          <button class="copy-btn" data-type="holidays">复制</button>
+        <div class="ical-card">
+          <div class="ical-card-icon">🌿</div>
+          <div class="ical-card-title">二十四节气</div>
+          <div class="ical-card-desc">立春、夏至、秋分…</div>
+          <span class="ical-card-url" id="icalUrlTerms" data-url="terms">加载中...</span>
+          <button class="ical-copy-btn" data-type="terms">复制链接</button>
         </div>
-        <div class="ical-link-row">
-          <span class="ical-label">农历节日</span>
-          <span class="ical-url" data-url="lunar" id="icalUrlLunar">加载中...</span>
-          <button class="copy-btn" data-type="lunar">复制</button>
+        <div class="ical-card">
+          <div class="ical-card-icon">🏮</div>
+          <div class="ical-card-title">传统节日</div>
+          <div class="ical-card-desc">端午、中秋、七夕、重阳…</div>
+          <span class="ical-card-url" id="icalUrlLunar" data-url="lunar">加载中...</span>
+          <button class="ical-copy-btn" data-type="lunar">复制链接</button>
         </div>
-        <div class="ical-link-row">
-          <span class="ical-label">二十四节气</span>
-          <span class="ical-url" data-url="terms" id="icalUrlTerms">加载中...</span>
-          <button class="copy-btn" data-type="terms">复制</button>
+        <div class="ical-card">
+          <div class="ical-card-icon">📋</div>
+          <div class="ical-card-title">每日宜忌</div>
+          <div class="ical-card-desc">每日宜忌摘要提醒</div>
+          <span class="ical-card-url" id="icalUrlYiji" data-url="yiji">加载中...</span>
+          <button class="ical-copy-btn" data-type="yiji">复制链接</button>
+        </div>
+        <div class="ical-card ical-card-full">
+          <div class="ical-card-icon">🗓</div>
+          <div class="ical-card-title">完整日历</div>
+          <div class="ical-card-desc">以上全部合并</div>
+          <span class="ical-card-url" id="icalUrlAll" data-url="all">加载中...</span>
+          <button class="ical-copy-btn" data-type="all">复制链接</button>
         </div>
       </div>
     </section>
@@ -151,48 +172,59 @@
       <div id="panelTags" class="panel-tags"></div>
     </div>
 
-    <div class="panel-almanac" id="panelAlmanac">
-      <div class="almanac-col almanac-yi-col">
-        <span class="almanac-badge badge-yi">宜</span>
-        <span class="almanac-text" id="panelYi"></span>
+    <div class="panel-yiji" id="panelYiji">
+      <div class="panel-yiji-section yi-section">
+        <div class="yiji-section-header">
+          <span class="yiji-section-badge badge-yi">宜</span>
+          <span class="yiji-section-title">今日适宜</span>
+        </div>
+        <div class="yiji-category-list" id="panelYiGroups"></div>
       </div>
-      <div class="almanac-divider"></div>
-      <div class="almanac-col almanac-ji-col">
-        <span class="almanac-badge badge-ji">忌</span>
-        <span class="almanac-text" id="panelJi"></span>
+      <div class="yiji-divider"></div>
+      <div class="panel-yiji-section ji-section">
+        <div class="yiji-section-header">
+          <span class="yiji-section-badge badge-ji">忌</span>
+          <span class="yiji-section-title">今日不宜</span>
+        </div>
+        <div class="yiji-category-list" id="panelJiGroups"></div>
       </div>
     </div>
 
+    <div class="panel-chongsha" id="panelChongshaBlock">
+      <div class="chongsha-header">
+        <span class="chongsha-icon">⚠</span>
+        <span class="chongsha-raw" id="panelChongshaRaw"></span>
+      </div>
+      <p class="chongsha-text" id="panelChongshaText"></p>
+    </div>
+
     <details class="panel-traditional" id="panelTraditional">
-      <summary class="traditional-toggle">传统黄历信息</summary>
+      <summary class="traditional-toggle">传统信息 <span class="toggle-hint">（值神、星宿、纳音…）</span></summary>
       <div class="traditional-grid">
         <div class="trad-item">
-          <span class="trad-label">冲煞<span class="trad-hint">与当日地支相冲的生肖及方位</span></span>
-          <span class="trad-value" id="panelChongsha"></span>
+          <span class="trad-label">值神 <span class="trad-hint">当日轮值之神</span></span>
+          <span class="trad-value" id="panelZhishen">-</span>
         </div>
         <div class="trad-item">
-          <span class="trad-label">值神<span class="trad-hint">当日轮值的神煞</span></span>
-          <span class="trad-value" id="panelZhishen"></span>
+          <span class="trad-label">星宿 <span class="trad-hint">二十八宿之一</span></span>
+          <span class="trad-value" id="panelXingxiu">-</span>
         </div>
         <div class="trad-item">
-          <span class="trad-label">纳音<span class="trad-hint">干支五行属性</span></span>
-          <span class="trad-value" id="panelNayin"></span>
+          <span class="trad-label">纳音 <span class="trad-hint">干支五行属性</span></span>
+          <span class="trad-value" id="panelNayin">-</span>
         </div>
         <div class="trad-item">
-          <span class="trad-label">星宿<span class="trad-hint">二十八宿之一</span></span>
-          <span class="trad-value" id="panelXingxiu"></span>
+          <span class="trad-label">喜神 <span class="trad-hint">祈福吉方</span></span>
+          <span class="trad-value" id="panelXishen">-</span>
         </div>
         <div class="trad-item">
-          <span class="trad-label">喜神<span class="trad-hint">祈福吉方</span></span>
-          <span class="trad-value" id="panelXishen"></span>
-        </div>
-        <div class="trad-item">
-          <span class="trad-label">财神<span class="trad-hint">求财吉方</span></span>
-          <span class="trad-value" id="panelCaishen"></span>
+          <span class="trad-label">财神 <span class="trad-hint">求财吉方</span></span>
+          <span class="trad-value" id="panelCaishen">-</span>
         </div>
       </div>
     </details>
 
+    <div class="panel-divider"></div>
     <div class="panel-section-title">日程事件</div>
     <div id="panelEvents" class="event-list"></div>
 
@@ -208,8 +240,8 @@
 
   <div class="toast" id="toast"></div>
 
-  <script type="module" src="/js/calendar.js?v=1.2"></script>
-  <script type="module" src="/js/events.js?v=1.2"></script>
-  <script type="module" src="/js/app.js?v=1.2"></script>
+  <script type="module" src="/js/calendar.js?v=2.0"></script>
+  <script type="module" src="/js/events.js?v=2.0"></script>
+  <script type="module" src="/js/app.js?v=2.0"></script>
 </body>
 </html>

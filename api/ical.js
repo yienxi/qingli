@@ -105,9 +105,31 @@ function generateSolarTermEvents(year) {
   return events
 }
 
+function generateYijiEvents(year) {
+  let events = ''
+  for (let m = 1; m <= 12; m++) {
+    const daysInMonth = new Date(year, m, 0).getDate()
+    for (let d = 1; d <= daysInMonth; d++) {
+      try {
+        const solar = Solar.fromYmd(year, m, d)
+        const lunar = solar.getLunar()
+        const yi = lunar.getDayYi()
+        const ji = lunar.getDayJi()
+        if (yi.length > 0 || ji.length > 0) {
+          const yiStr = yi.length > 0 ? `宜: ${yi.slice(0, 4).join('、')}` : ''
+          const jiStr = ji.length > 0 ? `忌: ${ji.slice(0, 4).join('、')}` : ''
+          const desc = [yiStr, jiStr].filter(Boolean).join(' · ')
+          events += vevent(icalDate(year, m, d), '黄历宜忌', desc)
+        }
+      } catch {}
+    }
+  }
+  return events
+}
+
 function generateICal(type, year) {
   const years = [year - 1, year, year + 1]
-  const calNameMap = { all: '', holidays: ' · 节假日', lunar: ' · 农历节日', terms: ' · 节气' }
+  const calNameMap = { all: '', holidays: ' · 节假日', lunar: ' · 农历节日', terms: ' · 节气', yiji: ' · 每日宜忌' }
   const suffix = calNameMap[type] || ''
 
   let cal = [
@@ -125,6 +147,7 @@ function generateICal(type, year) {
     if (type === 'all' || type === 'holidays') cal += generateHolidayEvents(y)
     if (type === 'all' || type === 'lunar') cal += generateLunarFestivalEvents(y)
     if (type === 'all' || type === 'terms') cal += generateSolarTermEvents(y)
+    if (type === 'all' || type === 'yiji') cal += generateYijiEvents(y)
   }
 
   cal += 'END:VCALENDAR\n'
@@ -135,7 +158,7 @@ export async function GET(request) {
   const url = new URL(request.url)
   const type = url.searchParams.get('type') || 'all'
 
-  if (!['all', 'holidays', 'lunar', 'terms'].includes(type)) {
+  if (!['all', 'holidays', 'lunar', 'terms', 'yiji'].includes(type)) {
     return new Response('Invalid type', { status: 400 })
   }
 

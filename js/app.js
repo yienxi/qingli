@@ -1,4 +1,4 @@
-import { Calendar } from './calendar.js'
+import { Calendar, categorizeYiji, interpretChongsha, YIJI_EXPLAIN, YIJI_CATEGORIES } from './calendar.js'
 import { EventStore } from './events.js'
 
 const cal = new Calendar()
@@ -14,9 +14,11 @@ const detailPanel = document.getElementById('detailPanel')
 const panelDate = document.getElementById('panelDate')
 const panelLunar = document.getElementById('panelLunar')
 const panelTags = document.getElementById('panelTags')
-const panelYi = document.getElementById('panelYi')
-const panelJi = document.getElementById('panelJi')
-const panelChongsha = document.getElementById('panelChongsha')
+const panelYiGroups = document.getElementById('panelYiGroups')
+const panelJiGroups = document.getElementById('panelJiGroups')
+const panelChongshaBlock = document.getElementById('panelChongshaBlock')
+const panelChongshaRaw = document.getElementById('panelChongshaRaw')
+const panelChongshaText = document.getElementById('panelChongshaText')
 const panelZhishen = document.getElementById('panelZhishen')
 const panelNayin = document.getElementById('panelNayin')
 const panelXingxiu = document.getElementById('panelXingxiu')
@@ -41,6 +43,37 @@ function showToast(msg) {
   toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 2000)
 }
 
+function buildYijiGroupHtml(yiGroups, jiGroups) {
+  const catOrder = ['婚嫁', '出行', '营建', '商务', '祭祀', '生活', '丧葬', '其他']
+
+  function buildCol(groups) {
+    if (!groups || Object.keys(groups).length === 0) {
+      return '<div class="yiji-category-item"><span class="yiji-cat-terms"><span class="yiji-term" style="color:var(--color-text-muted)">无</span></span></div>'
+    }
+
+    return catOrder
+      .filter(cat => groups[cat] && groups[cat].length > 0)
+      .map(cat => {
+        const terms = groups[cat]
+        const termHtml = terms.slice(0, 5).map(term => {
+          const explain = YIJI_EXPLAIN[term] || ''
+          const tooltip = explain ? `<span class="yiji-term-tooltip">${explain}</span>` : ''
+          return `<span class="yiji-term">${term}${tooltip}</span>`
+        }).join('')
+        return `<div class="yiji-category-item">
+          <span class="yiji-cat-name">${cat}</span>
+          <span class="yiji-cat-terms">${termHtml}</span>
+        </div>`
+      }).join('')
+  }
+
+  const yiCol = buildCol(yiGroups)
+  const jiCol = buildCol(jiGroups)
+
+  if (panelYiGroups) panelYiGroups.innerHTML = yiCol || ''
+  if (panelJiGroups) panelJiGroups.innerHTML = jiCol || ''
+}
+
 function openPanel(cellData) {
   selectedCell = cellData
   isPanelOpen = true
@@ -51,12 +84,8 @@ function openPanel(cellData) {
   const lunarInfo = cellData.lunarData
   if (lunarInfo) {
     let lunarText = `农历${lunarInfo.lunarMonthStr}月${lunarInfo.lunarDayStr}`
-    if (lunarInfo.solarTerm) {
-      lunarText += ` · ${lunarInfo.solarTerm}`
-    }
-    if (lunarInfo.festival) {
-      lunarText += ` · ${lunarInfo.festival}`
-    }
+    if (lunarInfo.solarTerm) lunarText += ` · ${lunarInfo.solarTerm}`
+    if (lunarInfo.festival) lunarText += ` · ${lunarInfo.festival}`
     lunarText += `\n${lunarInfo.ganZhiYear}年 [${lunarInfo.shengXiao}] ${lunarInfo.ganZhiMonth}月 ${lunarInfo.ganZhiDay}日`
     panelLunar.textContent = lunarText
   } else {
@@ -76,22 +105,25 @@ function openPanel(cellData) {
   panelTags.innerHTML = tagsHtml
 
   if (lunarInfo) {
-    if (panelYi) {
-      panelYi.textContent = lunarInfo.yi && lunarInfo.yi.length > 0
-        ? lunarInfo.yi.join('、')
-        : '无'
+    buildYijiGroupHtml(lunarInfo.yiGroups, lunarInfo.jiGroups)
+
+    if (lunarInfo.chongshaInfo && lunarInfo.chongshaInfo.text) {
+      if (panelChongshaRaw) panelChongshaRaw.textContent = lunarInfo.chongSha || ''
+      if (panelChongshaText) panelChongshaText.textContent = lunarInfo.chongshaInfo.text
+      if (panelChongshaBlock) panelChongshaBlock.style.display = ''
+    } else {
+      if (panelChongshaBlock) panelChongshaBlock.style.display = 'none'
     }
-    if (panelJi) {
-      panelJi.textContent = lunarInfo.ji && lunarInfo.ji.length > 0
-        ? lunarInfo.ji.join('、')
-        : '无'
-    }
-    if (panelChongsha) panelChongsha.textContent = lunarInfo.chongSha || '-'
+
     if (panelZhishen) panelZhishen.textContent = lunarInfo.zhiShen || '-'
     if (panelNayin) panelNayin.textContent = lunarInfo.naYin || '-'
     if (panelXingxiu) panelXingxiu.textContent = lunarInfo.xingXiu || '-'
     if (panelXishen) panelXishen.textContent = lunarInfo.xiShen || '-'
     if (panelCaishen) panelCaishen.textContent = lunarInfo.caiShen || '-'
+  } else {
+    if (panelYiGroups) panelYiGroups.innerHTML = '<div class="yiji-category-item"><span class="yiji-term" style="color:var(--color-text-muted)">暂无数据</span></div>'
+    if (panelJiGroups) panelJiGroups.innerHTML = '<div class="yiji-category-item"><span class="yiji-term" style="color:var(--color-text-muted)">暂无数据</span></div>'
+    if (panelChongshaBlock) panelChongshaBlock.style.display = 'none'
   }
 
   renderEventsForDate(dateStr)
@@ -209,38 +241,31 @@ function getBaseUrl() {
 
 function setupIcalLinks() {
   const baseUrl = getBaseUrl()
-  const types = {
-    all: '全部日历（节假日+农历+节气）',
-    holidays: '中国法定节假日',
-    lunar: '农历节日',
-    terms: '二十四节气',
-  }
 
-  for (const [type, label] of Object.entries(types)) {
-    const urlEl = document.getElementById(`icalUrl${type.charAt(0).toUpperCase() + type.slice(1)}`)
-    const copyBtn = document.querySelector(`.copy-btn[data-type="${type}"]`)
-    if (urlEl) {
+  document.querySelectorAll('.ical-card-url').forEach(el => {
+    const type = el.dataset.url
+    const url = `${baseUrl}/api/ical?type=${type}`
+    el.textContent = url
+  })
+
+  document.querySelectorAll('.ical-copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const type = btn.dataset.type
       const url = `${baseUrl}/api/ical?type=${type}`
-      urlEl.textContent = url
-    }
-    if (copyBtn) {
-      copyBtn.addEventListener('click', async () => {
-        const url = `${baseUrl}/api/ical?type=${type}`
-        try {
-          await navigator.clipboard.writeText(url)
-          copyBtn.textContent = '已复制 ✓'
-          copyBtn.classList.add('copied')
-          setTimeout(() => {
-            copyBtn.textContent = '复制'
-            copyBtn.classList.remove('copied')
-          }, 2000)
-          showToast(`${label} 链接已复制`)
-        } catch {
-          showToast('复制失败，请手动复制')
-        }
-      })
-    }
-  }
+      try {
+        await navigator.clipboard.writeText(url)
+        btn.textContent = '已复制 ✓'
+        btn.classList.add('copied')
+        setTimeout(() => {
+          btn.textContent = '复制链接'
+          btn.classList.remove('copied')
+        }, 2000)
+        showToast('iCal 链接已复制到剪贴板')
+      } catch {
+        showToast('复制失败，请手动复制')
+      }
+    })
+  })
 }
 
 let darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
