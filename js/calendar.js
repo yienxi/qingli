@@ -282,60 +282,87 @@ class Calendar {
     const todayData = this.computeLunarData(this.today.year, this.today.month, this.today.day)
     if (!todayData) return
 
-    const dayEl = document.getElementById('todayCardDay')
-    const monthYearEl = document.getElementById('todayCardMonthYear')
-    const weekdayEl = document.getElementById('todayCardWeekday')
-    const lunarEl = document.getElementById('todayCardLunar')
-    const ganzhiEl = document.getElementById('todayCardGanzhi')
-    const yiTextEl = document.getElementById('todayCardYiText')
-    const jiTextEl = document.getElementById('todayCardJiText')
-    const zhiShenEl = document.getElementById('todayCardZhiShen')
-    const xiShenEl = document.getElementById('todayCardXiShen')
-    const caiShenEl = document.getElementById('todayCardCaiShen')
-    const chongShaEl = document.getElementById('todayCardChongSha')
-
-    if (dayEl) dayEl.textContent = this.today.day
-    if (monthYearEl) monthYearEl.textContent = `${this.today.month}月 ${this.today.year}`
-    if (weekdayEl) {
-      const wdNames = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    const dateHeadEl = document.getElementById('todayCardDateHead')
+    if (dateHeadEl) {
+      const wdNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
       const wd = new Date(this.today.year, this.today.month - 1, this.today.day).getDay()
-      const idx = wd === 0 ? 6 : wd - 1
-      weekdayEl.textContent = wdNames[idx]
-    }
-    if (lunarEl) {
-      let lunarText = `农历${todayData.lunarMonthStr}月${todayData.lunarDayStr}`
-      if (todayData.solarTerm) lunarText += ` · ${todayData.solarTerm}`
-      if (todayData.festival) lunarText += ` · ${todayData.festival}`
-      lunarEl.textContent = lunarText
-    }
-    if (ganzhiEl) {
-      ganzhiEl.textContent = `${todayData.ganZhiYear}年 ${todayData.ganZhiMonth}月 ${todayData.ganZhiDay}日 [${todayData.shengXiao}]`
+      const extra = []
+      if (todayData.solarTerm) extra.push(todayData.solarTerm)
+      if (todayData.festival) extra.push(todayData.festival)
+      const extraStr = extra.length > 0 ? `  ·  ${extra.join(' · ')}` : ''
+      dateHeadEl.textContent = `${this.today.month}月${this.today.day}日  ${wdNames[wd]}${extraStr}`
     }
 
-    if (yiTextEl) {
+    const lunarLineEl = document.getElementById('todayCardLunarLine')
+    if (lunarLineEl) {
+      lunarLineEl.textContent = `农历${todayData.lunarMonthStr}月${todayData.lunarDayStr}  |  ${todayData.ganZhiYear}年 · ${todayData.ganZhiMonth}月 · ${todayData.ganZhiDay}日  [${todayData.shengXiao}]`
+    }
+
+    const yiSectionEl = document.getElementById('todayYiSection')
+    if (yiSectionEl) {
       if (todayData.yi && todayData.yi.length > 0) {
-        yiTextEl.textContent = todayData.yi.slice(0, 8).join('、')
+        const topYi = todayData.yi.slice(0, 6)
+        const explainParts = topYi.map(t => YIJI_EXPLAIN[t] || t).filter(Boolean).slice(0, 3)
+        yiSectionEl.innerHTML = `<div class="section-row">
+          <span class="section-label yi-label">宜</span>
+          <span class="section-terms">${topYi.join(' · ')}</span>
+        </div>
+        <p class="section-explain yi-explain">${topYi.join('、')}，${explainParts.join('、')}。今日气场流通，诸事顺遂。</p>`
       } else {
-        yiTextEl.textContent = '无'
+        yiSectionEl.innerHTML = `<div class="section-row">
+          <span class="section-label yi-label">宜</span>
+          <span class="section-none">诸事平平，无特别宜事。</span>
+        </div>`
       }
     }
 
-    if (jiTextEl) {
+    const jiSectionEl = document.getElementById('todayJiSection')
+    if (jiSectionEl) {
       if (todayData.ji && todayData.ji.length > 0) {
-        jiTextEl.textContent = todayData.ji.slice(0, 6).join('、')
+        const topJi = todayData.ji.slice(0, 5)
+        const explainParts = topJi.map(t => YIJI_EXPLAIN[t] || t).filter(Boolean).slice(0, 2)
+        jiSectionEl.innerHTML = `<div class="section-row">
+          <span class="section-label ji-label">忌</span>
+          <span class="section-terms">${topJi.join(' · ')}</span>
+        </div>
+        <p class="section-explain ji-explain">${topJi.join('、')}，${explainParts.join('、')}。今日不宜为之，可择吉日而行。</p>`
       } else {
-        jiTextEl.textContent = '无'
+        jiSectionEl.innerHTML = `<div class="section-row">
+          <span class="section-label ji-label">忌</span>
+          <span class="section-none">💫 百无禁忌，诸事可行。</span>
+        </div>`
       }
     }
 
-    if (zhiShenEl) zhiShenEl.textContent = todayData.zhiShen || '-'
-    if (xiShenEl) xiShenEl.textContent = todayData.xiShen || '-'
-    if (caiShenEl) caiShenEl.textContent = todayData.caiShen || '-'
-    if (chongShaEl) {
-      const short = (todayData.chongshaInfo && todayData.chongshaInfo.text)
-        ? todayData.chongshaInfo.text.replace(/[，。]/g, '').slice(0, 10)
-        : (todayData.chongSha || '-')
-      chongShaEl.textContent = short
+    const chongshaSectionEl = document.getElementById('todayChongshaSection')
+    if (chongshaSectionEl) {
+      const ci = todayData.chongshaInfo
+      if (ci && ci.text) {
+        let explain = ''
+        if (ci.zodiac) {
+          explain += `属${ci.zodiac}的朋友，今日大事宜谨慎，签约、出行、婚嫁多留心。`
+        }
+        if (ci.direction) {
+          explain += `煞气在${ci.direction}，建造修坟当避开。`
+        }
+        chongshaSectionEl.innerHTML = `<div class="section-row">
+          <span class="section-label chongsha-label">冲</span>
+          <span class="section-terms">${todayData.chongSha || ''}</span>
+        </div>
+        <p class="section-explain chongsha-explain">${explain}</p>`
+        chongshaSectionEl.style.display = ''
+      } else {
+        chongshaSectionEl.style.display = 'none'
+      }
+    }
+
+    const metaSectionEl = document.getElementById('todayMetaSection')
+    if (metaSectionEl) {
+      const parts = []
+      if (todayData.zhiShen) parts.push(`值神 ${todayData.zhiShen}`)
+      if (todayData.xiShen) parts.push(`喜神 ${todayData.xiShen}`)
+      if (todayData.caiShen) parts.push(`财神 ${todayData.caiShen}`)
+      metaSectionEl.textContent = parts.length > 0 ? parts.join('  ·  ') : ''
     }
   }
 

@@ -71,121 +71,95 @@
   overflow: hidden;
 }
 
-.today-top {
+.today-head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--color-border-light);
+  padding: var(--space-4) var(--space-5) var(--space-2);
 }
 
-.today-date-block {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--space-3);
-}
-
-.today-day-num {
+.today-label {
   font-family: var(--font-serif);
-  font-size: 2.8rem;
+  font-size: var(--text-lg);
   font-weight: var(--weight-bold);
   color: var(--color-accent-red);
-  line-height: 0.9;
 }
 
-.today-date-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding-bottom: 2px;
-}
-
-.today-month-year {
+.today-date-head {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
-  font-weight: var(--weight-medium);
 }
 
-.today-weekday {
-  font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
-}
-
-.today-lunar-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  text-align: right;
-}
-
-.today-lunar-date {
+.today-lunar-line {
+  padding: 0 var(--space-5) var(--space-3);
   font-family: var(--font-serif);
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-}
-
-.today-ganzhi {
   font-size: var(--text-xs);
   color: var(--color-text-tertiary);
-}
-
-/* 宜忌行 */
-.today-yiji {
-  padding: var(--space-3) var(--space-5);
   border-bottom: 1px solid var(--color-border-light);
 }
 
-.today-yi-row,
-.today-ji-row {
+.today-body {
+  padding: var(--space-3) var(--space-5);
+}
+
+.today-yi-section,
+.today-ji-section,
+.today-chongsha-section {
+  margin-bottom: var(--space-3);
+}
+
+.today-meta-section {
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-border-light);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+.section-row {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
 }
 
-.today-yi-row { margin-bottom: var(--space-1); }
-
-.yiji-badge {
+.section-label {
   flex-shrink: 0;
   display: inline-block;
-  padding: 1px 6px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
   border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: var(--weight-bold);
-  line-height: 1.4;
 }
 
-.yi-badge { background: var(--color-accent-green-bg); color: var(--color-accent-green); }
-.ji-badge { background: var(--color-accent-red-bg); color: var(--color-accent-red); }
+.yi-label { background: var(--color-accent-green-bg); color: var(--color-accent-green); }
+.ji-label { background: var(--color-accent-red-bg); color: var(--color-accent-red); }
+.chongsha-label { background: #fef3c7; color: var(--color-accent-gold); }
 
-.yiji-items {
+.section-terms {
+  font-family: var(--font-serif);
   font-size: var(--text-sm);
   color: var(--color-text-primary);
   line-height: 1.5;
-  font-family: var(--font-serif);
 }
 
-/* 传统信息条 */
-.today-meta-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-5);
-  border-bottom: 1px solid var(--color-border-light);
-  background: var(--color-bg-page);
+.section-none {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }
 
-.meta-chip {
-  font-size: 11px;
+.section-explain {
+  margin: var(--space-1) 0 0 24px;
+  font-size: var(--text-xs);
+  line-height: 1.6;
   color: var(--color-text-tertiary);
-  white-space: nowrap;
 }
 
-.meta-chip span {
-  color: var(--color-text-primary);
-  font-weight: var(--weight-medium);
-  margin-left: 2px;
-}
+.yi-explain { color: var(--color-text-secondary); }
+.ji-explain { color: var(--color-text-secondary); }
+.chongsha-explain { color: var(--color-accent-red); }
 
 /* AI摘要 */
 .today-ai-summary {
@@ -194,7 +168,7 @@
   color: var(--color-text-secondary);
   line-height: 1.5;
   font-style: italic;
-  border-bottom: none;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .today-ai-summary .ai-badge {
@@ -755,7 +729,14 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.panel-events-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
   margin-bottom: var(--space-2);
+  line-height: 1.4;
 }
 
 .panel-events {

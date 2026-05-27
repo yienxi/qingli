@@ -13,9 +13,9 @@
   <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
   <link rel="apple-touch-icon" href="/public/logo.svg">
   <title>轻历</title>
-  <link rel="stylesheet" href="/css/design-system.css?v=2.3">
-  <link rel="stylesheet" href="/css/calendar.css?v=2.3">
-  <link rel="stylesheet" href="/css/responsive.css?v=2.3">
+  <link rel="stylesheet" href="/css/design-system.css?v=2.4">
+  <link rel="stylesheet" href="/css/calendar.css?v=2.4">
+  <link rel="stylesheet" href="/css/responsive.css?v=2.4">
 </head>
 <body>
   <div class="app" id="app">
@@ -54,39 +54,6 @@
       <div id="searchResults" class="search-results"></div>
     </div>
 
-    <div class="today-card" id="todayCard">
-      <div class="today-top">
-        <div class="today-date-block">
-          <span class="today-day-num" id="todayCardDay"></span>
-          <div class="today-date-meta">
-            <span class="today-month-year" id="todayCardMonthYear"></span>
-            <span class="today-weekday" id="todayCardWeekday"></span>
-          </div>
-        </div>
-        <div class="today-lunar-block">
-          <span class="today-lunar-date" id="todayCardLunar"></span>
-          <span class="today-ganzhi" id="todayCardGanzhi"></span>
-        </div>
-      </div>
-      <div class="today-yiji">
-        <div class="today-yi-row">
-          <span class="yiji-badge yi-badge">宜</span>
-          <span class="yiji-items" id="todayCardYiText"></span>
-        </div>
-        <div class="today-ji-row">
-          <span class="yiji-badge ji-badge">忌</span>
-          <span class="yiji-items" id="todayCardJiText"></span>
-        </div>
-      </div>
-      <div class="today-meta-bar">
-        <span class="meta-chip">冲<span id="todayCardChongSha">-</span></span>
-        <span class="meta-chip">值神 <span id="todayCardZhiShen">-</span></span>
-        <span class="meta-chip">喜神 <span id="todayCardXiShen">-</span></span>
-        <span class="meta-chip">财神 <span id="todayCardCaiShen">-</span></span>
-      </div>
-      <div class="today-ai-summary" id="todayAiSummary"></div>
-    </div>
-
     <nav class="cal-nav" id="calNav">
       <div class="cal-nav-title">
         <span class="year" id="navYear"></span>
@@ -120,6 +87,21 @@
       <span class="legend-item legend-holiday">节假日</span>
       <span class="legend-item legend-term">节气</span>
       <span class="legend-item legend-event">个人事件</span>
+    </div>
+
+    <div class="today-card" id="todayCard">
+      <div class="today-head">
+        <span class="today-label">今日黄历</span>
+        <span class="today-date-head" id="todayCardDateHead"></span>
+      </div>
+      <div class="today-lunar-line" id="todayCardLunarLine"></div>
+      <div class="today-body" id="todayBody">
+        <div class="today-yi-section" id="todayYiSection"></div>
+        <div class="today-ji-section" id="todayJiSection"></div>
+        <div class="today-chongsha-section" id="todayChongshaSection"></div>
+        <div class="today-meta-section" id="todayMetaSection"></div>
+      </div>
+      <div class="today-ai-summary" id="todayAiSummary"></div>
     </div>
 
     <section class="ical-section">
@@ -203,7 +185,8 @@
         <div class="trad-item"><span class="trad-label">财神</span><span class="trad-value" id="panelCaishen">-</span></div>
       </div>
       <div class="panel-events-section">
-        <h4 class="panel-events-heading">事件</h4>
+        <h4 class="panel-events-heading">📝 个人备忘录</h4>
+        <p class="panel-events-hint">为这一天添加你的备注或提醒，数据保存在浏览器本地。</p>
         <div class="panel-events" id="panelEvents"></div>
         <form class="event-form" id="eventForm">
           <input type="text" id="eventTitleInput" class="event-input" placeholder="添加事件..." required>
@@ -217,8 +200,8 @@
 
   <div class="toast" id="toast"></div>
 
-  <script type="module" src="/js/calendar.js?v=2.3"></script>
-  <script type="module" src="/js/events.js?v=2.3"></script>
-  <script type="module" src="/js/app.js?v=2.3"></script>
+  <script type="module" src="/js/calendar.js?v=2.4"></script>
+  <script type="module" src="/js/events.js?v=2.4"></script>
+  <script type="module" src="/js/app.js?v=2.4"></script>
 </body>
 </html>
