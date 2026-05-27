@@ -99,7 +99,7 @@
   --shadow-red:   0 0 0 2px var(--color-accent-red);
 
   /* ██ Calendar Grid */
-  --calendar-max-width: 920px;
+  --calendar-max-width: 1040px;
   --cell-min-height-desktop: 80px;
   --cell-min-height-mobile: 56px;
   --weekday-header-height: 32px;

@@ -93,15 +93,17 @@
 
 .today-date-head {
   font-family: var(--font-serif);
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   font-weight: var(--weight-bold);
   color: var(--color-text-primary);
+  letter-spacing: 0.02em;
 }
 
 .today-clock {
   font-family: var(--font-mono, monospace);
-  font-size: var(--text-sm);
-  color: var(--color-text-tertiary);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
   padding-top: 2px;
 }
 
@@ -192,10 +194,7 @@
 }
 
 .yi-ji-explain {
-  margin-left: 32px;
-  font-size: var(--text-xs);
-  line-height: 1.65;
-  color: var(--color-text-secondary);
+  display: none;
 }
 
 /* ===== Navigation ===== */
@@ -263,7 +262,11 @@
 .cal-cell:focus-visible { outline: 2px solid var(--color-accent-red); outline-offset: -2px; z-index: 1; }
 .cal-cell.is-other-month { background: transparent; }
 .cal-cell.is-other-month .day-num { color: var(--color-text-muted); }
-.cal-cell.is-today { background: var(--color-bg-today); }
+.cal-cell.is-today {
+  background: var(--color-bg-today);
+  box-shadow: inset 0 0 0 2px var(--color-accent-red);
+  border-radius: var(--radius-md);
+}
 
 .day-num {
   font-size: var(--text-lg); font-weight: var(--weight-semibold);

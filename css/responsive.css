@@ -17,7 +17,6 @@
   .today-chongsha-section { padding: var(--space-3) 0; }
 
   .yi-ji-tags { margin-left: 28px; gap: 4px; }
-  .yi-ji-explain { margin-left: 28px; font-size: 11px; }
 
   .cal-nav-title .year { font-size: var(--text-sm); }
   .cal-nav-title .month { font-size: var(--text-xl); }
@@ -52,7 +51,6 @@
   .today-label { font-size: var(--text-sm); }
   .today-body { padding: 0 var(--space-2); }
   .yi-ji-tags { margin-left: 0; gap: 3px; }
-  .yi-ji-explain { margin-left: 0; }
 
   .cal-cell { min-height: 52px; }
   .day-num { font-size: var(--text-xs); }

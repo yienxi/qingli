@@ -59,13 +59,13 @@ const YIJI_CATEGORIES = {
 }
 
 const YIJI_EXPLAIN = {
-  '嫁娶': '结婚摆酒席', '纳采': '提亲过大礼', '订盟': '订婚仪式', '纳婿': '招女婿上门', '冠笄': '成人礼仪式',
-  '出行': '外出远行', '旅游': '观光游览', '移徙': '搬家迁居', '入宅': '入住新居', '赴任': '上任履新',
-  '动土': '开挖地基、装修拆墙', '修造': '动工营造、房屋修缮', '上梁': '建房封顶仪式', '安门': '安装大门', '作灶': '建灶开火',
-  '开市': '店铺开业、公司揭牌', '交易': '买卖签约', '立契': '签订合同', '纳财': '进货、收款、投资', '开张': '新店开张',
-  '祭祀': '拜神、祭祖、扫墓', '祈福': '祈求福运平安', '开光': '神像佛像开光仪式', '求嗣': '求子祈福', '斋醮': '设坛做法事',
-  '安葬': '下葬入土', '启攒': '迁坟、拾骨重葬', '破土': '挖掘墓地', '行丧': '办理丧事',
-  '理发': '剪发修面', '沐浴': '沐浴更衣', '扫舍': '打扫房屋', '解除': '解除灾厄', '栽种': '种植花草、植树', '牧养': '放牧养殖',
+  '嫁娶': '领证脱单好日子', '纳采': '上门提亲不挨骂', '订盟': '订婚官宣日', '纳婿': '招赘上门成了', '冠笄': '今天办成人礼',
+  '出行': '出门遇贵人', '旅游': '出游心情好', '移徙': '搬家顺风顺水', '入宅': '搬新家旺宅运', '赴任': '新官上任正当时',
+  '动土': '破土动工日子硬', '修造': '装修不怕坑', '上梁': '封顶大吉好运来', '安门': '安门纳福', '作灶': '开火做饭香满屋',
+  '开市': '开门红赚第一桶', '交易': '签单到手软', '立契': '合同一签稳如狗', '纳财': '钱进口袋的日子', '开张': '开张大吉客满堂',
+  '祭祀': '拜拜图个心安', '祈福': '许愿灵验率最高', '开光': '开光见福', '求嗣': '求子宜早不宜迟', '斋醮': '做法事消灾',
+  '安葬': '入土为安', '启攒': '迁坟拾骨吉时', '破土': '破土安坟事事顺', '行丧': '白事办理稳妥',
+  '理发': '剪头改运', '沐浴': '洗掉一身晦气', '扫舍': '大扫除迎好运', '解除': '消灾解厄一身轻', '栽种': '种花种树种春天', '牧养': '六畜兴旺好收成',
 }
 
 const ZODIAC_NAMES = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪']
@@ -361,16 +361,14 @@ class Calendar {
           const title = explain ? ` title="${explain}"` : ''
           return `<span class="yi-ji-tag yi-tag"${title}>${t}</span>`
         }).join('')
-        const explainText = this._buildExplainLine(topYi, 'yi')
         yiSectionEl.innerHTML = `<div class="yi-ji-block yi-block">
           <div class="yi-ji-header yi-header">宜</div>
           <div class="yi-ji-tags">${tags}</div>
-          <p class="yi-ji-explain yi-explain-text">${explainText}</p>
         </div>`
       } else {
         yiSectionEl.innerHTML = `<div class="yi-ji-block yi-block">
           <div class="yi-ji-header yi-header">宜</div>
-          <p class="yi-ji-explain yi-explain-text" style="color:var(--color-text-muted)">今日无特别宜事，随心而动即可。</p>
+          <p style="margin-left:32px;color:var(--color-text-muted);font-size:var(--text-xs)">今日无特别宜事，随心而动即可。</p>
         </div>`
       }
     }
@@ -384,34 +382,17 @@ class Calendar {
           const title = explain ? ` title="${explain}"` : ''
           return `<span class="yi-ji-tag ji-tag"${title}>${t}</span>`
         }).join('')
-        const explainText = this._buildExplainLine(topJi, 'ji')
         jiSectionEl.innerHTML = `<div class="yi-ji-block ji-block">
           <div class="yi-ji-header ji-header">忌</div>
           <div class="yi-ji-tags">${tags}</div>
-          <p class="yi-ji-explain ji-explain-text">${explainText}</p>
         </div>`
       } else {
         jiSectionEl.innerHTML = `<div class="yi-ji-block ji-block">
           <div class="yi-ji-header ji-header">忌</div>
-          <p class="yi-ji-explain ji-explain-text" style="color:var(--color-text-muted)">百无禁忌，今日诸事可行。</p>
+          <p style="margin-left:32px;color:var(--color-text-muted);font-size:var(--text-xs)">百无禁忌，今日诸事可行。</p>
         </div>`
       }
     }
-  }
-
-  _buildExplainLine(terms, type) {
-    const explains = terms.map(t => YIJI_EXPLAIN[t] || '').filter(Boolean)
-    if (explains.length === 0) {
-      return type === 'yi'
-        ? '今日宜事如上，天时地利人和。'
-        : '今日忌事如上，避开为妙。'
-    }
-    const first = explains[0]
-    const rest = explains.slice(1, 3)
-    if (type === 'yi') {
-      return `${first}，今天做最合适。${rest.length > 0 ? rest.join('，') + '，也是不错的时候。' : ''}`
-    }
-    return `${first}，今天不太适合。${rest.length > 0 ? rest.join('，') + '，同样建议避开。' : ''}`
   }
 
   renderGrid(cells) {
