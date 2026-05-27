@@ -75,6 +75,7 @@
 
 /* ---- 1024px+ 桌面端 ---- */
 @media (min-width: 1024px) {
+  html { font-size: 17px; }
   .cal-cell { min-height: var(--cell-min-height-desktop); }
 
   .detail-panel {
@@ -91,4 +92,14 @@
 
   .ical-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
   .traditional-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---- 1440px+ 大屏 ---- */
+@media (min-width: 1440px) {
+  html { font-size: 18px; }
+}
+
+/* ---- 2560px+ 超宽屏 ---- */
+@media (min-width: 2560px) {
+  html { font-size: 20px; }
 }

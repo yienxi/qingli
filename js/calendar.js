@@ -311,7 +311,6 @@ class Calendar {
     this.hideLoading()
     this.renderGrid(cells)
     this.updateTodayCard()
-    this.updateAiSummary()
     if (this.onRender) this.onRender(cells)
   }
 
@@ -362,7 +361,7 @@ class Calendar {
           const title = explain ? ` title="${explain}"` : ''
           return `<span class="yi-ji-tag yi-tag"${title}>${t}</span>`
         }).join('')
-        const explainText = this._buildYiExplain(topYi)
+        const explainText = this._buildExplainLine(topYi, 'yi')
         yiSectionEl.innerHTML = `<div class="yi-ji-block yi-block">
           <div class="yi-ji-header yi-header">宜</div>
           <div class="yi-ji-tags">${tags}</div>
@@ -385,7 +384,7 @@ class Calendar {
           const title = explain ? ` title="${explain}"` : ''
           return `<span class="yi-ji-tag ji-tag"${title}>${t}</span>`
         }).join('')
-        const explainText = this._buildJiExplain(topJi)
+        const explainText = this._buildExplainLine(topJi, 'ji')
         jiSectionEl.innerHTML = `<div class="yi-ji-block ji-block">
           <div class="yi-ji-header ji-header">忌</div>
           <div class="yi-ji-tags">${tags}</div>
@@ -398,124 +397,21 @@ class Calendar {
         </div>`
       }
     }
-
-    const chongshaSectionEl = document.getElementById('todayChongshaSection')
-    if (chongshaSectionEl) {
-      const ci = todayData.chongshaInfo
-      if (ci && ci.text) {
-        let chongName = todayData.chongSha || ''
-        let explain = ''
-        if (ci.zodiac) {
-          explain += `今日冲${ci.zodiac}，属${ci.zodiac}的朋友大事多留个心眼——签约付款、远行搬家，能缓则缓。`
-        }
-        if (ci.direction) {
-          explain += `煞气落于${ci.direction}方，动土修造忌朝此向。`
-        }
-        chongshaSectionEl.innerHTML = `<div class="yi-ji-block chongsha-block">
-          <div class="yi-ji-header chongsha-header">冲</div>
-          <div class="yi-ji-tags"><span class="yi-ji-tag chongsha-tag">${chongName}</span></div>
-          <p class="yi-ji-explain chongsha-explain-text">${explain}</p>
-        </div>`
-        chongshaSectionEl.style.display = ''
-      } else {
-        chongshaSectionEl.style.display = 'none'
-      }
-    }
-
-    const metaSectionEl = document.getElementById('todayMetaSection')
-    if (metaSectionEl) {
-      const parts = []
-      if (todayData.zhiShen) parts.push(`值神 ${todayData.zhiShen}`)
-      if (todayData.xiShen) parts.push(`喜神 ${todayData.xiShen}`)
-      if (todayData.caiShen) parts.push(`财神 ${todayData.caiShen}`)
-      metaSectionEl.textContent = parts.length > 0 ? parts.join('  ·  ') : ''
-    }
   }
 
-  _buildYiExplain(terms) {
+  _buildExplainLine(terms, type) {
     const explains = terms.map(t => YIJI_EXPLAIN[t] || '').filter(Boolean)
-    const joined = explains.slice(0, 4).join('、')
-    const wordCount = terms.length
-
-    const openers = [
-      `${terms.slice(0, 3).join('、')} 一类事务，${joined}，今天都挺合适。`,
-      `今日宜${terms.slice(0, 2).join('、')}，${joined}——星象上看是个好日子。`,
-      `${joined}，所以${terms.slice(0, 3).join('、')}尽管放手去做。`,
-      `讲究的人会选今天${terms[0]}，${explains[0] || ''}，时辰和方位都对。`,
-    ]
-
-    if (wordCount <= 2) {
-      return `${terms.join('和')}都和今天的气场对得上，顺水推舟的好时机。`
+    if (explains.length === 0) {
+      return type === 'yi'
+        ? '今日宜事如上，天时地利人和。'
+        : '今日忌事如上，避开为妙。'
     }
-
-    if (wordCount >= 5) {
-      return `今天日子不错：${terms.slice(0, 4).join('、')}等均宜。${explains[0] || ''}，天时地利，别浪费了。`
+    const first = explains[0]
+    const rest = explains.slice(1, 3)
+    if (type === 'yi') {
+      return `${first}，今天做最合适。${rest.length > 0 ? rest.join('，') + '，也是不错的时候。' : ''}`
     }
-
-    return openers[wordCount % openers.length]
-  }
-
-  _buildJiExplain(terms) {
-    const explains = terms.map(t => YIJI_EXPLAIN[t] || '').filter(Boolean)
-    const wordCount = terms.length
-
-    const closers = [
-      `今日忌${terms.slice(0, 3).join('、')}。${explains[0] || ''}，避开不亏。`,
-      `按老黄历，${terms[0]}之类的事别在今天办——${explains[0] || '时辰不吉'}。`,
-      `${explains.slice(0, 2).join('，')}，这几样不碰为妙。`,
-      `今天气场不太支持${terms[0]}，缓一缓，不着急。`,
-    ]
-
-    if (wordCount <= 2) {
-      return `${terms.join('和')}今天不太合适，不急的话改天挑个吉日。`
-    }
-
-    return closers[wordCount % closers.length]
-  }
-
-  async updateAiSummary() {
-    const aiEl = document.getElementById('todayAiSummary')
-    if (!aiEl) return
-
-    const now = new Date()
-    const todayKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
-    const cacheKey = 'qingli_ai_summary'
-    const cacheRaw = localStorage.getItem(cacheKey)
-
-    if (cacheRaw) {
-      try {
-        const cache = JSON.parse(cacheRaw)
-        if (cache.date === todayKey && cache.summary) {
-          aiEl.innerHTML = `<span class="ai-badge">AI</span>${cache.summary}`
-          aiEl.style.display = ''
-          return
-        }
-      } catch {}
-    }
-
-    try {
-      const res = await fetch(`/api/ai-summary?date=${todayKey}`)
-      if (!res.ok) throw new Error('API error')
-
-      const data = await res.json()
-      const summary = data.summary || ''
-
-      if (summary) {
-        const badge = data.generated
-          ? '<span class="ai-badge">AI</span>'
-          : ''
-        aiEl.innerHTML = `${badge}${summary}`
-        aiEl.style.display = ''
-
-        localStorage.setItem(cacheKey, JSON.stringify({
-          date: todayKey,
-          summary: data.generated ? summary : '',
-          generated: data.generated,
-        }))
-      }
-    } catch {
-      aiEl.style.display = 'none'
-    }
+    return `${first}，今天不太适合。${rest.length > 0 ? rest.join('，') + '，同样建议避开。' : ''}`
   }
 
   renderGrid(cells) {

@@ -130,15 +130,11 @@
   border-bottom: none;
 }
 
-.today-meta-section {
-  padding: var(--space-3) var(--space-5);
-  border-top: 1px dashed var(--color-border-light);
-  font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
-  text-align: center;
-}
+/* AI摘要 | removed in v2 — kept for cleanup */
 
-.yi-ji-block {
+/* ====================
+   Yi/Ji Block
+   ==================== */
   position: relative;
 }
 
@@ -200,29 +196,6 @@
   font-size: var(--text-xs);
   line-height: 1.65;
   color: var(--color-text-secondary);
-}
-
-/* AI摘要 */
-.today-ai-summary {
-  padding: var(--space-3) var(--space-5);
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-  font-style: italic;
-  border-top: 1px solid var(--color-border-light);
-}
-
-.today-ai-summary .ai-badge {
-  display: inline-block;
-  font-size: 9px;
-  font-style: normal;
-  font-weight: var(--weight-semibold);
-  color: var(--color-accent-green);
-  background: var(--color-accent-green-bg);
-  padding: 1px 5px;
-  border-radius: var(--radius-sm);
-  margin-right: var(--space-1);
-  vertical-align: middle;
 }
 
 /* ===== Navigation ===== */
