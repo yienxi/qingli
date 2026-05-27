@@ -30,6 +30,7 @@ const eventTitleInput = document.getElementById('eventTitleInput')
 const eventTimeInput = document.getElementById('eventTimeInput')
 const eventColorInput = document.getElementById('eventColorInput')
 const panelCloseBtn = document.getElementById('panelCloseBtn')
+const panelShareBtn = document.getElementById('panelShareBtn')
 const toast = document.getElementById('toast')
 const themeToggle = document.getElementById('themeToggle')
 const themeIcon = document.getElementById('themeIcon')
@@ -102,6 +103,9 @@ function openPanel(cellData) {
   if (lunarInfo && lunarInfo.festival) {
     tagsHtml += `<span class="day-tag festival">${lunarInfo.festival}</span>`
   }
+  if (lunarInfo && lunarInfo.specialDay) {
+    tagsHtml += `<span class="day-tag special">${lunarInfo.specialDay}</span>`
+  }
   panelTags.innerHTML = tagsHtml
 
   if (lunarInfo) {
@@ -173,9 +177,7 @@ function renderEventsForDate(dateStr) {
 }
 
 function escapeHtml(text) {
-  const div = document.createElement('div')
-  div.textContent = text
-  return div.innerHTML
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
 eventForm.addEventListener('submit', (e) => {
@@ -352,22 +354,6 @@ window.addEventListener('appinstalled', () => {
   if (pwaInstallBanner) pwaInstallBanner.style.display = 'none'
 })
 
-function setupVersionDisplay() {
-  const versionEl = document.getElementById('dataVersion')
-  const versionNumberEl = document.getElementById('versionNumber')
-
-  if (cal.holidayService.dataVersion) {
-    versionNumberEl.textContent = cal.holidayService.dataVersion
-    versionEl.style.display = 'flex'
-  }
-
-  setTimeout(() => {
-    if (cal.holidayService.updateAvailable) {
-      showToast('节假日数据已更新')
-    }
-  }, 1000)
-}
-
 const searchBtn = document.getElementById('searchBtn')
 const searchPanel = document.getElementById('searchPanel')
 const searchInput = document.getElementById('searchInput')
@@ -435,8 +421,6 @@ searchInput.addEventListener('input', (e) => {
 })
 
 cal.init().then(() => {
-  setupVersionDisplay()
-
   if (!localStorage.getItem('qingli_bookmark_hint_shown')) {
     setTimeout(() => {
       showToast('按 Ctrl+D 收藏，随时打开看黄历')
@@ -444,3 +428,111 @@ cal.init().then(() => {
     }, 8000)
   }
 }).catch(console.error)
+
+if (panelShareBtn) {
+  panelShareBtn.addEventListener('click', generateShareCard)
+}
+
+async function generateShareCard() {
+  const d = selectedCell
+  if (!d) return
+
+  const W = 1080, H = 1080
+  const canvas = document.createElement('canvas')
+  canvas.width = W; canvas.height = H
+  const ctx = canvas.getContext('2d')
+
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+  const bg = isDark ? '#2D2A24' : '#F7F3EE'
+  const fg = isDark ? '#E8E0D4' : '#3C3024'
+  const accent = '#B54A3A'
+  const muted = isDark ? '#A09884' : '#8C7C6C'
+
+  ctx.fillStyle = bg
+  ctx.fillRect(0, 0, W, H)
+
+  ctx.font = 'bold 96px "Noto Serif SC", "Source Han Serif CN", serif'
+  ctx.fillStyle = accent
+  ctx.textAlign = 'center'
+  ctx.fillText(`${d.month}月${d.day}日`, W / 2, 220)
+
+  ctx.font = '36px "Noto Sans SC", sans-serif'
+  ctx.fillStyle = muted
+  ctx.fillText(`${d.year}年`, W / 2, 290)
+
+  let y = 400
+  if (d.lunarData) {
+    const li = d.lunarData
+    ctx.font = '40px "Noto Sans SC", sans-serif'
+    ctx.fillStyle = fg
+    const lunarLine = `农历${li.lunarMonthStr}月${li.lunarDayStr}`
+    ctx.fillText(lunarLine, W / 2, y); y += 60
+    ctx.font = '32px "Noto Sans SC", sans-serif'
+    ctx.fillStyle = muted
+    ctx.fillText(`${li.ganZhiYear}年 · ${li.shengXiao} · ${li.ganZhiMonth}月 · ${li.ganZhiDay}日`, W / 2, y); y += 60
+    if (li.solarTerm || li.festival) {
+      ctx.fillStyle = accent
+      ctx.fillText([li.solarTerm, li.festival].filter(Boolean).join(' · '), W / 2, y); y += 60
+    }
+    y += 20
+
+    const allYi = Object.values(li.yiGroups || {}).flat()
+    const allJi = Object.values(li.jiGroups || {}).flat()
+    if (allYi.length > 0 || allJi.length > 0) {
+      ctx.font = 'bold 36px "Noto Sans SC", sans-serif'
+      if (allYi.length > 0) {
+        ctx.fillStyle = '#358A50'
+        ctx.textAlign = 'left'
+        ctx.fillText('宜', 160, y); y += 50
+        ctx.font = '32px "Noto Sans SC", sans-serif'
+        ctx.fillStyle = fg
+        ctx.textAlign = 'left'
+        const parts = []
+        for (let i = 0; i < allYi.length && i < 8; i++) {
+          parts.push(YIJI_EXPLAIN[allYi[i]] || allYi[i])
+        }
+        ctx.fillText(parts.join('  ·  '), 160, y); y += 60
+        ctx.font = 'bold 36px "Noto Sans SC", sans-serif'
+      }
+      if (allJi.length > 0) {
+        ctx.fillStyle = accent
+        ctx.textAlign = 'left'
+        ctx.fillText('忌', 160, y); y += 50
+        ctx.font = '32px "Noto Sans SC", sans-serif'
+        ctx.fillStyle = muted
+        ctx.textAlign = 'left'
+        const parts = []
+        for (let i = 0; i < allJi.length && i < 8; i++) {
+          parts.push(YIJI_EXPLAIN[allJi[i]] || allJi[i])
+        }
+        ctx.fillText(parts.join('  ·  '), 160, y); y += 60
+      }
+    }
+  }
+
+  y = Math.max(y + 60, 920)
+  ctx.font = '28px "Noto Sans SC", sans-serif'
+  ctx.fillStyle = muted
+  ctx.textAlign = 'center'
+  ctx.fillText('轻历 · qingli.app', W / 2, y)
+
+  try {
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'))
+    if (navigator.share) {
+      await navigator.share({
+        title: '轻历',
+        text: `${d.month}月${d.day}日 · 农历宜忌`,
+        files: [new File([blob], `qingli-${d.dayDate}.png`, { type: 'image/png' })]
+      })
+    } else {
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      a.download = `qingli-${d.dayDate}.png`
+      a.click()
+      URL.revokeObjectURL(a.href)
+      showToast('卡片已保存')
+    }
+  } catch (e) {
+    if (e.name !== 'AbortError') console.warn('Share failed:', e)
+  }
+}

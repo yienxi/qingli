@@ -9,10 +9,21 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="轻历">
   <meta name="format-detection" content="telephone=no">
+  <link rel="apple-touch-startup-image" href="/public/logo.svg" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+  <link rel="apple-touch-startup-image" href="/public/logo.svg" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)">
+  <meta property="og:title" content="轻历 QingLi">
+  <meta property="og:description" content="一眼看清农历、节气、节假日、宜忌 — 轻量中国日历">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://qingli.vercel.app">
+  <meta property="og:image" content="/public/logo.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="轻历 QingLi">
+  <meta name="twitter:description" content="一眼看清农历、节气、节假日、宜忌 — 轻量中国日历">
+  <meta name="twitter:image" content="/public/logo.svg">
   <link rel="manifest" href="/public/manifest.json">
   <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
   <link rel="apple-touch-icon" href="/public/logo.svg">
-  <title>轻历</title>
+  <title>轻历 — 轻量中国日历</title>
   <link rel="stylesheet" href="/css/design-system.css?v=2.4">
   <link rel="stylesheet" href="/css/calendar.css?v=2.4">
   <link rel="stylesheet" href="/css/responsive.css?v=2.4">
@@ -91,8 +102,11 @@
 
     <div class="today-card" id="todayCard">
       <div class="today-head">
-        <span class="today-label">今日黄历</span>
-        <span class="today-date-head" id="todayCardDateHead"></span>
+        <div class="today-head-left">
+          <span class="today-year-line" id="todayYearLine"></span>
+          <span class="today-date-head" id="todayCardDateHead"></span>
+        </div>
+        <span class="today-clock" id="todayClock"></span>
       </div>
       <div class="today-lunar-line" id="todayCardLunarLine"></div>
       <div class="today-body" id="todayBody">
@@ -158,6 +172,7 @@
     <div class="panel-header">
       <h3 class="panel-date" id="panelDate"></h3>
       <button class="panel-close" id="panelCloseBtn" aria-label="关闭">✕</button>
+      <button class="panel-share" id="panelShareBtn" aria-label="分享">↗</button>
     </div>
     <div class="panel-body">
       <p class="panel-lunar" id="panelLunar"></p>

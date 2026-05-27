@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vercel dev",
     "deploy": "vercel deploy --prod",
-    "build": "echo 'Static site - no build required'"
+    "build": "echo 'Static site - no build required'",
+    "test": "node --test packages/lunar/test/index.js"
   },
   "dependencies": {
     "lunar-typescript": "^1.8.6"

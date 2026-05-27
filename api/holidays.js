@@ -23,7 +23,7 @@ export async function GET(request) {
             type: holiday.isWork() ? 'workday' : 'holiday'
           })
         }
-      } catch {}
+        } catch (e) { console.warn('holiday lookup error:', e) }
     }
   }
 

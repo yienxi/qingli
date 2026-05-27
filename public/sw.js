@@ -11,6 +11,7 @@ const PRECACHE = [
   '/js/app.js',
   '/public/manifest.json',
   '/public/logo.svg',
+  '/public/offline.html',
 ]
 
 self.addEventListener('install', (event) => {
@@ -33,6 +34,14 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
 
   if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match('/public/offline.html'))
+    )
+    return
+  }
+
+  if (url.pathname === '/public/offline.html') {
+    event.respondWith(caches.match(event.request))
     return
   }
 

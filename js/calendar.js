@@ -4,6 +4,7 @@ import { HolidayService } from './holiday-service.js'
 const DAYS_IN_WEEK = 7
 const MONTH_NAMES = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
 
+// 与 server 端 api/_festivals.js 同步，修改时两边同时更新
 const TRADITIONAL_FESTIVALS = {
   '1/1': '春节', '1/2': '初二', '1/3': '初三', '1/4': '初四', '1/5': '初五',
   '1/15': '元宵节',
@@ -18,6 +19,35 @@ const TRADITIONAL_FESTIVALS = {
   '12/8': '腊八节', '12/23': '小年', '12/30': '除夕',
 }
 
+const SPECIAL_DAYS = {
+  '01-01': '元旦',
+  '02-14': '情人节', '03-08': '妇女节', '03-12': '植树节',
+  '04-01': '愚人节',
+  '05-01': '劳动节', '05-04': '青年节', '05-12': '护士节', '05-20': '520',
+  '06-01': '儿童节',
+  '07-01': '建党节',
+  '08-01': '建军节',
+  '09-10': '教师节',
+  '11-11': '双十一',
+  '12-24': '平安夜', '12-25': '圣诞节',
+}
+
+function getFloatingSpecialDays(year) {
+  const pad = (n) => String(n).padStart(2, '0')
+  const prefix = `${year}-`
+  const days = {}
+  const nthWeekday = (month, weekday, n) => {
+    const d = new Date(year, month, 1)
+    while (d.getDay() !== weekday) d.setDate(d.getDate() + 1)
+    d.setDate(d.getDate() + (n - 1) * 7)
+    return pad(d.getDate())
+  }
+  days[prefix + pad(5) + '-' + nthWeekday(4, 0, 2)] = '母亲节'
+  days[prefix + pad(6) + '-' + nthWeekday(5, 0, 3)] = '父亲节'
+  days[prefix + pad(11) + '-' + nthWeekday(10, 4, 4)] = '感恩节'
+  return days
+}
+
 const YIJI_CATEGORIES = {
   '嫁娶': '婚嫁', '纳采': '婚嫁', '订盟': '婚嫁', '纳婿': '婚嫁', '冠笄': '婚嫁',
   '出行': '出行', '旅游': '出行', '移徙': '出行', '入宅': '出行', '赴任': '出行',
@@ -29,13 +59,13 @@ const YIJI_CATEGORIES = {
 }
 
 const YIJI_EXPLAIN = {
-  '嫁娶': '结婚摆酒席', '纳采': '提亲过大礼', '订盟': '订婚仪式', '纳婿': '招女婿上门',
-  '出行': '外出远行', '旅游': '观光游览', '移徙': '搬家迁居', '入宅': '入住新居',
-  '动土': '开挖地基、装修拆墙', '修造': '动工营造、房屋修缮', '上梁': '建房封顶仪式', '安门': '安装大门',
-  '开市': '店铺开业、公司揭牌', '交易': '买卖签约', '立契': '签订合同', '纳财': '进货、收款、投资',
-  '祭祀': '拜神、祭祖、扫墓', '祈福': '祈求福运平安', '开光': '神像佛像开光仪式', '求嗣': '求子祈福',
-  '安葬': '下葬入土', '启攒': '迁坟、拾骨重葬', '破土': '挖掘墓地',
-  '理发': '剪发修面', '沐浴': '沐浴更衣', '扫舍': '打扫房屋', '解除': '解除灾厄',
+  '嫁娶': '结婚摆酒席', '纳采': '提亲过大礼', '订盟': '订婚仪式', '纳婿': '招女婿上门', '冠笄': '成人礼仪式',
+  '出行': '外出远行', '旅游': '观光游览', '移徙': '搬家迁居', '入宅': '入住新居', '赴任': '上任履新',
+  '动土': '开挖地基、装修拆墙', '修造': '动工营造、房屋修缮', '上梁': '建房封顶仪式', '安门': '安装大门', '作灶': '建灶开火',
+  '开市': '店铺开业、公司揭牌', '交易': '买卖签约', '立契': '签订合同', '纳财': '进货、收款、投资', '开张': '新店开张',
+  '祭祀': '拜神、祭祖、扫墓', '祈福': '祈求福运平安', '开光': '神像佛像开光仪式', '求嗣': '求子祈福', '斋醮': '设坛做法事',
+  '安葬': '下葬入土', '启攒': '迁坟、拾骨重葬', '破土': '挖掘墓地', '行丧': '办理丧事',
+  '理发': '剪发修面', '沐浴': '沐浴更衣', '扫舍': '打扫房屋', '解除': '解除灾厄', '栽种': '种植花草、植树', '牧养': '放牧养殖',
 }
 
 const ZODIAC_NAMES = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪']
@@ -96,7 +126,7 @@ function buildSolarTermCache(year) {
           }
         }
       }
-    } catch (e) {}
+    } catch (e) { console.warn('buildSolarTermCache error:', e) }
   }
 }
 
@@ -139,7 +169,7 @@ class Calendar {
       const jiList = lunar.getDayJi()
       const yiGroups = categorizeYiji(yiList)
       const jiGroups = categorizeYiji(jiList)
-      const rawChongsha = lunar.getDayChongShu() + ' ' + lunar.getDaySha()
+      const rawChongsha = '冲' + lunar.getDayChongShengXiao() + ' 煞' + lunar.getDaySha()
       const chongshaInfo = interpretChongsha(rawChongsha)
 
       const data = {
@@ -163,11 +193,11 @@ class Calendar {
         jiCardText: formatYijiForCard(jiGroups),
         chongSha: rawChongsha,
         chongshaInfo,
-        zhiShen: lunar.getDayZhiXing(),
+        zhiShen: lunar.getZhiXing(),
         naYin: lunar.getDayNaYin(),
-        xingXiu: lunar.getDayXiu(),
-        xiShen: lunar.getDayXiShen(),
-        caiShen: lunar.getDayCaiShen(),
+        xingXiu: lunar.getXiu(),
+        xiShen: lunar.getDayPositionXi(),
+        caiShen: lunar.getDayPositionCai(),
       }
 
       const lunarKey = `${lunar.getMonth()}/${lunar.getDay()}`
@@ -177,9 +207,16 @@ class Calendar {
       if (term) {
         data.solarTerm = term
       }
+      const flatKey = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+      data.specialDay = SPECIAL_DAYS[flatKey] || null
+      if (!data.specialDay) {
+        const floatDays = getFloatingSpecialDays(year)
+        data.specialDay = floatDays[`${year}-${flatKey}`] || null
+      }
       this.cachedLunarData.set(key, data)
       return data
-    } catch {
+    } catch (e) {
+      console.warn('computeLunarData error:', e)
       return null
     }
   }
@@ -187,7 +224,8 @@ class Calendar {
   async getHoliday(year, month, day) {
     try {
       return await this.holidayService.isHoliday(year, month, day)
-    } catch {
+    } catch (e) {
+      console.warn('getHoliday error:', e)
       return null
     }
   }
@@ -216,8 +254,7 @@ class Calendar {
 
     const totalCells = Math.ceil((firstDayIndex + daysInMonth) / DAYS_IN_WEEK) * DAYS_IN_WEEK
     const todayBtnEl = document.querySelector('.today-btn')
-    const isCurrentMonth = this.year === this.today.year && this.month === this.today.month
-    if (todayBtnEl) todayBtnEl.style.opacity = isCurrentMonth ? '0.5' : '1'
+    if (todayBtnEl) todayBtnEl.disabled = this.year === this.today.year && this.month === this.today.month
 
     const cells = []
 
@@ -281,21 +318,39 @@ class Calendar {
   updateTodayCard() {
     const todayData = this.computeLunarData(this.today.year, this.today.month, this.today.day)
     if (!todayData) return
+    const wdNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+    const wd = new Date(this.today.year, this.today.month - 1, this.today.day).getDay()
+
+    const yearLineEl = document.getElementById('todayYearLine')
+    if (yearLineEl) {
+      yearLineEl.textContent = `${this.today.year}年  ${todayData.ganZhiYear}年 · ${todayData.shengXiao}`
+    }
 
     const dateHeadEl = document.getElementById('todayCardDateHead')
     if (dateHeadEl) {
-      const wdNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-      const wd = new Date(this.today.year, this.today.month - 1, this.today.day).getDay()
       const extra = []
       if (todayData.solarTerm) extra.push(todayData.solarTerm)
       if (todayData.festival) extra.push(todayData.festival)
+      if (todayData.specialDay) extra.push(todayData.specialDay)
       const extraStr = extra.length > 0 ? `  ·  ${extra.join(' · ')}` : ''
       dateHeadEl.textContent = `${this.today.month}月${this.today.day}日  ${wdNames[wd]}${extraStr}`
     }
 
+    const clockEl = document.getElementById('todayClock')
+    if (clockEl) {
+      const now = new Date()
+      clockEl.textContent = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+      if (!this._clockInterval) {
+        this._clockInterval = setInterval(() => {
+          const c = document.getElementById('todayClock')
+          if (c) c.textContent = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+        }, 10000)
+      }
+    }
+
     const lunarLineEl = document.getElementById('todayCardLunarLine')
     if (lunarLineEl) {
-      lunarLineEl.textContent = `农历${todayData.lunarMonthStr}月${todayData.lunarDayStr}  |  ${todayData.ganZhiYear}年 · ${todayData.ganZhiMonth}月 · ${todayData.ganZhiDay}日  [${todayData.shengXiao}]`
+      lunarLineEl.textContent = `农历${todayData.lunarMonthStr}月${todayData.lunarDayStr}  |  ${todayData.ganZhiYear}年 · ${todayData.ganZhiMonth}月 · ${todayData.ganZhiDay}日`
     }
 
     const yiSectionEl = document.getElementById('todayYiSection')
@@ -479,6 +534,7 @@ class Calendar {
       if (cell.weekend) el.classList.add('is-weekend')
       if (cell.holidayTag) el.classList.add('has-holiday')
       if (cell.lunarData && cell.lunarData.solarTerm) el.classList.add('has-term')
+      if (cell.lunarData && cell.lunarData.specialDay) el.classList.add('has-special')
 
       const dayNum = document.createElement('div')
       dayNum.className = 'day-num'
@@ -487,9 +543,13 @@ class Calendar {
       const lunar = document.createElement('div')
       lunar.className = 'day-lunar'
 
+      const sp = cell.lunarData?.specialDay
       if (cell.holidayTag) {
         lunar.textContent = cell.holidayTag.name
         lunar.classList.add('lunar-holiday')
+      } else if (sp && !cell.lunarData?.solarTerm) {
+        lunar.textContent = sp
+        lunar.classList.add('lunar-special')
       } else if (cell.lunarData && cell.lunarData.solarTerm) {
         lunar.textContent = cell.lunarData.solarTerm
         lunar.classList.add('lunar-term')
@@ -509,9 +569,21 @@ class Calendar {
       el.dataset.month = String(cell.month)
       el.dataset.day = String(cell.day)
 
+      el.tabIndex = 0
+      el.setAttribute('role', 'button')
+
       el.addEventListener('click', () => {
         if (self.onDayClick) {
           self.onDayClick(cell)
+        }
+      })
+
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          if (self.onDayClick) {
+            self.onDayClick(cell)
+          }
         }
       })
 

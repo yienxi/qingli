@@ -9,7 +9,8 @@ export class EventStore {
     try {
       const data = localStorage.getItem(STORAGE_KEY)
       return data ? JSON.parse(data) : []
-    } catch {
+    } catch (e) {
+      console.warn('Failed to load events from localStorage:', e)
       return []
     }
   }
@@ -29,7 +30,7 @@ export class EventStore {
 
   addEvent({ date, title, time, color }) {
     const event = {
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      id: crypto.randomUUID(),
       date,
       title: title.trim(),
       time: time || '',

@@ -73,21 +73,36 @@
 
 .today-head {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   padding: var(--space-4) var(--space-5) var(--space-2);
 }
 
-.today-label {
-  font-family: var(--font-serif);
-  font-size: var(--text-lg);
-  font-weight: var(--weight-bold);
-  color: var(--color-accent-red);
+.today-head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.today-year-line {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.03em;
 }
 
 .today-date-head {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+}
+
+.today-clock {
+  font-family: var(--font-mono, monospace);
   font-size: var(--text-sm);
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
+  padding-top: 2px;
 }
 
 .today-lunar-line {
@@ -237,6 +252,9 @@
 }
 .today-btn:hover { background: var(--color-accent-red-bg); }
 .today-btn:active { transform: scale(0.95); }
+.today-btn:disabled { opacity: 0.4; cursor: default; }
+.today-btn:disabled:hover { background: transparent; }
+.today-btn:disabled:active { transform: none; }
 
 /* ===== Weekday Header ===== */
 .weekday-header { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: var(--space-1); }
@@ -269,6 +287,7 @@
 }
 
 .cal-cell:hover { background: var(--color-bg-hover); z-index: var(--z-base); }
+.cal-cell:focus-visible { outline: 2px solid var(--color-accent-red); outline-offset: -2px; z-index: 1; }
 .cal-cell.is-other-month { background: transparent; }
 .cal-cell.is-other-month .day-num { color: var(--color-text-muted); }
 .cal-cell.is-today { background: var(--color-bg-today); }
@@ -293,6 +312,10 @@
 }
 .day-lunar.lunar-term {
   font-size: 12px; font-weight: var(--weight-bold); color: var(--color-accent-brown);
+  letter-spacing: 0.02em;
+}
+.day-lunar.lunar-special {
+  font-size: 12px; font-weight: var(--weight-bold); color: var(--color-accent-blue);
   letter-spacing: 0.02em;
 }
 
@@ -611,6 +634,19 @@
 }
 .panel-close:hover { background: var(--color-accent-red-bg); color: var(--color-accent-red); }
 
+.panel-share {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  border: none; background: var(--color-bg-page);
+  color: var(--color-text-tertiary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: var(--text-lg);
+  transition: all var(--transition-fast);
+  margin-right: auto;
+}
+.panel-share:hover { background: var(--color-bg-hover); color: var(--color-accent-blue); }
+
 .panel-body {
   padding: 0 var(--space-5) var(--space-4);
 }
@@ -637,6 +673,7 @@
 .day-tag.holiday { background: var(--color-accent-red-bg); color: var(--color-accent-red); }
 .day-tag.solar-term { background: var(--color-accent-brown-bg); color: var(--color-accent-brown); }
 .day-tag.festival { background: var(--color-accent-gold-bg); color: var(--color-accent-gold); }
+.day-tag.special { background: var(--color-accent-blue-bg); color: var(--color-accent-blue); }
 
 .panel-yiji {
   display: flex;

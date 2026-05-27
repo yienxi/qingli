@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { Solar, Lunar } from 'lunar-typescript';
+import { TRADITIONAL_FESTIVALS } from './api/_festivals.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,24 +55,7 @@ function getSolarTerm(year, month, day) {
 function getLunarFestival(lunar) {
   const month = lunar.getMonth();
   const day = lunar.getDay();
-  const festivals = {
-    '1/1': '春节',
-    '1/15': '元宵节',
-    '2/2': '龙抬头',
-    '3/3': '上巳节',
-    '5/5': '端午节',
-    '6/6': '天贶节',
-    '7/7': '七夕节',
-    '7/15': '中元节',
-    '8/15': '中秋节',
-    '9/9': '重阳节',
-    '10/1': '寒衣节',
-    '10/15': '下元节',
-    '12/8': '腊八节',
-    '12/23': '小年',
-    '12/30': '除夕',
-  };
-  return festivals[`${month}/${day}`] || null;
+  return TRADITIONAL_FESTIVALS[`${month}/${day}`] || null;
 }
 
 function buildFallbackSummary(data) {
@@ -146,7 +130,7 @@ async function handleAISummary(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const date = url.searchParams.get('date');
   const now = new Date();
-  const dateStr = date || `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+  const dateStr = date || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   try {
     const data = getYiJi(dateStr);

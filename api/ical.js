@@ -1,23 +1,7 @@
 export const runtime = 'edge'
 
 import { Solar, Lunar, HolidayUtil } from 'lunar-typescript'
-
-const TRADITIONAL_FESTIVALS = {
-  '1/1': '春节', '1/15': '元宵节',
-  '2/2': '龙抬头', '3/3': '上巳节',
-  '5/5': '端午节', '6/6': '天贶节',
-  '7/7': '七夕节', '7/15': '中元节',
-  '8/15': '中秋节', '9/9': '重阳节',
-  '10/1': '寒衣节', '10/15': '下元节',
-  '12/8': '腊八节', '12/23': '小年', '12/30': '除夕',
-}
-
-const SOLAR_TERM_NAMES = [
-  '小寒', '大寒', '立春', '雨水', '惊蛰', '春分',
-  '清明', '谷雨', '立夏', '小满', '芒种', '夏至',
-  '小暑', '大暑', '立秋', '处暑', '白露', '秋分',
-  '寒露', '霜降', '立冬', '小雪', '大雪', '冬至',
-]
+import { TRADITIONAL_FESTIVALS, SOLAR_TERM_NAMES, YIJI_EXPLAIN } from './_festivals.js'
 
 function esc(text) {
   return text.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
@@ -53,7 +37,7 @@ function buildSolarTermLookup(year) {
           if (!lookup[key]) lookup[key] = name
         }
       }
-    } catch (e) {}
+    } catch (e) { console.warn('buildSolarTermLookup error:', e) }
   }
   return lookup
 }
@@ -71,7 +55,7 @@ function generateHolidayEvents(year) {
           const desc = isWork ? `${name}（调休上班）` : name
           events += vevent(icalDate(year, m, d), name, desc)
         }
-      } catch {}
+      } catch (e) { console.warn('generateHolidayEvents error:', e) }
     }
   }
   return events
@@ -88,7 +72,7 @@ function generateLunarFestivalEvents(year) {
         const dateStr = icalDate(solar.getYear(), solar.getMonth(), solar.getDay())
         events += vevent(dateStr, name, `农历${name}`)
       }
-    } catch {}
+    } catch (e) { console.warn('generateLunarFestivalEvents error:', e) }
   }
   return events
 }
@@ -116,12 +100,12 @@ function generateYijiEvents(year) {
         const yi = lunar.getDayYi()
         const ji = lunar.getDayJi()
         if (yi.length > 0 || ji.length > 0) {
-          const yiStr = yi.length > 0 ? `宜: ${yi.slice(0, 4).join('、')}` : ''
-          const jiStr = ji.length > 0 ? `忌: ${ji.slice(0, 4).join('、')}` : ''
+          const yiStr = yi.length > 0 ? `宜: ${yi.slice(0, 6).map(k => YIJI_EXPLAIN[k] || k).join('、')}` : ''
+          const jiStr = ji.length > 0 ? `忌: ${ji.slice(0, 6).map(k => YIJI_EXPLAIN[k] || k).join('、')}` : ''
           const desc = [yiStr, jiStr].filter(Boolean).join(' · ')
           events += vevent(icalDate(year, m, d), '黄历宜忌', desc)
         }
-      } catch {}
+      } catch (e) { console.warn('generateYijiEvents error:', e) }
     }
   }
   return events

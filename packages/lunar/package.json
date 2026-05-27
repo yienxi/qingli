@@ -1,0 +1,28 @@
+{
+  "name": "@qingli/lunar",
+  "version": "0.1.0",
+  "description": "Chinese lunar calendar utilities — festivals, yiji, solar terms, special days",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./festivals": "./festivals.js"
+  },
+  "files": [
+    "index.js",
+    "festivals.js",
+    "README.md"
+  ],
+  "keywords": [
+    "chinese-calendar", "lunar", "lunar-calendar", "nongli", "yiji",
+    "solar-term", "jieqi", "农历", "黄历", "宜忌", "节气"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "lunar-typescript": "^1.8.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yienxi/qingli"
+  }
+}
