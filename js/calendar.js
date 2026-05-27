@@ -393,6 +393,29 @@ class Calendar {
         </div>`
       }
     }
+
+    const chongshaSectionEl = document.getElementById('todayChongshaSection')
+    if (chongshaSectionEl) {
+      const ci = todayData.chongshaInfo
+      if (ci && ci.text) {
+        let chongName = todayData.chongSha || ''
+        let explain = ''
+        if (ci.zodiac) {
+          explain += `今日冲${ci.zodiac}，属${ci.zodiac}的朋友大事多留个心眼——签约付款、远行搬家，能缓则缓。`
+        }
+        if (ci.direction) {
+          explain += `煞气落于${ci.direction}方，动土修造忌朝此向。`
+        }
+        chongshaSectionEl.innerHTML = `<div class="yi-ji-block chongsha-block">
+          <div class="yi-ji-header chongsha-header">冲</div>
+          <div class="yi-ji-tags"><span class="yi-ji-tag chongsha-tag">${chongName}</span></div>
+          <p class="chongsha-explain-text">${explain}</p>
+        </div>`
+        chongshaSectionEl.style.display = ''
+      } else {
+        chongshaSectionEl.style.display = 'none'
+      }
+    }
   }
 
   renderGrid(cells) {

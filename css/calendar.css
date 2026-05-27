@@ -197,6 +197,13 @@
   display: none;
 }
 
+.chongsha-explain-text {
+  margin-left: 32px;
+  font-size: var(--text-xs);
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+
 /* ===== Navigation ===== */
 .cal-nav {
   display: flex;
