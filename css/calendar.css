@@ -99,67 +99,93 @@
 }
 
 .today-body {
-  padding: var(--space-3) var(--space-5);
+  padding: 0 var(--space-5);
 }
 
 .today-yi-section,
 .today-ji-section,
 .today-chongsha-section {
-  margin-bottom: var(--space-3);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.today-yi-section:last-of-type,
+.today-ji-section:last-of-type,
+.today-chongsha-section:last-of-type {
+  border-bottom: none;
 }
 
 .today-meta-section {
-  padding-top: var(--space-2);
+  padding: var(--space-3) var(--space-5);
   border-top: 1px dashed var(--color-border-light);
   font-size: var(--text-xs);
   color: var(--color-text-tertiary);
   text-align: center;
 }
 
-.section-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
+.yi-ji-block {
+  position: relative;
 }
 
-.section-label {
-  flex-shrink: 0;
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
-  text-align: center;
+.yi-ji-header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
   border-radius: var(--radius-sm);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: var(--weight-bold);
+  margin-bottom: var(--space-1);
+  flex-shrink: 0;
 }
 
-.yi-label { background: var(--color-accent-green-bg); color: var(--color-accent-green); }
-.ji-label { background: var(--color-accent-red-bg); color: var(--color-accent-red); }
-.chongsha-label { background: #fef3c7; color: var(--color-accent-gold); }
+.yi-header { background: var(--color-accent-green-bg); color: var(--color-accent-green); }
+.ji-header { background: var(--color-accent-red-bg); color: var(--color-accent-red); }
+.chongsha-header { background: #fef3c7; color: var(--color-accent-gold); }
 
-.section-terms {
+.yi-ji-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+  margin-left: 32px;
+}
+
+.yi-ji-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-serif);
-  font-size: var(--text-sm);
-  color: var(--color-text-primary);
-  line-height: 1.5;
-}
-
-.section-none {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-}
-
-.section-explain {
-  margin: var(--space-1) 0 0 24px;
   font-size: var(--text-xs);
   line-height: 1.6;
-  color: var(--color-text-tertiary);
+  cursor: default;
 }
 
-.yi-explain { color: var(--color-text-secondary); }
-.ji-explain { color: var(--color-text-secondary); }
-.chongsha-explain { color: var(--color-accent-red); }
+.yi-tag {
+  background: var(--color-accent-green-bg);
+  color: var(--color-accent-green);
+  border: 1px solid rgba(53, 138, 80, 0.15);
+}
+
+.ji-tag {
+  background: var(--color-accent-red-bg);
+  color: var(--color-accent-red);
+  border: 1px solid rgba(199, 59, 43, 0.15);
+}
+
+.chongsha-tag {
+  background: #fef3c7;
+  color: var(--color-accent-gold);
+  border: 1px solid rgba(176, 129, 28, 0.2);
+}
+
+.yi-ji-explain {
+  margin-left: 32px;
+  font-size: var(--text-xs);
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
 
 /* AI摘要 */
 .today-ai-summary {
@@ -230,7 +256,7 @@
 
 .cal-cell {
   position: relative;
-  min-height: 80px;
+  min-height: 82px;
   padding: var(--space-2);
   border-right: 1px solid var(--color-border-light);
   border-bottom: 1px solid var(--color-border-light);
@@ -257,12 +283,18 @@
 .cal-cell.is-today.is-weekend .day-num { opacity: 1; }
 
 .day-lunar {
-  font-size: 10px; color: var(--color-text-lunar);
-  font-family: var(--font-serif); line-height: 1.2;
+  font-size: 11px; color: var(--color-text-lunar);
+  font-family: var(--font-serif); line-height: 1.25;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
 }
-.day-lunar.lunar-holiday { color: var(--color-accent-red); font-weight: var(--weight-medium); }
-.day-lunar.lunar-term { color: var(--color-accent-brown); font-weight: var(--weight-medium); }
+.day-lunar.lunar-holiday {
+  font-size: 12px; font-weight: var(--weight-bold); color: var(--color-accent-red);
+  letter-spacing: 0.02em;
+}
+.day-lunar.lunar-term {
+  font-size: 12px; font-weight: var(--weight-bold); color: var(--color-accent-brown);
+  letter-spacing: 0.02em;
+}
 
 .day-dot {
   position: absolute; bottom: var(--space-2); right: var(--space-2);

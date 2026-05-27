@@ -302,16 +302,21 @@ class Calendar {
     if (yiSectionEl) {
       if (todayData.yi && todayData.yi.length > 0) {
         const topYi = todayData.yi.slice(0, 6)
-        const explainParts = topYi.map(t => YIJI_EXPLAIN[t] || t).filter(Boolean).slice(0, 3)
-        yiSectionEl.innerHTML = `<div class="section-row">
-          <span class="section-label yi-label">宜</span>
-          <span class="section-terms">${topYi.join(' · ')}</span>
-        </div>
-        <p class="section-explain yi-explain">${topYi.join('、')}，${explainParts.join('、')}。今日气场流通，诸事顺遂。</p>`
+        const tags = topYi.map((t, i) => {
+          const explain = YIJI_EXPLAIN[t] || ''
+          const title = explain ? ` title="${explain}"` : ''
+          return `<span class="yi-ji-tag yi-tag"${title}>${t}</span>`
+        }).join('')
+        const explainText = this._buildYiExplain(topYi)
+        yiSectionEl.innerHTML = `<div class="yi-ji-block yi-block">
+          <div class="yi-ji-header yi-header">宜</div>
+          <div class="yi-ji-tags">${tags}</div>
+          <p class="yi-ji-explain yi-explain-text">${explainText}</p>
+        </div>`
       } else {
-        yiSectionEl.innerHTML = `<div class="section-row">
-          <span class="section-label yi-label">宜</span>
-          <span class="section-none">诸事平平，无特别宜事。</span>
+        yiSectionEl.innerHTML = `<div class="yi-ji-block yi-block">
+          <div class="yi-ji-header yi-header">宜</div>
+          <p class="yi-ji-explain yi-explain-text" style="color:var(--color-text-muted)">今日无特别宜事，随心而动即可。</p>
         </div>`
       }
     }
@@ -320,16 +325,21 @@ class Calendar {
     if (jiSectionEl) {
       if (todayData.ji && todayData.ji.length > 0) {
         const topJi = todayData.ji.slice(0, 5)
-        const explainParts = topJi.map(t => YIJI_EXPLAIN[t] || t).filter(Boolean).slice(0, 2)
-        jiSectionEl.innerHTML = `<div class="section-row">
-          <span class="section-label ji-label">忌</span>
-          <span class="section-terms">${topJi.join(' · ')}</span>
-        </div>
-        <p class="section-explain ji-explain">${topJi.join('、')}，${explainParts.join('、')}。今日不宜为之，可择吉日而行。</p>`
+        const tags = topJi.map((t, i) => {
+          const explain = YIJI_EXPLAIN[t] || ''
+          const title = explain ? ` title="${explain}"` : ''
+          return `<span class="yi-ji-tag ji-tag"${title}>${t}</span>`
+        }).join('')
+        const explainText = this._buildJiExplain(topJi)
+        jiSectionEl.innerHTML = `<div class="yi-ji-block ji-block">
+          <div class="yi-ji-header ji-header">忌</div>
+          <div class="yi-ji-tags">${tags}</div>
+          <p class="yi-ji-explain ji-explain-text">${explainText}</p>
+        </div>`
       } else {
-        jiSectionEl.innerHTML = `<div class="section-row">
-          <span class="section-label ji-label">忌</span>
-          <span class="section-none">💫 百无禁忌，诸事可行。</span>
+        jiSectionEl.innerHTML = `<div class="yi-ji-block ji-block">
+          <div class="yi-ji-header ji-header">忌</div>
+          <p class="yi-ji-explain ji-explain-text" style="color:var(--color-text-muted)">百无禁忌，今日诸事可行。</p>
         </div>`
       }
     }
@@ -338,18 +348,19 @@ class Calendar {
     if (chongshaSectionEl) {
       const ci = todayData.chongshaInfo
       if (ci && ci.text) {
+        let chongName = todayData.chongSha || ''
         let explain = ''
         if (ci.zodiac) {
-          explain += `属${ci.zodiac}的朋友，今日大事宜谨慎，签约、出行、婚嫁多留心。`
+          explain += `今日冲${ci.zodiac}，属${ci.zodiac}的朋友大事多留个心眼——签约付款、远行搬家，能缓则缓。`
         }
         if (ci.direction) {
-          explain += `煞气在${ci.direction}，建造修坟当避开。`
+          explain += `煞气落于${ci.direction}方，动土修造忌朝此向。`
         }
-        chongshaSectionEl.innerHTML = `<div class="section-row">
-          <span class="section-label chongsha-label">冲</span>
-          <span class="section-terms">${todayData.chongSha || ''}</span>
-        </div>
-        <p class="section-explain chongsha-explain">${explain}</p>`
+        chongshaSectionEl.innerHTML = `<div class="yi-ji-block chongsha-block">
+          <div class="yi-ji-header chongsha-header">冲</div>
+          <div class="yi-ji-tags"><span class="yi-ji-tag chongsha-tag">${chongName}</span></div>
+          <p class="yi-ji-explain chongsha-explain-text">${explain}</p>
+        </div>`
         chongshaSectionEl.style.display = ''
       } else {
         chongshaSectionEl.style.display = 'none'
@@ -364,6 +375,47 @@ class Calendar {
       if (todayData.caiShen) parts.push(`财神 ${todayData.caiShen}`)
       metaSectionEl.textContent = parts.length > 0 ? parts.join('  ·  ') : ''
     }
+  }
+
+  _buildYiExplain(terms) {
+    const explains = terms.map(t => YIJI_EXPLAIN[t] || '').filter(Boolean)
+    const joined = explains.slice(0, 4).join('、')
+    const wordCount = terms.length
+
+    const openers = [
+      `${terms.slice(0, 3).join('、')} 一类事务，${joined}，今天都挺合适。`,
+      `今日宜${terms.slice(0, 2).join('、')}，${joined}——星象上看是个好日子。`,
+      `${joined}，所以${terms.slice(0, 3).join('、')}尽管放手去做。`,
+      `讲究的人会选今天${terms[0]}，${explains[0] || ''}，时辰和方位都对。`,
+    ]
+
+    if (wordCount <= 2) {
+      return `${terms.join('和')}都和今天的气场对得上，顺水推舟的好时机。`
+    }
+
+    if (wordCount >= 5) {
+      return `今天日子不错：${terms.slice(0, 4).join('、')}等均宜。${explains[0] || ''}，天时地利，别浪费了。`
+    }
+
+    return openers[wordCount % openers.length]
+  }
+
+  _buildJiExplain(terms) {
+    const explains = terms.map(t => YIJI_EXPLAIN[t] || '').filter(Boolean)
+    const wordCount = terms.length
+
+    const closers = [
+      `今日忌${terms.slice(0, 3).join('、')}。${explains[0] || ''}，避开不亏。`,
+      `按老黄历，${terms[0]}之类的事别在今天办——${explains[0] || '时辰不吉'}。`,
+      `${explains.slice(0, 2).join('，')}，这几样不碰为妙。`,
+      `今天气场不太支持${terms[0]}，缓一缓，不着急。`,
+    ]
+
+    if (wordCount <= 2) {
+      return `${terms.join('和')}今天不太合适，不急的话改天挑个吉日。`
+    }
+
+    return closers[wordCount % closers.length]
   }
 
   async updateAiSummary() {
