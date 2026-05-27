@@ -61,10 +61,10 @@ function interpretChongsha(raw) {
   const dirCn = DIRECTION_NAMES[direction] || direction
   let text = ''
   if (zodiac && ZODIAC_NAMES.includes(zodiac)) {
-    text += `今日与属${zodiac}的人地支相冲。属${zodiac}者大事（签约、出行、婚嫁）宜谨慎。`
+    text += `属${zodiac}的人，大事（签约、出行、婚嫁）宜谨慎。`
   }
   if (direction) {
-    text += `煞气在${dirCn}，今日不宜从${dirCn}开始动工或远行。`
+    text += `煞气在${dirCn}。`
   }
   return { zodiac, direction: dirCn, text }
 }
@@ -100,100 +100,29 @@ function buildSolarTermCache(year) {
   }
 }
 
-export { Calendar, categorizeYiji, interpretChongsha, YIJI_EXPLAIN, YIJI_CATEGORIES }
-
-class Calendar {
-  constructor() {
-    const now = new Date()
-    this.year = now.getFullYear()
-    this.month = now.getMonth() + 1
-    this.today = { year: this.year, month: this.month, day: now.getDate() }
+export class Calendar {
+  constructor(container) {
+    this.container = container
+    this.today = {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth() + 1,
+      day: new Date().getDate(),
+    }
+    this.year = this.today.year
+    this.month = this.today.month
     this.selectedDate = null
-    this.onDayClick = null
-    this.onRender = null
-    this.grid = document.getElementById('calGrid')
     this.cachedLunarData = new Map()
     this.holidayService = new HolidayService()
-    this.isLoading = false
-
-    this.navYear = document.getElementById('navYear')
-    this.navMonth = document.getElementById('navMonth')
-    this.prevBtn = document.getElementById('prevMonth')
-    this.nextBtn = document.getElementById('nextMonth')
-    this.todayBtn = document.getElementById('todayBtn')
-  }
-
-  async init() {
-    this.prevBtn.addEventListener('click', () => this.prevMonth())
-    this.nextBtn.addEventListener('click', () => this.nextMonth())
-    this.todayBtn.addEventListener('click', () => this.goToToday())
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') this.prevMonth()
-      if (e.key === 'ArrowRight') this.nextMonth()
-    })
-
-    await this.render()
-  }
-
-  showLoading() {
-    this.isLoading = true
-    this.grid.innerHTML = `
-      <div class="loading-container">
-        <div class="loading-spinner"></div>
-        <span class="loading-text">加载中...</span>
-      </div>
-    `
-  }
-
-  hideLoading() {
-    this.isLoading = false
-  }
-
-  async prevMonth() {
-    if (this.month === 1) {
-      this.month = 12
-      this.year--
-    } else {
-      this.month--
-    }
-    await this.render()
-  }
-
-  async nextMonth() {
-    if (this.month === 12) {
-      this.month = 1
-      this.year++
-    } else {
-      this.month++
-    }
-    await this.render()
-  }
-
-  async goToToday() {
-    const now = new Date()
-    this.year = now.getFullYear()
-    this.month = now.getMonth() + 1
-    this.selectedDate = this.today
-    await this.render()
-
-    const dayCells = this.grid.querySelectorAll('.day-cell')
-    for (const cell of dayCells) {
-      const day = parseInt(cell.dataset.day)
-      if (day === this.today.day) {
-        cell.classList.add('spring-bounce')
-        setTimeout(() => cell.classList.remove('spring-bounce'), 400)
-      }
-    }
-  }
-
-  getFirstDayOfMonth(year, month) {
-    const day = new Date(year, month - 1, 1).getDay()
-    return day === 0 ? 6 : day - 1
+    this.onRender = null
   }
 
   getDaysInMonth(year, month) {
     return new Date(year, month, 0).getDate()
+  }
+
+  getFirstDayOfMonth(year, month) {
+    const d = new Date(year, month - 1, 1).getDay()
+    return d === 0 ? 6 : d - 1
   }
 
   computeLunarData(year, month, day) {
@@ -202,7 +131,7 @@ class Calendar {
       return this.cachedLunarData.get(key)
     }
     try {
-      buildSolarTermCache(this.year)
+      buildSolarTermCache(year)
       const solar = Solar.fromYmd(year, month, day)
       const lunar = solar.getLunar()
 
@@ -280,13 +209,15 @@ class Calendar {
     const prevYear = this.month === 1 ? this.year - 1 : this.year
     const daysInPrevMonth = this.getDaysInMonth(prevYear, prevMonth)
 
-    this.navYear.textContent = `${this.year}年`
-    this.navMonth.textContent = MONTH_NAMES[this.month - 1]
+    const navYear = document.getElementById('navYear')
+    const navMonth = document.getElementById('navMonth')
+    if (navYear) navYear.textContent = `${this.year}年`
+    if (navMonth) navMonth.textContent = MONTH_NAMES[this.month - 1]
 
     const totalCells = Math.ceil((firstDayIndex + daysInMonth) / DAYS_IN_WEEK) * DAYS_IN_WEEK
     const todayBtnEl = document.querySelector('.today-btn')
     const isCurrentMonth = this.year === this.today.year && this.month === this.today.month
-    todayBtnEl.style.opacity = isCurrentMonth ? '0.5' : '1'
+    if (todayBtnEl) todayBtnEl.style.opacity = isCurrentMonth ? '0.5' : '1'
 
     const cells = []
 
@@ -356,9 +287,14 @@ class Calendar {
     const weekdayEl = document.getElementById('todayCardWeekday')
     const lunarEl = document.getElementById('todayCardLunar')
     const ganzhiEl = document.getElementById('todayCardGanzhi')
-    const yiTextEl = document.getElementById('todayCardYiText')
-    const jiTextEl = document.getElementById('todayCardJiText')
-    const chongshaEl = document.getElementById('todayCardChongsha')
+    const yiListEl = document.getElementById('todayCardYiList')
+    const jiListEl = document.getElementById('todayCardJiList')
+    const zhiShenEl = document.getElementById('todayCardZhiShen')
+    const xingXiuEl = document.getElementById('todayCardXingXiu')
+    const naYinEl = document.getElementById('todayCardNaYin')
+    const xiShenEl = document.getElementById('todayCardXiShen')
+    const caiShenEl = document.getElementById('todayCardCaiShen')
+    const chongShaEl = document.getElementById('todayCardChongSha')
 
     if (dayEl) dayEl.textContent = this.today.day
     if (monthYearEl) monthYearEl.textContent = `${this.today.month}月 ${this.today.year}`
@@ -377,24 +313,49 @@ class Calendar {
     if (ganzhiEl) {
       ganzhiEl.textContent = `${todayData.ganZhiYear}年 ${todayData.ganZhiMonth}月 ${todayData.ganZhiDay}日 [${todayData.shengXiao}]`
     }
-    if (yiTextEl) {
-      yiTextEl.textContent = todayData.yi && todayData.yi.length > 0
-        ? todayData.yi.slice(0, 6).join('、')
-        : '无'
-    }
-    if (jiTextEl) {
-      jiTextEl.textContent = todayData.ji && todayData.ji.length > 0
-        ? todayData.ji.slice(0, 5).join('、')
-        : '无'
-    }
-    if (chongshaEl) {
-      chongshaEl.textContent = todayData.chongshaInfo.text || ''
-      if (!todayData.chongshaInfo.text) {
-        chongshaEl.parentElement.style.display = 'none'
+
+    if (yiListEl && todayData.yi) {
+      yiListEl.innerHTML = ''
+      if (todayData.yi.length > 0) {
+        todayData.yi.slice(0, 8).forEach(item => {
+          const span = document.createElement('span')
+          span.className = 'yiji-tag'
+          span.textContent = item
+          if (YIJI_EXPLAIN[item]) span.title = YIJI_EXPLAIN[item]
+          yiListEl.appendChild(span)
+        })
       } else {
-        chongshaEl.parentElement.style.display = ''
+        const span = document.createElement('span')
+        span.className = 'yiji-tag'
+        span.textContent = '无'
+        yiListEl.appendChild(span)
       }
     }
+
+    if (jiListEl && todayData.ji) {
+      jiListEl.innerHTML = ''
+      if (todayData.ji.length > 0) {
+        todayData.ji.slice(0, 6).forEach(item => {
+          const span = document.createElement('span')
+          span.className = 'yiji-tag'
+          span.textContent = item
+          if (YIJI_EXPLAIN[item]) span.title = YIJI_EXPLAIN[item]
+          jiListEl.appendChild(span)
+        })
+      } else {
+        const span = document.createElement('span')
+        span.className = 'yiji-tag'
+        span.textContent = '无'
+        jiListEl.appendChild(span)
+      }
+    }
+
+    if (zhiShenEl) zhiShenEl.textContent = todayData.zhiShen || '-'
+    if (xingXiuEl) xingXiuEl.textContent = todayData.xingXiu || '-'
+    if (naYinEl) naYinEl.textContent = todayData.naYin || '-'
+    if (xiShenEl) xiShenEl.textContent = todayData.xiShen || '-'
+    if (caiShenEl) caiShenEl.textContent = todayData.caiShen || '-'
+    if (chongShaEl) chongShaEl.textContent = todayData.chongSha || '-'
   }
 
   async updateAiSummary() {
@@ -443,67 +404,95 @@ class Calendar {
   }
 
   renderGrid(cells) {
+    const grid = document.getElementById('calGrid')
+    if (!grid) return
+
     const fragment = document.createDocumentFragment()
 
     for (const cell of cells) {
       const el = document.createElement('div')
-      el.className = 'day-cell'
-      el.dataset.date = cell.dayDate
-      el.dataset.day = cell.day
-      el.dataset.month = cell.month
-      el.dataset.year = cell.year
+      el.className = 'cal-cell'
+      if (cell.isOtherMonth) el.classList.add('is-other-month')
+      if (cell.isCurrentDay) el.classList.add('is-today')
+      if (cell.isSelected) el.classList.add('is-selected')
+      if (cell.weekend) el.classList.add('is-weekend')
+      if (cell.holidayTag) el.classList.add('has-holiday')
+      if (cell.lunarData && cell.lunarData.solarTerm) el.classList.add('has-term')
 
-      if (cell.isOtherMonth) el.classList.add('other-month')
-      if (cell.isCurrentDay) el.classList.add('today')
-      if (cell.weekend) el.classList.add('weekend')
-      if (cell.isSelected) el.classList.add('selected')
+      const dayNum = document.createElement('div')
+      dayNum.className = 'day-num'
+      dayNum.textContent = cell.day
 
-      let tagsHtml = ''
+      const lunar = document.createElement('div')
+      lunar.className = 'day-lunar'
+
       if (cell.holidayTag) {
-        tagsHtml += `<span class="day-tag holiday">${cell.holidayTag.name}</span>`
-      }
-      if (cell.lunarData && cell.lunarData.solarTerm) {
-        tagsHtml += `<span class="day-tag solar-term">${cell.lunarData.solarTerm}</span>`
-      } else if (cell.lunarData && cell.lunarData.festival && !cell.holidayTag) {
-        tagsHtml += `<span class="day-tag festival">${cell.lunarData.festival}</span>`
+        lunar.textContent = cell.holidayTag.name
+        lunar.classList.add('lunar-holiday')
+      } else if (cell.lunarData && cell.lunarData.solarTerm) {
+        lunar.textContent = cell.lunarData.solarTerm
+        lunar.classList.add('lunar-term')
+      } else {
+        lunar.textContent = cell.lunarDisplay
       }
 
-      el.innerHTML = `
-        <div class="day-number">${cell.day}</div>
-        ${cell.isCurrentDay ? '<div class="today-seal"></div>' : ''}
-        <div class="lunar-date">${cell.lunarDisplay}</div>
-        ${tagsHtml ? `<div>${tagsHtml}</div>` : ''}
-        <div class="event-dots" data-date="${cell.dayDate}"></div>
-      `
+      const dot = document.createElement('div')
+      dot.className = 'day-dot'
 
-      el.addEventListener('click', () => {
-        if (this.onDayClick) {
-          this.onDayClick(cell)
-        }
-      })
+      el.appendChild(dayNum)
+      el.appendChild(lunar)
+      el.appendChild(dot)
+
+      el.dataset.date = cell.dayDate
+      el.dataset.year = cell.year
+      el.dataset.month = cell.month
+      el.dataset.day = cell.day
 
       fragment.appendChild(el)
     }
 
-    this.grid.innerHTML = ''
-    this.grid.appendChild(fragment)
+    grid.innerHTML = ''
+    grid.appendChild(fragment)
   }
 
-  refreshEvents() {
-    const eventDotsContainers = this.grid.querySelectorAll('.event-dots')
-    if (typeof qingliEvents !== 'undefined' && qingliEvents) {
-      for (const container of eventDotsContainers) {
-        const date = container.dataset.date
-        const events = qingliEvents.getEvents(date)
-        if (events.length > 0) {
-          const dotColors = [...new Set(events.map(e => e.color || '#5B8F7A'))]
-          container.innerHTML = dotColors.map(c =>
-            `<span class="event-dot" style="background:${c}"></span>`
-          ).join('')
-        } else {
-          container.innerHTML = ''
-        }
-      }
+  goPrevMonth() {
+    if (this.month === 1) {
+      this.month = 12
+      this.year--
+    } else {
+      this.month--
     }
+    this.render()
+  }
+
+  goNextMonth() {
+    if (this.month === 12) {
+      this.month = 1
+      this.year++
+    } else {
+      this.month++
+    }
+    this.render()
+  }
+
+  goToday() {
+    this.year = this.today.year
+    this.month = this.today.month
+    this.render()
+  }
+
+  setDate(year, month, day) {
+    this.selectedDate = { year, month, day }
+    this.render()
+  }
+
+  showLoading() {
+    const loading = document.getElementById('loadingOverlay')
+    if (loading) loading.style.display = 'flex'
+  }
+
+  hideLoading() {
+    const loading = document.getElementById('loadingOverlay')
+    if (loading) loading.style.display = 'none'
   }
 }
