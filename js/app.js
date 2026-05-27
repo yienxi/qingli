@@ -268,6 +268,12 @@ function setupIcalLinks() {
   })
 }
 
+setupIcalLinks()
+
+document.getElementById('prevMonth').addEventListener('click', () => cal.prevMonth())
+document.getElementById('nextMonth').addEventListener('click', () => cal.nextMonth())
+document.getElementById('todayBtn').addEventListener('click', () => cal.goToday())
+
 let darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
 const savedTheme = localStorage.getItem('qingli_theme')
 if (savedTheme) {

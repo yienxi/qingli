@@ -13,9 +13,9 @@
   <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
   <link rel="apple-touch-icon" href="/public/logo.svg">
   <title>轻历</title>
-  <link rel="stylesheet" href="/css/design-system.css?v=2.2">
-  <link rel="stylesheet" href="/css/calendar.css?v=2.2">
-  <link rel="stylesheet" href="/css/responsive.css?v=2.2">
+  <link rel="stylesheet" href="/css/design-system.css?v=2.3">
+  <link rel="stylesheet" href="/css/calendar.css?v=2.3">
+  <link rel="stylesheet" href="/css/responsive.css?v=2.3">
 </head>
 <body>
   <div class="app" id="app">
@@ -55,53 +55,34 @@
     </div>
 
     <div class="today-card" id="todayCard">
-      <div class="today-head">
-        <div class="today-date-row">
-          <span class="today-day" id="todayCardDay"></span>
+      <div class="today-top">
+        <div class="today-date-block">
+          <span class="today-day-num" id="todayCardDay"></span>
           <div class="today-date-meta">
             <span class="today-month-year" id="todayCardMonthYear"></span>
             <span class="today-weekday" id="todayCardWeekday"></span>
           </div>
         </div>
-        <div class="today-lunar" id="todayCardLunar"></div>
-        <div class="today-ganzhi" id="todayCardGanzhi"></div>
-      </div>
-      <div class="today-divider"></div>
-      <div class="today-almanac">
-        <div class="today-yi-section">
-          <span class="today-almanac-label label-yi">宜</span>
-          <div class="today-yiji-list" id="todayCardYiList"></div>
-        </div>
-        <div class="today-ji-section">
-          <span class="today-almanac-label label-ji">忌</span>
-          <div class="today-yiji-list" id="todayCardJiList"></div>
+        <div class="today-lunar-block">
+          <span class="today-lunar-date" id="todayCardLunar"></span>
+          <span class="today-ganzhi" id="todayCardGanzhi"></span>
         </div>
       </div>
-      <div class="today-almanac-details">
-        <div class="almanac-detail-row">
-          <span class="detail-label">值神</span>
-          <span class="detail-value" id="todayCardZhiShen"></span>
+      <div class="today-yiji">
+        <div class="today-yi-row">
+          <span class="yiji-badge yi-badge">宜</span>
+          <span class="yiji-items" id="todayCardYiText"></span>
         </div>
-        <div class="almanac-detail-row">
-          <span class="detail-label">星宿</span>
-          <span class="detail-value" id="todayCardXingXiu"></span>
+        <div class="today-ji-row">
+          <span class="yiji-badge ji-badge">忌</span>
+          <span class="yiji-items" id="todayCardJiText"></span>
         </div>
-        <div class="almanac-detail-row">
-          <span class="detail-label">纳音</span>
-          <span class="detail-value" id="todayCardNaYin"></span>
-        </div>
-        <div class="almanac-detail-row">
-          <span class="detail-label">喜神</span>
-          <span class="detail-value" id="todayCardXiShen"></span>
-        </div>
-        <div class="almanac-detail-row">
-          <span class="detail-label">财神</span>
-          <span class="detail-value" id="todayCardCaiShen"></span>
-        </div>
-        <div class="almanac-detail-row">
-          <span class="detail-label">冲煞</span>
-          <span class="detail-value" id="todayCardChongSha"></span>
-        </div>
+      </div>
+      <div class="today-meta-bar">
+        <span class="meta-chip">冲<span id="todayCardChongSha">-</span></span>
+        <span class="meta-chip">值神 <span id="todayCardZhiShen">-</span></span>
+        <span class="meta-chip">喜神 <span id="todayCardXiShen">-</span></span>
+        <span class="meta-chip">财神 <span id="todayCardCaiShen">-</span></span>
       </div>
       <div class="today-ai-summary" id="todayAiSummary"></div>
     </div>
@@ -124,6 +105,15 @@
       </div>
     </nav>
 
+    <div class="weekday-header">
+      <span class="weekday-cell">一</span>
+      <span class="weekday-cell">二</span>
+      <span class="weekday-cell">三</span>
+      <span class="weekday-cell">四</span>
+      <span class="weekday-cell">五</span>
+      <span class="weekday-cell weekend">六</span>
+      <span class="weekday-cell weekend">日</span>
+    </div>
     <div class="cal-grid" id="calGrid"></div>
 
     <div class="cal-legend">
@@ -175,10 +165,60 @@
 
   </div>
 
+  <div class="loading-overlay" id="loadingOverlay" style="display:none">
+    <div class="loading-spinner"></div>
+    <span class="loading-text">加载中...</span>
+  </div>
+
+  <div class="detail-overlay" id="detailOverlay"></div>
+  <div class="detail-panel" id="detailPanel">
+    <div class="panel-handle"></div>
+    <div class="panel-header">
+      <h3 class="panel-date" id="panelDate"></h3>
+      <button class="panel-close" id="panelCloseBtn" aria-label="关闭">✕</button>
+    </div>
+    <div class="panel-body">
+      <p class="panel-lunar" id="panelLunar"></p>
+      <div class="panel-tags" id="panelTags"></div>
+      <div class="panel-yiji">
+        <div class="panel-yiji-section">
+          <div class="panel-yiji-title" style="color:var(--color-accent-green)">宜</div>
+          <div class="panel-yiji-content" id="panelYiGroups"></div>
+        </div>
+        <div class="yiji-divider"></div>
+        <div class="panel-yiji-section">
+          <div class="panel-yiji-title" style="color:var(--color-accent-red)">忌</div>
+          <div class="panel-yiji-content" id="panelJiGroups"></div>
+        </div>
+      </div>
+      <div class="panel-chongsha" id="panelChongshaBlock" style="display:none">
+        <span class="panel-chongsha-raw" id="panelChongshaRaw"></span>
+        <p class="panel-chongsha-text" id="panelChongshaText"></p>
+      </div>
+      <div class="traditional-grid">
+        <div class="trad-item"><span class="trad-label">值神</span><span class="trad-value" id="panelZhishen">-</span></div>
+        <div class="trad-item"><span class="trad-label">纳音</span><span class="trad-value" id="panelNayin">-</span></div>
+        <div class="trad-item"><span class="trad-label">星宿</span><span class="trad-value" id="panelXingxiu">-</span></div>
+        <div class="trad-item"><span class="trad-label">喜神</span><span class="trad-value" id="panelXishen">-</span></div>
+        <div class="trad-item"><span class="trad-label">财神</span><span class="trad-value" id="panelCaishen">-</span></div>
+      </div>
+      <div class="panel-events-section">
+        <h4 class="panel-events-heading">事件</h4>
+        <div class="panel-events" id="panelEvents"></div>
+        <form class="event-form" id="eventForm">
+          <input type="text" id="eventTitleInput" class="event-input" placeholder="添加事件..." required>
+          <input type="time" id="eventTimeInput" class="event-input">
+          <input type="color" id="eventColorInput" class="event-color-picker" value="#C73B2B">
+          <button type="submit" class="event-add-btn">添加</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
-  <script type="module" src="/js/calendar.js?v=2.2"></script>
-  <script type="module" src="/js/events.js?v=2.2"></script>
-  <script type="module" src="/js/app.js?v=2.2"></script>
+  <script type="module" src="/js/calendar.js?v=2.3"></script>
+  <script type="module" src="/js/events.js?v=2.3"></script>
+  <script type="module" src="/js/app.js?v=2.3"></script>
 </body>
 </html>

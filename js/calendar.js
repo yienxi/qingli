@@ -100,7 +100,7 @@ function buildSolarTermCache(year) {
   }
 }
 
-export class Calendar {
+class Calendar {
   constructor(container) {
     this.container = container
     this.today = {
@@ -287,11 +287,9 @@ export class Calendar {
     const weekdayEl = document.getElementById('todayCardWeekday')
     const lunarEl = document.getElementById('todayCardLunar')
     const ganzhiEl = document.getElementById('todayCardGanzhi')
-    const yiListEl = document.getElementById('todayCardYiList')
-    const jiListEl = document.getElementById('todayCardJiList')
+    const yiTextEl = document.getElementById('todayCardYiText')
+    const jiTextEl = document.getElementById('todayCardJiText')
     const zhiShenEl = document.getElementById('todayCardZhiShen')
-    const xingXiuEl = document.getElementById('todayCardXingXiu')
-    const naYinEl = document.getElementById('todayCardNaYin')
     const xiShenEl = document.getElementById('todayCardXiShen')
     const caiShenEl = document.getElementById('todayCardCaiShen')
     const chongShaEl = document.getElementById('todayCardChongSha')
@@ -314,48 +312,31 @@ export class Calendar {
       ganzhiEl.textContent = `${todayData.ganZhiYear}年 ${todayData.ganZhiMonth}月 ${todayData.ganZhiDay}日 [${todayData.shengXiao}]`
     }
 
-    if (yiListEl && todayData.yi) {
-      yiListEl.innerHTML = ''
-      if (todayData.yi.length > 0) {
-        todayData.yi.slice(0, 8).forEach(item => {
-          const span = document.createElement('span')
-          span.className = 'yiji-tag'
-          span.textContent = item
-          if (YIJI_EXPLAIN[item]) span.title = YIJI_EXPLAIN[item]
-          yiListEl.appendChild(span)
-        })
+    if (yiTextEl) {
+      if (todayData.yi && todayData.yi.length > 0) {
+        yiTextEl.textContent = todayData.yi.slice(0, 8).join('、')
       } else {
-        const span = document.createElement('span')
-        span.className = 'yiji-tag'
-        span.textContent = '无'
-        yiListEl.appendChild(span)
+        yiTextEl.textContent = '无'
       }
     }
 
-    if (jiListEl && todayData.ji) {
-      jiListEl.innerHTML = ''
-      if (todayData.ji.length > 0) {
-        todayData.ji.slice(0, 6).forEach(item => {
-          const span = document.createElement('span')
-          span.className = 'yiji-tag'
-          span.textContent = item
-          if (YIJI_EXPLAIN[item]) span.title = YIJI_EXPLAIN[item]
-          jiListEl.appendChild(span)
-        })
+    if (jiTextEl) {
+      if (todayData.ji && todayData.ji.length > 0) {
+        jiTextEl.textContent = todayData.ji.slice(0, 6).join('、')
       } else {
-        const span = document.createElement('span')
-        span.className = 'yiji-tag'
-        span.textContent = '无'
-        jiListEl.appendChild(span)
+        jiTextEl.textContent = '无'
       }
     }
 
     if (zhiShenEl) zhiShenEl.textContent = todayData.zhiShen || '-'
-    if (xingXiuEl) xingXiuEl.textContent = todayData.xingXiu || '-'
-    if (naYinEl) naYinEl.textContent = todayData.naYin || '-'
     if (xiShenEl) xiShenEl.textContent = todayData.xiShen || '-'
     if (caiShenEl) caiShenEl.textContent = todayData.caiShen || '-'
-    if (chongShaEl) chongShaEl.textContent = todayData.chongSha || '-'
+    if (chongShaEl) {
+      const short = (todayData.chongshaInfo && todayData.chongshaInfo.text)
+        ? todayData.chongshaInfo.text.replace(/[，。]/g, '').slice(0, 10)
+        : (todayData.chongSha || '-')
+      chongShaEl.textContent = short
+    }
   }
 
   async updateAiSummary() {
@@ -408,6 +389,7 @@ export class Calendar {
     if (!grid) return
 
     const fragment = document.createDocumentFragment()
+    const self = this
 
     for (const cell of cells) {
       const el = document.createElement('div')
@@ -444,9 +426,15 @@ export class Calendar {
       el.appendChild(dot)
 
       el.dataset.date = cell.dayDate
-      el.dataset.year = cell.year
-      el.dataset.month = cell.month
-      el.dataset.day = cell.day
+      el.dataset.year = String(cell.year)
+      el.dataset.month = String(cell.month)
+      el.dataset.day = String(cell.day)
+
+      el.addEventListener('click', () => {
+        if (self.onDayClick) {
+          self.onDayClick(cell)
+        }
+      })
 
       fragment.appendChild(el)
     }
@@ -465,6 +453,8 @@ export class Calendar {
     this.render()
   }
 
+  prevMonth() { return this.goPrevMonth() }
+
   goNextMonth() {
     if (this.month === 12) {
       this.month = 1
@@ -474,6 +464,8 @@ export class Calendar {
     }
     this.render()
   }
+
+  nextMonth() { return this.goNextMonth() }
 
   goToday() {
     this.year = this.today.year
@@ -495,4 +487,25 @@ export class Calendar {
     const loading = document.getElementById('loadingOverlay')
     if (loading) loading.style.display = 'none'
   }
+
+  init() {
+    return this.render()
+  }
+
+  refreshEvents() {
+    const grid = document.getElementById('calGrid')
+    if (!grid) return
+
+    const cells = grid.querySelectorAll('.cal-cell')
+    cells.forEach(cell => {
+      const date = cell.dataset.date
+      const events = window.qingliEvents?.getEvents?.(date) || []
+      const dot = cell.querySelector('.day-dot')
+      if (dot) {
+        dot.style.display = events.length > 0 ? '' : 'none'
+      }
+    })
+  }
 }
+
+export { Calendar, categorizeYiji, interpretChongsha, YIJI_EXPLAIN, YIJI_CATEGORIES }

@@ -91,14 +91,14 @@ async function generateAISummary(data, apiKey) {
 只输出一句话，不要任何其他内容。`
 
   try {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'deepseek-chat',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 100,
         temperature: 0.8,
@@ -107,7 +107,7 @@ async function generateAISummary(data, apiKey) {
 
     if (!res.ok) {
       const errorText = await res.text()
-      console.error('OpenAI API error:', res.status, errorText)
+      console.error('DeepSeek API error:', res.status, errorText)
       return null
     }
 
@@ -133,7 +133,7 @@ export async function GET(request) {
     const data = getYiJi(dateStr)
     
     // 从环境变量获取 API Key
-    const apiKey = process.env.OPENAI_API_KEY || ''
+    const apiKey = process.env.DEEPSEEK_API_KEY || ''
     
     let summary = null
     let generated = false
