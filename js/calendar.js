@@ -343,6 +343,7 @@ class Calendar {
     this.hideLoading()
     this.renderGrid(cells)
     this.updateTodayCard()
+    this.updateAiSummary()
     if (this.onRender) this.onRender(cells)
   }
 
@@ -393,6 +394,51 @@ class Calendar {
       } else {
         chongshaEl.parentElement.style.display = ''
       }
+    }
+  }
+
+  async updateAiSummary() {
+    const aiEl = document.getElementById('todayAiSummary')
+    if (!aiEl) return
+
+    const now = new Date()
+    const todayKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
+    const cacheKey = 'qingli_ai_summary'
+    const cacheRaw = localStorage.getItem(cacheKey)
+
+    if (cacheRaw) {
+      try {
+        const cache = JSON.parse(cacheRaw)
+        if (cache.date === todayKey && cache.summary) {
+          aiEl.innerHTML = `<span class="ai-badge">AI</span>${cache.summary}`
+          aiEl.style.display = ''
+          return
+        }
+      } catch {}
+    }
+
+    try {
+      const res = await fetch(`/api/ai-summary?date=${todayKey}`)
+      if (!res.ok) throw new Error('API error')
+
+      const data = await res.json()
+      const summary = data.summary || ''
+
+      if (summary) {
+        const badge = data.generated
+          ? '<span class="ai-badge">AI</span>'
+          : ''
+        aiEl.innerHTML = `${badge}${summary}`
+        aiEl.style.display = ''
+
+        localStorage.setItem(cacheKey, JSON.stringify({
+          date: todayKey,
+          summary: data.generated ? summary : '',
+          generated: data.generated,
+        }))
+      }
+    } catch {
+      aiEl.style.display = 'none'
     }
   }
 

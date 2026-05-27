@@ -178,6 +178,29 @@
   line-height: 1.5;
 }
 
+.today-ai-summary {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-border-light);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.today-ai-summary .ai-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent-green);
+  background: var(--color-accent-green-bg);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  margin-right: var(--space-1);
+  vertical-align: middle;
+}
+
 /* ===== Navigation ===== */
 .cal-nav {
   display: flex;
@@ -583,6 +606,11 @@
 
 .ical-card-full { grid-column: 1 / -1; flex-direction: row; align-items: center; }
 
+.ical-card-featured {
+  border-color: var(--color-accent-gold);
+  background: var(--color-accent-gold-bg);
+}
+
 .ical-card-icon { font-size: 1.5rem; }
 .ical-card-title { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-primary); }
 .ical-card-desc { font-size: var(--text-xs); color: var(--color-text-tertiary); }
@@ -673,3 +701,92 @@
   transition: all var(--transition-base); z-index: var(--z-modal); white-space: nowrap;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== PWA Install Banner ===== */
+.pwa-install-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  animation: slideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pwa-install-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.pwa-install-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.pwa-install-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pwa-install-text strong {
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.pwa-install-text span {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+.pwa-install-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.pwa-install-btn {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  font-family: var(--font-ui);
+  font-weight: var(--weight-medium);
+  color: white;
+  background: var(--color-accent-red);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.pwa-install-btn:hover { opacity: 0.9; }
+.pwa-install-btn:active { transform: scale(0.95); }
+
+.pwa-install-dismiss {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.pwa-install-dismiss:hover {
+  color: var(--color-accent-red);
+  background: var(--color-accent-red-bg);
+}

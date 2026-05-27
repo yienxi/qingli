@@ -304,6 +304,50 @@ if ('serviceWorker' in navigator) {
   })
 }
 
+let deferredPrompt = null
+const pwaInstallBanner = document.getElementById('pwaInstallBanner')
+const pwaInstallBtn = document.getElementById('pwaInstallBtn')
+const pwaDismissBtn = document.getElementById('pwaDismissBtn')
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault()
+  deferredPrompt = e
+
+  if (localStorage.getItem('qingli_pwa_banner_dismissed')) return
+
+  setTimeout(() => {
+    if (pwaInstallBanner) pwaInstallBanner.style.display = 'flex'
+  }, 2000)
+})
+
+if (pwaInstallBtn) {
+  pwaInstallBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return
+
+    deferredPrompt.prompt()
+    const result = await deferredPrompt.userChoice
+    deferredPrompt = null
+
+    if (pwaInstallBanner) pwaInstallBanner.style.display = 'none'
+
+    if (result.outcome === 'accepted') {
+      showToast('已添加到桌面')
+    }
+  })
+}
+
+if (pwaDismissBtn) {
+  pwaDismissBtn.addEventListener('click', () => {
+    localStorage.setItem('qingli_pwa_banner_dismissed', '1')
+    if (pwaInstallBanner) pwaInstallBanner.style.display = 'none'
+  })
+}
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null
+  if (pwaInstallBanner) pwaInstallBanner.style.display = 'none'
+})
+
 function setupVersionDisplay() {
   const versionEl = document.getElementById('dataVersion')
   const versionNumberEl = document.getElementById('versionNumber')
@@ -388,4 +432,11 @@ searchInput.addEventListener('input', (e) => {
 
 cal.init().then(() => {
   setupVersionDisplay()
+
+  if (!localStorage.getItem('qingli_bookmark_hint_shown')) {
+    setTimeout(() => {
+      showToast('按 Ctrl+D 收藏，随时打开看黄历')
+      localStorage.setItem('qingli_bookmark_hint_shown', '1')
+    }, 8000)
+  }
 }).catch(console.error)

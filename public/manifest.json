@@ -1,20 +1,25 @@
 {
+  "id": "qingli-suanqiu-fun",
   "name": "轻历",
   "short_name": "轻历",
-  "description": "轻量中国日历 — 农历、节气、节假日、宜忌一目了然",
+  "description": "轻量中国日历 — 农历、节气、节假日、宜忌，一目了然",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#F7F3EE",
   "theme_color": "#F7F3EE",
-  "orientation": "portrait",
+  "orientation": "any",
+  "categories": ["utilities", "lifestyle", "productivity"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/public/logo.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
-  ],
-  "categories": ["utilities", "lifestyle"],
-  "lang": "zh-CN",
-  "dir": "ltr"
+  ]
 }

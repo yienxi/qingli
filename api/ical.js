@@ -127,9 +127,13 @@ function generateYijiEvents(year) {
   return events
 }
 
+function generateFestivalEvents(year) {
+  return generateHolidayEvents(year) + generateLunarFestivalEvents(year)
+}
+
 function generateICal(type, year) {
   const years = [year - 1, year, year + 1]
-  const calNameMap = { all: '', holidays: ' · 节假日', lunar: ' · 农历节日', terms: ' · 节气', yiji: ' · 每日宜忌' }
+  const calNameMap = { all: '', festivals: ' · 节日与假期', terms: ' · 节气', yiji: ' · 每日宜忌' }
   const suffix = calNameMap[type] || ''
 
   let cal = [
@@ -144,8 +148,7 @@ function generateICal(type, year) {
   ].join('\n')
 
   for (const y of years) {
-    if (type === 'all' || type === 'holidays') cal += generateHolidayEvents(y)
-    if (type === 'all' || type === 'lunar') cal += generateLunarFestivalEvents(y)
+    if (type === 'all' || type === 'festivals') cal += generateFestivalEvents(y)
     if (type === 'all' || type === 'terms') cal += generateSolarTermEvents(y)
     if (type === 'all' || type === 'yiji') cal += generateYijiEvents(y)
   }
@@ -156,9 +159,13 @@ function generateICal(type, year) {
 
 export async function GET(request) {
   const url = new URL(request.url)
-  const type = url.searchParams.get('type') || 'all'
+  let type = url.searchParams.get('type') || 'all'
 
-  if (!['all', 'holidays', 'lunar', 'terms', 'yiji'].includes(type)) {
+  if (type === 'holidays' || type === 'lunar') {
+    type = 'festivals'
+  }
+
+  if (!['all', 'festivals', 'terms', 'yiji'].includes(type)) {
     return new Response('Invalid type', { status: 400 })
   }
 

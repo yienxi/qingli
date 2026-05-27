@@ -7,13 +7,15 @@
   <meta name="theme-color" content="#F7F3EE">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="轻历">
+  <meta name="format-detection" content="telephone=no">
   <link rel="manifest" href="/public/manifest.json">
   <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
   <link rel="apple-touch-icon" href="/public/logo.svg">
-  <title>轻历 — 中国日历</title>
-  <link rel="stylesheet" href="/css/design-system.css?v=2.0">
-  <link rel="stylesheet" href="/css/calendar.css?v=2.0">
-  <link rel="stylesheet" href="/css/responsive.css?v=2.0">
+  <title>轻历</title>
+  <link rel="stylesheet" href="/css/design-system.css?v=2.1">
+  <link rel="stylesheet" href="/css/calendar.css?v=2.1">
+  <link rel="stylesheet" href="/css/responsive.css?v=2.1">
 </head>
 <body>
   <div class="app" id="app">
@@ -32,6 +34,20 @@
         </button>
       </div>
     </header>
+
+    <div class="pwa-install-banner" id="pwaInstallBanner" style="display:none">
+      <div class="pwa-install-content">
+        <div class="pwa-install-icon">📅</div>
+        <div class="pwa-install-text">
+          <strong>将轻历添加到桌面</strong>
+          <span>无需打开浏览器，就像用 App 一样使用</span>
+        </div>
+      </div>
+      <div class="pwa-install-actions">
+        <button class="pwa-install-btn" id="pwaInstallBtn">安装</button>
+        <button class="pwa-install-dismiss" id="pwaDismissBtn">✕</button>
+      </div>
+    </div>
 
     <div class="search-panel" id="searchPanel" style="display: none;">
       <input type="text" id="searchInput" placeholder="搜索事件..." class="search-input">
@@ -65,6 +81,7 @@
           <span class="today-chongsha-text" id="todayCardChongsha"></span>
         </div>
       </div>
+      <div class="today-ai-summary" id="todayAiSummary"></div>
     </div>
 
     <nav class="cal-nav" id="calNav">
@@ -115,38 +132,31 @@
         复制链接，粘贴到 Apple 日历 / Google Calendar / Outlook 的「订阅日历」中，节假日和节气自动同步。
       </p>
       <div class="ical-grid">
-        <div class="ical-card">
-          <div class="ical-card-icon">🏖</div>
-          <div class="ical-card-title">法定节假日</div>
-          <div class="ical-card-desc">春节、国庆、清明…含调休</div>
-          <span class="ical-card-url" id="icalUrlHolidays" data-url="holidays">加载中...</span>
-          <button class="ical-copy-btn" data-type="holidays">复制链接</button>
+        <div class="ical-card ical-card-featured">
+          <div class="ical-card-icon">🎉</div>
+          <div class="ical-card-title">节日与假期</div>
+          <div class="ical-card-desc">法定节假日、传统节日、调休提醒</div>
+          <span class="ical-card-url" id="icalUrlFestivals" data-url="festivals">加载中...</span>
+          <button class="ical-copy-btn" data-type="festivals">复制链接</button>
         </div>
         <div class="ical-card">
           <div class="ical-card-icon">🌿</div>
           <div class="ical-card-title">二十四节气</div>
-          <div class="ical-card-desc">立春、夏至、秋分…</div>
+          <div class="ical-card-desc">立春、夏至、秋分、冬至…</div>
           <span class="ical-card-url" id="icalUrlTerms" data-url="terms">加载中...</span>
           <button class="ical-copy-btn" data-type="terms">复制链接</button>
         </div>
         <div class="ical-card">
-          <div class="ical-card-icon">🏮</div>
-          <div class="ical-card-title">传统节日</div>
-          <div class="ical-card-desc">端午、中秋、七夕、重阳…</div>
-          <span class="ical-card-url" id="icalUrlLunar" data-url="lunar">加载中...</span>
-          <button class="ical-copy-btn" data-type="lunar">复制链接</button>
-        </div>
-        <div class="ical-card">
           <div class="ical-card-icon">📋</div>
           <div class="ical-card-title">每日宜忌</div>
-          <div class="ical-card-desc">每日宜忌摘要提醒</div>
+          <div class="ical-card-desc">每日黄历宜忌摘要</div>
           <span class="ical-card-url" id="icalUrlYiji" data-url="yiji">加载中...</span>
           <button class="ical-copy-btn" data-type="yiji">复制链接</button>
         </div>
         <div class="ical-card ical-card-full">
           <div class="ical-card-icon">🗓</div>
           <div class="ical-card-title">完整日历</div>
-          <div class="ical-card-desc">以上全部合并</div>
+          <div class="ical-card-desc">以上全部合并订阅</div>
           <span class="ical-card-url" id="icalUrlAll" data-url="all">加载中...</span>
           <button class="ical-copy-btn" data-type="all">复制链接</button>
         </div>
@@ -240,8 +250,8 @@
 
   <div class="toast" id="toast"></div>
 
-  <script type="module" src="/js/calendar.js?v=2.0"></script>
-  <script type="module" src="/js/events.js?v=2.0"></script>
-  <script type="module" src="/js/app.js?v=2.0"></script>
+  <script type="module" src="/js/calendar.js?v=2.1"></script>
+  <script type="module" src="/js/events.js?v=2.1"></script>
+  <script type="module" src="/js/app.js?v=2.1"></script>
 </body>
 </html>
