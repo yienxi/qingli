@@ -9,28 +9,24 @@
   .brand-text { font-size: var(--text-lg); }
   .app-logo { width: 28px; height: 28px; }
 
-  .workday-hero {
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
+  .magazine-card {
     padding: var(--space-5);
+    margin-bottom: var(--space-5);
   }
-  .workday-hero h1 { font-size: 2rem; }
-  .workday-hero p { font-size: var(--text-base); }
-  .workday-kicker {
+  .magazine-headline {
+    font-size: clamp(2rem, 1.5rem + 2vw, 2.5rem);
+  }
+  .magazine-header {
     flex-wrap: wrap;
     gap: var(--space-2);
-    margin-bottom: var(--space-4);
   }
-  .scene-switch { grid-template-columns: repeat(3, 1fr); }
-  .scene-chip { min-height: 38px; }
-  .workday-summary { grid-template-columns: 1fr; margin-bottom: var(--space-6); }
-  .summary-board { padding: var(--space-4); }
-  .summary-board-head {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: var(--space-1);
+  .magazine-columns {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
-  .summary-board-grid { grid-template-columns: 1fr; gap: var(--space-4); }
+  .magazine-tags span { font-size: var(--text-xs); min-height: 28px; padding: 4px 10px; }
+  .magazine-footer { flex-direction: column; gap: var(--space-3); align-items: stretch; }
+  .magazine-footer .section-link-btn { text-align: center; }
 
   .today-head { padding: var(--space-3) var(--space-3) var(--space-2); }
   .today-lunar-line { padding: 0 var(--space-3) var(--space-2); }
@@ -71,9 +67,8 @@
 
 /* ---- 360px 超小屏 ---- */
 @media (max-width: 360px) {
-  .workday-hero { padding: var(--space-4); }
-  .workday-hero h1 { font-size: 1.75rem; }
-  .scene-switch { grid-template-columns: repeat(2, 1fr); }
+  .magazine-card { padding: var(--space-4); }
+  .magazine-headline { font-size: 1.75rem; }
   .today-label { font-size: var(--text-sm); }
   .today-body { padding: 0 var(--space-2); }
   .yi-ji-tags { margin-left: 0; gap: 3px; }
@@ -88,9 +83,8 @@
 
 /* ---- 768px 平板 ---- */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .workday-hero { grid-template-columns: minmax(0, 1fr) 150px; }
-  .workday-summary { grid-template-columns: 1fr; }
-  .summary-board-grid { grid-template-columns: repeat(3, 1fr); }
+  .magazine-columns { grid-template-columns: minmax(0, 1fr) 150px; }
+  .magazine-headline { font-size: clamp(2.5rem, 2rem + 1.5vw, 3rem); }
 
   .detail-panel {
     max-width: 640px; left: 50%; right: auto;

@@ -24,9 +24,12 @@
   <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
   <link rel="apple-touch-icon" href="/public/logo.svg">
   <title>轻历 — 轻量中国日历</title>
-  <link rel="stylesheet" href="/css/design-system.css?v=2.5">
-  <link rel="stylesheet" href="/css/calendar.css?v=2.5">
-  <link rel="stylesheet" href="/css/responsive.css?v=2.5">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/design-system.css?v=2.6">
+  <link rel="stylesheet" href="/css/calendar.css?v=2.6">
+  <link rel="stylesheet" href="/css/responsive.css?v=2.6">
 </head>
 <body>
   <div class="app" id="app">
@@ -65,51 +68,37 @@
       <div id="searchResults" class="search-results"></div>
     </div>
 
-    <section class="workday-hero" id="workdayHero">
-      <div class="workday-hero-main">
-        <div class="workday-kicker">
-          <span id="workdayDateLine">今日职场黄历</span>
+    <section class="magazine-card" id="magazineCard">
+      <div class="magazine-inner">
+        <div class="magazine-header">
+          <span class="magazine-kicker" id="magazineKicker">今日职场黄历</span>
+          <span class="magazine-date" id="magazineDate"></span>
           <span class="today-clock" id="todayClock"></span>
         </div>
-        <h1 id="workdayHeadline">今天适合礼貌推进，不适合无底线配合。</h1>
-        <p id="workdaySubline">能说清楚的事别靠默契，能排优先级的事别靠加班。</p>
-        <button class="hero-share-btn" id="shareWorkdayBtn" type="button">生成今日职场签</button>
-      </div>
-      <div class="scene-switch" id="sceneSwitch" aria-label="切换职场场景">
-        <button class="scene-chip is-active" type="button" data-scene="work">上班</button>
-        <button class="scene-chip" type="button" data-scene="meeting">开会</button>
-        <button class="scene-chip" type="button" data-scene="overtime">加班</button>
-        <button class="scene-chip" type="button" data-scene="slack">摸鱼</button>
-        <button class="scene-chip" type="button" data-scene="job">求职</button>
-        <button class="scene-chip" type="button" data-scene="report">汇报</button>
-      </div>
-    </section>
-
-    <section class="workday-summary" id="workdaySummary">
-      <div class="summary-board">
-        <div class="summary-board-head">
-          <span>今天怎么做</span>
-          <strong id="workdaySignal">今日固定 · 上班场景</strong>
-        </div>
-        <div class="summary-board-grid">
-          <div class="summary-block summary-panel-primary">
-            <div class="summary-label">可以推进</div>
-            <div class="summary-tags" id="workdayFocusTags"></div>
+        <h1 class="magazine-headline" id="magazineHeadline">今天适合...</h1>
+        <p class="magazine-subline" id="magazineSubline"></p>
+        <div class="magazine-columns">
+          <div class="magazine-col magazine-col-yi">
+            <div class="magazine-col-label">
+              <span class="magazine-dot yi-dot"></span>
+              可以推进
+            </div>
+            <div class="magazine-tags" id="magazineFocusTags"></div>
           </div>
-          <div class="summary-block">
-            <div class="summary-label">先别急</div>
-            <div class="summary-tags caution" id="workdayWarningTags"></div>
-          </div>
-          <div class="summary-block summary-note">
-            <div class="summary-label">一句人话</div>
-            <p id="workdayNote">完整日历在下面，想认真查日子也能查。</p>
-            <span id="workdayLunarLine"></span>
+          <div class="magazine-col magazine-col-ji">
+            <div class="magazine-col-label">
+              <span class="magazine-dot ji-dot"></span>
+              先缓一缓
+            </div>
+            <div class="magazine-tags caution" id="magazineWarningTags"></div>
           </div>
         </div>
-      </div>
-      <div class="rhythm-card">
-        <div class="summary-label">今日信号</div>
-        <div class="rhythm-list" id="workdayRhythm"></div>
+        <div class="magazine-chongsha" id="magazineChongsha"></div>
+        <div class="magazine-lunar-bar" id="magazineLunarBar"></div>
+        <div class="magazine-footer">
+          <div class="magazine-ai-note" id="magazineAiNote"></div>
+          <button class="magazine-share-btn" id="shareWorkdayBtn" type="button">生成今日职场签</button>
+        </div>
       </div>
     </section>
 
@@ -247,8 +236,8 @@
 
   <div class="toast" id="toast"></div>
 
-  <script type="module" src="/js/calendar.js?v=2.5"></script>
-  <script type="module" src="/js/events.js?v=2.5"></script>
-  <script type="module" src="/js/app.js?v=2.5"></script>
+  <script type="module" src="/js/calendar.js?v=2.6"></script>
+  <script type="module" src="/js/events.js?v=2.6"></script>
+  <script type="module" src="/js/app.js?v=2.6"></script>
 </body>
 </html>
