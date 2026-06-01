@@ -882,7 +882,7 @@
   position: fixed;
   inset: 0;
   background: rgba(28, 24, 20, 0.3);
-  z-index: var(--z-overlay);
+  z-index: var(--z-panel);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--transition-base);
@@ -898,7 +898,7 @@
   background: var(--color-bg-card);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   box-shadow: var(--shadow-lg);
-  z-index: var(--z-panel);
+  z-index: var(--z-overlay);
   transform: translateY(100%);
   transition: transform var(--transition-spring);
   overflow-y: auto;

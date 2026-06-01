@@ -752,7 +752,10 @@ async function shareCanvas(canvas, title, text, fileName) {
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
   a.download = fileName
+  a.style.display = 'none'
+  document.body.appendChild(a)
   a.click()
+  document.body.removeChild(a)
   URL.revokeObjectURL(a.href)
   showToast('卡片已保存')
 }
