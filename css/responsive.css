@@ -141,7 +141,7 @@
   .app { padding: var(--space-3) var(--space-8); }
 
   .main-grid {
-    grid-template-columns: 360px 1fr;
+    grid-template-columns: 1fr 2fr;
     gap: var(--space-6);
   }
 
@@ -154,16 +154,20 @@
   }
 
   .cal-cell { min-height: 72px; }
+
+  .ical-grid { gap: var(--space-4); }
 }
 
 /* ---- 1280px+ 宽屏桌面 ---- */
 @media (min-width: 1280px) {
   .main-grid {
-    grid-template-columns: 380px 1fr;
+    grid-template-columns: 1fr 2fr;
     gap: var(--space-8);
   }
 
   .cal-cell { min-height: 78px; }
+
+  .ical-grid { gap: var(--space-5); }
 }
 
 /* ---- 1600px+ 超宽屏 ---- */
@@ -171,7 +175,7 @@
   .app { padding: var(--space-3) var(--space-10); }
 
   .main-grid {
-    grid-template-columns: 400px 1fr;
+    grid-template-columns: 1fr 2fr;
     gap: var(--space-10);
   }
 
@@ -183,7 +187,7 @@
   .app { padding: var(--space-3) var(--space-12); }
 
   .main-grid {
-    grid-template-columns: 420px 1fr;
+    grid-template-columns: 1fr 2fr;
     gap: var(--space-12);
   }
 

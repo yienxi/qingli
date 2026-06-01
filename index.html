@@ -97,6 +97,8 @@
         </div>
       </aside>
 
+      <div class="right-column">
+
       <section class="calendar-section" id="calendarSection">
         <nav class="cal-nav" id="calNav">
           <div class="cal-nav-title">
@@ -133,6 +135,43 @@
           <span class="legend-item legend-event">个人事件</span>
         </div>
       </section>
+
+      <section class="ical-section">
+        <h2 class="ical-section-title">订阅到你的日历</h2>
+        <p class="ical-section-desc">复制链接，粘贴到 Apple 日历 / Google Calendar / Outlook 的「订阅日历」中，节假日和节气自动同步。</p>
+        <div class="ical-grid">
+          <div class="ical-card ical-card-featured">
+            <div class="ical-card-icon">🎉</div>
+            <div class="ical-card-title">节日与假期</div>
+            <div class="ical-card-desc">法定节假日、传统节日、调休提醒</div>
+            <span class="ical-card-url" id="icalUrlFestivals" data-url="festivals">加载中...</span>
+            <button class="ical-copy-btn" data-type="festivals">复制链接</button>
+          </div>
+          <div class="ical-card">
+            <div class="ical-card-icon">🌿</div>
+            <div class="ical-card-title">二十四节气</div>
+            <div class="ical-card-desc">立春、夏至、秋分、冬至...</div>
+            <span class="ical-card-url" id="icalUrlTerms" data-url="terms">加载中...</span>
+            <button class="ical-copy-btn" data-type="terms">复制链接</button>
+          </div>
+          <div class="ical-card">
+            <div class="ical-card-icon">📋</div>
+            <div class="ical-card-title">每日宜忌</div>
+            <div class="ical-card-desc">每日黄历宜忌摘要</div>
+            <span class="ical-card-url" id="icalUrlYiji" data-url="yiji">加载中...</span>
+            <button class="ical-copy-btn" data-type="yiji">复制链接</button>
+          </div>
+          <div class="ical-card ical-card-full">
+            <div class="ical-card-icon">🗓</div>
+            <div class="ical-card-title">完整日历</div>
+            <div class="ical-card-desc">以上全部合并订阅</div>
+            <span class="ical-card-url" id="icalUrlAll" data-url="all">加载中...</span>
+            <button class="ical-copy-btn" data-type="all">复制链接</button>
+          </div>
+        </div>
+      </section>
+
+      </div>
     </div>
 
     <div class="info-strip" id="infoStrip">
@@ -141,41 +180,6 @@
         <div class="info-strip-items" id="infoStripItems"></div>
       </div>
     </div>
-
-    <section class="ical-section">
-      <h2 class="ical-section-title">订阅到你的日历</h2>
-      <p class="ical-section-desc">复制链接，粘贴到 Apple 日历 / Google Calendar / Outlook 的「订阅日历」中，节假日和节气自动同步。</p>
-      <div class="ical-grid">
-        <div class="ical-card ical-card-featured">
-          <div class="ical-card-icon">🎉</div>
-          <div class="ical-card-title">节日与假期</div>
-          <div class="ical-card-desc">法定节假日、传统节日、调休提醒</div>
-          <span class="ical-card-url" id="icalUrlFestivals" data-url="festivals">加载中...</span>
-          <button class="ical-copy-btn" data-type="festivals">复制链接</button>
-        </div>
-        <div class="ical-card">
-          <div class="ical-card-icon">🌿</div>
-          <div class="ical-card-title">二十四节气</div>
-          <div class="ical-card-desc">立春、夏至、秋分、冬至...</div>
-          <span class="ical-card-url" id="icalUrlTerms" data-url="terms">加载中...</span>
-          <button class="ical-copy-btn" data-type="terms">复制链接</button>
-        </div>
-        <div class="ical-card">
-          <div class="ical-card-icon">📋</div>
-          <div class="ical-card-title">每日宜忌</div>
-          <div class="ical-card-desc">每日黄历宜忌摘要</div>
-          <span class="ical-card-url" id="icalUrlYiji" data-url="yiji">加载中...</span>
-          <button class="ical-copy-btn" data-type="yiji">复制链接</button>
-        </div>
-        <div class="ical-card ical-card-full">
-          <div class="ical-card-icon">🗓</div>
-          <div class="ical-card-title">完整日历</div>
-          <div class="ical-card-desc">以上全部合并订阅</div>
-          <span class="ical-card-url" id="icalUrlAll" data-url="all">加载中...</span>
-          <button class="ical-copy-btn" data-type="all">复制链接</button>
-        </div>
-      </div>
-    </section>
 
     <footer class="app-footer">
       <span class="footer-text">轻历 · 开源 · MIT</span>
