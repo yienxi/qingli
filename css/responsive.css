@@ -138,30 +138,54 @@
 @media (min-width: 1024px) {
   html { font-size: 17px; }
 
-  .app { padding: var(--space-10) var(--space-10); }
+  .app { padding: var(--space-3) var(--space-8); }
+
+  .main-grid {
+    grid-template-columns: 360px 1fr;
+    gap: var(--space-6);
+  }
+
+  .magazine-card {
+    padding: var(--space-6);
+  }
+
+  .magazine-headline {
+    font-size: clamp(1.6rem, 1.2rem + 1vw, 2rem);
+  }
+
+  .cal-cell { min-height: 72px; }
+}
+
+/* ---- 1280px+ 宽屏桌面 ---- */
+@media (min-width: 1280px) {
+  .main-grid {
+    grid-template-columns: 380px 1fr;
+    gap: var(--space-8);
+  }
+
+  .cal-cell { min-height: 78px; }
+}
+
+/* ---- 1600px+ 超宽屏 ---- */
+@media (min-width: 1600px) {
+  .app { padding: var(--space-3) var(--space-10); }
 
   .main-grid {
     grid-template-columns: 400px 1fr;
     gap: var(--space-10);
   }
 
-  .magazine-card {
-    padding: var(--space-10);
-  }
-
-  .magazine-headline {
-    font-size: clamp(2.5rem, 2rem + 1vw, 3rem);
-  }
-
-  .cal-cell { min-height: 100px; }
+  .cal-cell { min-height: 82px; }
 }
 
-/* ---- 1280px+ 宽屏桌面 ---- */
-@media (min-width: 1280px) {
+/* ---- 1920px+ 全宽 ---- */
+@media (min-width: 1920px) {
+  .app { padding: var(--space-3) var(--space-12); }
+
   .main-grid {
     grid-template-columns: 420px 1fr;
     gap: var(--space-12);
   }
 
-  .cal-cell { min-height: 110px; }
+  .cal-cell { min-height: 88px; }
 }
