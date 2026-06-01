@@ -6,36 +6,49 @@
 /* ---- 480px 小屏手机 ---- */
 @media (max-width: 480px) {
   .app { padding: var(--space-4) var(--space-3); }
+  .app-header { margin-bottom: var(--space-5); }
   .brand-text { font-size: var(--text-lg); }
   .app-logo { width: 28px; height: 28px; }
 
-  .magazine-card {
-    padding: var(--space-5);
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
     margin-bottom: var(--space-5);
   }
+
+  .magazine-card {
+    position: relative;
+    top: 0;
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+  }
+  .magazine-date { font-size: var(--text-xl); }
   .magazine-headline {
-    font-size: clamp(2rem, 1.5rem + 2vw, 2.5rem);
+    font-size: clamp(1.75rem, 1.5rem + 2vw, 2.25rem);
   }
-  .magazine-header {
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-  .magazine-columns {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
+  .magazine-tags-section {
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
   }
   .magazine-tags span { font-size: var(--text-xs); min-height: 28px; padding: 4px 10px; }
   .magazine-footer { flex-direction: column; gap: var(--space-3); align-items: stretch; }
-  .magazine-footer .section-link-btn { text-align: center; }
+  .magazine-share-btn { text-align: center; }
 
-  .today-head { padding: var(--space-3) var(--space-3) var(--space-2); }
-  .today-lunar-line { padding: 0 var(--space-3) var(--space-2); }
-  .today-body { padding: 0 var(--space-3); }
-  .today-yi-section,
-  .today-ji-section,
-  .today-chongsha-section { padding: var(--space-3) 0; }
-
-  .yi-ji-tags { margin-left: 28px; gap: 4px; }
+  .info-strip {
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  .info-strip-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  .info-strip-label {
+    border-right: none;
+    padding-right: 0;
+    padding-bottom: var(--space-1);
+    border-bottom: 1px solid var(--color-border-light);
+  }
 
   .cal-nav-title .year { font-size: var(--text-sm); }
   .cal-nav-title .month { font-size: var(--text-xl); }
@@ -50,9 +63,16 @@
   .day-lunar.lunar-term { font-size: 10px; font-weight: var(--weight-semibold); }
   .day-tag { font-size: 8px; padding: 0 3px; }
 
+  .today-head { padding: var(--space-3) var(--space-3) var(--space-2); }
+  .today-lunar-line { padding: 0 var(--space-3) var(--space-2); }
+  .today-body { padding: 0 var(--space-3); }
+  .today-yi-section,
+  .today-ji-section,
+  .today-chongsha-section { padding: var(--space-3) 0; }
+  .yi-ji-tags { margin-left: 28px; gap: 4px; }
+
   .panel-date { font-size: var(--text-xl); }
   .panel-lunar { font-size: var(--text-sm); }
-
   .panel-yiji { flex-direction: column; padding: var(--space-3) var(--space-2); }
   .yiji-divider { width: 100%; height: 1px; margin: var(--space-3) 0; }
   .panel-yiji-section { padding: 0; }
@@ -69,6 +89,10 @@
 @media (max-width: 360px) {
   .magazine-card { padding: var(--space-4); }
   .magazine-headline { font-size: 1.75rem; }
+
+  .info-strip { padding: var(--space-2) var(--space-3); }
+  .info-strip-items { gap: var(--space-2); }
+
   .today-label { font-size: var(--text-sm); }
   .today-body { padding: 0 var(--space-2); }
   .yi-ji-tags { margin-left: 0; gap: 3px; }
@@ -83,8 +107,23 @@
 
 /* ---- 768px 平板 ---- */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .magazine-columns { grid-template-columns: minmax(0, 1fr) 150px; }
-  .magazine-headline { font-size: clamp(2.5rem, 2rem + 1.5vw, 3rem); }
+  .app { padding: var(--space-6) var(--space-5); }
+
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .magazine-card {
+    position: relative;
+    top: 0;
+    padding: var(--space-6);
+  }
+
+  .magazine-headline { font-size: clamp(2.25rem, 2rem + 1.5vw, 2.75rem); }
+
+  .info-strip { padding: var(--space-4) var(--space-5); }
 
   .detail-panel {
     max-width: 640px; left: 50%; right: auto;
@@ -98,30 +137,31 @@
 /* ---- 1024px+ 桌面端 ---- */
 @media (min-width: 1024px) {
   html { font-size: 17px; }
-  .cal-cell { min-height: var(--cell-min-height-desktop); }
 
-  .detail-panel {
-    max-width: 520px;
-    left: auto; right: var(--space-8);
-    bottom: var(--space-8);
-    border-radius: var(--radius-lg);
-    max-height: 85vh;
-    transform: translateY(20px) scale(0.95);
-    opacity: 0; pointer-events: none;
+  .app { padding: var(--space-10) var(--space-10); }
+
+  .main-grid {
+    grid-template-columns: 400px 1fr;
+    gap: var(--space-10);
   }
-  .detail-panel.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
-  .detail-panel .panel-handle { display: none; }
 
-  .ical-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-  .traditional-grid { grid-template-columns: repeat(3, 1fr); }
+  .magazine-card {
+    padding: var(--space-10);
+  }
+
+  .magazine-headline {
+    font-size: clamp(2.5rem, 2rem + 1vw, 3rem);
+  }
+
+  .cal-cell { min-height: 100px; }
 }
 
-/* ---- 1440px+ 大屏 ---- */
-@media (min-width: 1440px) {
-  html { font-size: 18px; }
-}
+/* ---- 1280px+ 宽屏桌面 ---- */
+@media (min-width: 1280px) {
+  .main-grid {
+    grid-template-columns: 420px 1fr;
+    gap: var(--space-12);
+  }
 
-/* ---- 2560px+ 超宽屏 ---- */
-@media (min-width: 2560px) {
-  html { font-size: 20px; }
+  .cal-cell { min-height: 110px; }
 }

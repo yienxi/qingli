@@ -44,6 +44,7 @@ const magazineLunarBar = document.getElementById('magazineLunarBar')
 const magazineAiNote = document.getElementById('magazineAiNote')
 const jumpTodayBtn = document.getElementById('jumpTodayBtn')
 const shareWorkdayBtn = document.getElementById('shareWorkdayBtn')
+const infoStripItems = document.getElementById('infoStripItems')
 
 let currentWorkdayBrief = null
 
@@ -138,6 +139,19 @@ async function renderWorkdayCard() {
   if (magazineChongsha) {
     magazineChongsha.innerHTML = chongshaHtml
     magazineChongsha.style.display = chongshaHtml ? '' : 'none'
+  }
+
+  if (infoStripItems && todayData) {
+    const items = [
+      { label: '值神', value: todayData.zhiShen || '-' },
+      { label: '纳音', value: todayData.naYin || '-' },
+      { label: '星宿', value: todayData.xingXiu || '-' },
+      { label: '喜神', value: todayData.xiShen || '-' },
+      { label: '财神', value: todayData.caiShen || '-' },
+    ]
+    infoStripItems.innerHTML = items
+      .map(item => `<span class="info-strip-item"><span class="info-label">${item.label}</span>${item.value}</span>`)
+      .join('')
   }
 
   const fallbackHeadline = `今天适合${yiFocus.slice(0, 2).join('、')}，不适合${jiWarnings.slice(0, 2).join('、')}。`

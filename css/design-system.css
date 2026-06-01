@@ -65,11 +65,14 @@
   --text-xs:       0.75rem;     /* 12px */
   --text-sm:       0.8125rem;   /* 13px */
   --text-base:     0.9375rem;   /* 15px */
-  --text-lg:       1.0625rem;   /* 17px */
   --text-md:       1rem;        /* 16px */
+  --text-lg:       1.0625rem;   /* 17px */
   --text-xl:       1.25rem;     /* 20px */
   --text-2xl:      1.5rem;      /* 24px */
   --text-3xl:      2rem;        /* 32px */
+  --text-4xl:      3rem;        /* 48px */
+  --text-5xl:      4.5rem;      /* 72px */
+  --text-display:  6rem;        /* 96px */
 
   --leading-tight: 1.2;
   --leading-normal: 1.5;
@@ -91,6 +94,8 @@
   --space-10:  2.5rem;
   --space-12:  3rem;
   --space-16:  4rem;
+  --space-20:  5rem;
+  --space-24:  6rem;
 
   /* ██ Layout */
   --radius-sm:    3px;
@@ -104,7 +109,7 @@
   --shadow-red:   0 0 0 2px var(--color-accent-red);
 
   /* ██ Calendar Grid */
-  --calendar-max-width: 1040px;
+  --calendar-max-width: 1440px;
   --cell-min-height-desktop: 80px;
   --cell-min-height-mobile: 56px;
   --weekday-header-height: 32px;

@@ -27,9 +27,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/design-system.css?v=2.6">
-  <link rel="stylesheet" href="/css/calendar.css?v=2.6">
-  <link rel="stylesheet" href="/css/responsive.css?v=2.6">
+  <link rel="stylesheet" href="/css/design-system.css?v=2.7">
+  <link rel="stylesheet" href="/css/calendar.css?v=2.7">
+  <link rel="stylesheet" href="/css/responsive.css?v=2.7">
 </head>
 <body>
   <div class="app" id="app">
@@ -68,76 +68,79 @@
       <div id="searchResults" class="search-results"></div>
     </div>
 
-    <section class="magazine-card" id="magazineCard">
-      <div class="magazine-inner">
-        <div class="magazine-header">
-          <span class="magazine-kicker" id="magazineKicker">今日职场黄历</span>
+    <div class="main-grid">
+      <aside class="magazine-card" id="magazineCard">
+        <div class="magazine-date-block">
           <span class="magazine-date" id="magazineDate"></span>
           <span class="today-clock" id="todayClock"></span>
         </div>
-        <h1 class="magazine-headline" id="magazineHeadline">今天适合...</h1>
-        <p class="magazine-subline" id="magazineSubline"></p>
-        <div class="magazine-columns">
-          <div class="magazine-col magazine-col-yi">
-            <div class="magazine-col-label">
-              <span class="magazine-dot yi-dot"></span>
-              可以推进
-            </div>
-            <div class="magazine-tags" id="magazineFocusTags"></div>
-          </div>
-          <div class="magazine-col magazine-col-ji">
-            <div class="magazine-col-label">
-              <span class="magazine-dot ji-dot"></span>
-              先缓一缓
-            </div>
-            <div class="magazine-tags caution" id="magazineWarningTags"></div>
-          </div>
-        </div>
-        <div class="magazine-chongsha" id="magazineChongsha"></div>
         <div class="magazine-lunar-bar" id="magazineLunarBar"></div>
+        <div class="magazine-body">
+          <span class="magazine-kicker" id="magazineKicker">今日职场黄历</span>
+          <h1 class="magazine-headline" id="magazineHeadline">今天适合...</h1>
+          <p class="magazine-subline" id="magazineSubline"></p>
+          <div class="magazine-tags-section">
+            <div class="magazine-tag-group">
+              <span class="magazine-tag-label yi-label">可以推进</span>
+              <div class="magazine-tags" id="magazineFocusTags"></div>
+            </div>
+            <div class="magazine-tag-group">
+              <span class="magazine-tag-label ji-label">先缓一缓</span>
+              <div class="magazine-tags caution" id="magazineWarningTags"></div>
+            </div>
+          </div>
+          <div class="magazine-chongsha" id="magazineChongsha"></div>
+        </div>
         <div class="magazine-footer">
           <div class="magazine-ai-note" id="magazineAiNote"></div>
           <button class="magazine-share-btn" id="shareWorkdayBtn" type="button">生成今日职场签</button>
         </div>
-      </div>
-    </section>
+      </aside>
 
-    <section class="calendar-section" id="calendarSection">
-      <nav class="cal-nav" id="calNav">
-        <div class="cal-nav-title">
-          <span class="year" id="navYear"></span>
-          <span class="month" id="navMonth"></span>
+      <section class="calendar-section" id="calendarSection">
+        <nav class="cal-nav" id="calNav">
+          <div class="cal-nav-title">
+            <span class="year" id="navYear"></span>
+            <span class="month" id="navMonth"></span>
+          </div>
+          <div class="cal-nav-controls">
+            <button class="icon-btn" id="prevMonth" aria-label="上个月">
+              ‹
+              <span class="tooltip">上个月</span>
+            </button>
+            <button class="today-btn" id="todayBtn">今天</button>
+            <button class="icon-btn" id="nextMonth" aria-label="下个月">
+              ›
+              <span class="tooltip">下个月</span>
+            </button>
+          </div>
+        </nav>
+
+        <div class="weekday-header">
+          <span class="weekday-cell">一</span>
+          <span class="weekday-cell">二</span>
+          <span class="weekday-cell">三</span>
+          <span class="weekday-cell">四</span>
+          <span class="weekday-cell">五</span>
+          <span class="weekday-cell weekend">六</span>
+          <span class="weekday-cell weekend">日</span>
         </div>
-        <div class="cal-nav-controls">
-          <button class="icon-btn" id="prevMonth" aria-label="上个月">
-            ‹
-            <span class="tooltip">上个月</span>
-          </button>
-          <button class="today-btn" id="todayBtn">今天</button>
-          <button class="icon-btn" id="nextMonth" aria-label="下个月">
-            ›
-            <span class="tooltip">下个月</span>
-          </button>
+        <div class="cal-grid" id="calGrid"></div>
+
+        <div class="cal-legend">
+          <span class="legend-item legend-holiday">节假日</span>
+          <span class="legend-item legend-term">节气</span>
+          <span class="legend-item legend-event">个人事件</span>
         </div>
-      </nav>
+      </section>
+    </div>
 
-      <div class="weekday-header">
-        <span class="weekday-cell">一</span>
-        <span class="weekday-cell">二</span>
-        <span class="weekday-cell">三</span>
-        <span class="weekday-cell">四</span>
-        <span class="weekday-cell">五</span>
-        <span class="weekday-cell weekend">六</span>
-        <span class="weekday-cell weekend">日</span>
+    <div class="info-strip" id="infoStrip">
+      <div class="info-strip-inner">
+        <span class="info-strip-label">今日传统</span>
+        <div class="info-strip-items" id="infoStripItems"></div>
       </div>
-      <div class="cal-grid" id="calGrid"></div>
-
-      <div class="cal-legend">
-        <span class="legend-item legend-holiday">节假日</span>
-        <span class="legend-item legend-term">节气</span>
-        <span class="legend-item legend-event">个人事件</span>
-      </div>
-    </section>
+    </div>
 
     <section class="ical-section">
       <h2 class="ical-section-title">订阅到你的日历</h2>
@@ -236,8 +239,7 @@
 
   <div class="toast" id="toast"></div>
 
-  <script type="module" src="/js/calendar.js?v=2.6"></script>
-  <script type="module" src="/js/events.js?v=2.6"></script>
-  <script type="module" src="/js/app.js?v=2.6"></script>
+  <script type="module" src="/js/calendar.js?v=2.7"></script>
+  <script type="module" src="/js/app.js?v=2.7"></script>
 </body>
 </html>
