@@ -65,56 +65,90 @@
       <div id="searchResults" class="search-results"></div>
     </div>
 
-    <div class="today-card" id="todayCard">
-      <div class="today-head">
-        <div class="today-head-left">
-          <span class="today-year-line" id="todayYearLine"></span>
-          <span class="today-date-head" id="todayCardDateHead"></span>
+    <section class="workday-hero" id="workdayHero">
+      <div class="workday-hero-main">
+        <div class="workday-kicker">
+          <span id="workdayDateLine">今日职场黄历</span>
+          <span class="today-clock" id="todayClock"></span>
         </div>
-        <span class="today-clock" id="todayClock"></span>
+        <h1 id="workdayHeadline">今天适合礼貌推进，不适合无底线配合。</h1>
+        <p id="workdaySubline">能说清楚的事别靠默契，能排优先级的事别靠加班。</p>
+        <button class="hero-share-btn" id="shareWorkdayBtn" type="button">生成今日职场签</button>
       </div>
-      <div class="today-lunar-line" id="todayCardLunarLine"></div>
-      <div class="today-body" id="todayBody">
-        <div class="today-yi-section" id="todayYiSection"></div>
-        <div class="today-ji-section" id="todayJiSection"></div>
-        <div class="today-chongsha-section" id="todayChongshaSection"></div>
+      <div class="scene-switch" id="sceneSwitch" aria-label="切换职场场景">
+        <button class="scene-chip is-active" type="button" data-scene="work">上班</button>
+        <button class="scene-chip" type="button" data-scene="meeting">开会</button>
+        <button class="scene-chip" type="button" data-scene="overtime">加班</button>
+        <button class="scene-chip" type="button" data-scene="slack">摸鱼</button>
+        <button class="scene-chip" type="button" data-scene="job">求职</button>
+        <button class="scene-chip" type="button" data-scene="report">汇报</button>
       </div>
-    </div>
+    </section>
 
-    <nav class="cal-nav" id="calNav">
-      <div class="cal-nav-title">
-        <span class="year" id="navYear"></span>
-        <span class="month" id="navMonth"></span>
+    <section class="workday-summary" id="workdaySummary">
+      <div class="summary-board">
+        <div class="summary-board-head">
+          <span>今天怎么做</span>
+          <strong id="workdaySignal">今日固定 · 上班场景</strong>
+        </div>
+        <div class="summary-board-grid">
+          <div class="summary-block summary-panel-primary">
+            <div class="summary-label">可以推进</div>
+            <div class="summary-tags" id="workdayFocusTags"></div>
+          </div>
+          <div class="summary-block">
+            <div class="summary-label">先别急</div>
+            <div class="summary-tags caution" id="workdayWarningTags"></div>
+          </div>
+          <div class="summary-block summary-note">
+            <div class="summary-label">一句人话</div>
+            <p id="workdayNote">完整日历在下面，想认真查日子也能查。</p>
+            <span id="workdayLunarLine"></span>
+          </div>
+        </div>
       </div>
-      <div class="cal-nav-controls">
-        <button class="icon-btn" id="prevMonth" aria-label="上个月">
-          ‹
-          <span class="tooltip">上个月</span>
-        </button>
-        <button class="today-btn" id="todayBtn">今天</button>
-        <button class="icon-btn" id="nextMonth" aria-label="下个月">
-          ›
-          <span class="tooltip">下个月</span>
-        </button>
+      <div class="rhythm-card">
+        <div class="summary-label">今日信号</div>
+        <div class="rhythm-list" id="workdayRhythm"></div>
       </div>
-    </nav>
+    </section>
 
-    <div class="weekday-header">
-      <span class="weekday-cell">一</span>
-      <span class="weekday-cell">二</span>
-      <span class="weekday-cell">三</span>
-      <span class="weekday-cell">四</span>
-      <span class="weekday-cell">五</span>
-      <span class="weekday-cell weekend">六</span>
-      <span class="weekday-cell weekend">日</span>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
+    <section class="calendar-section" id="calendarSection">
+      <nav class="cal-nav" id="calNav">
+        <div class="cal-nav-title">
+          <span class="year" id="navYear"></span>
+          <span class="month" id="navMonth"></span>
+        </div>
+        <div class="cal-nav-controls">
+          <button class="icon-btn" id="prevMonth" aria-label="上个月">
+            ‹
+            <span class="tooltip">上个月</span>
+          </button>
+          <button class="today-btn" id="todayBtn">今天</button>
+          <button class="icon-btn" id="nextMonth" aria-label="下个月">
+            ›
+            <span class="tooltip">下个月</span>
+          </button>
+        </div>
+      </nav>
 
-    <div class="cal-legend">
-      <span class="legend-item legend-holiday">节假日</span>
-      <span class="legend-item legend-term">节气</span>
-      <span class="legend-item legend-event">个人事件</span>
-    </div>
+      <div class="weekday-header">
+        <span class="weekday-cell">一</span>
+        <span class="weekday-cell">二</span>
+        <span class="weekday-cell">三</span>
+        <span class="weekday-cell">四</span>
+        <span class="weekday-cell">五</span>
+        <span class="weekday-cell weekend">六</span>
+        <span class="weekday-cell weekend">日</span>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+
+      <div class="cal-legend">
+        <span class="legend-item legend-holiday">节假日</span>
+        <span class="legend-item legend-term">节气</span>
+        <span class="legend-item legend-event">个人事件</span>
+      </div>
+    </section>
 
     <section class="ical-section">
       <h2 class="ical-section-title">订阅到你的日历</h2>
