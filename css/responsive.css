@@ -153,7 +153,7 @@
     font-size: clamp(1.6rem, 1.2rem + 1vw, 2rem);
   }
 
-  .cal-cell { min-height: 72px; }
+  .cal-cell { min-height: 68px; }
 
   .ical-grid { gap: var(--space-4); }
 }
@@ -165,7 +165,7 @@
     gap: var(--space-8);
   }
 
-  .cal-cell { min-height: 78px; }
+  .cal-cell { min-height: 74px; }
 
   .ical-grid { gap: var(--space-5); }
 }
@@ -179,7 +179,7 @@
     gap: var(--space-10);
   }
 
-  .cal-cell { min-height: 82px; }
+  .cal-cell { min-height: 78px; }
 }
 
 /* ---- 1920px+ 全宽 ---- */
@@ -191,5 +191,5 @@
     gap: var(--space-12);
   }
 
-  .cal-cell { min-height: 88px; }
+  .cal-cell { min-height: 84px; }
 }

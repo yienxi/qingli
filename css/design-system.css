@@ -110,7 +110,7 @@
 
   /* ██ Calendar Grid */
   --calendar-max-width: 100%;
-  --cell-min-height-desktop: 68px;
+  --cell-min-height-desktop: 64px;
   --cell-min-height-mobile: 56px;
   --weekday-header-height: 32px;
 
