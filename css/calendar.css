@@ -77,11 +77,26 @@
   min-width: 0;
 }
 
+.calendar-section {
+  flex: 2;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ical-section {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 /* ===== Magazine Card (Left Sidebar) ===== */
 .magazine-card {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   padding: var(--space-5);
   background-color: var(--color-bg-card);
   background-image:
@@ -322,6 +337,7 @@
   justify-content: space-between;
   margin-bottom: var(--space-2);
   user-select: none;
+  flex-shrink: 0;
 }
 
 .cal-nav-title { display: flex; align-items: baseline; gap: var(--space-3); }
@@ -347,7 +363,7 @@
 .today-btn:disabled:active { transform: none; }
 
 /* ===== Weekday Header ===== */
-.weekday-header { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: var(--space-1); }
+.weekday-header { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: var(--space-1); flex-shrink: 0; }
 .weekday-cell {
   padding: var(--space-2) 0; text-align: center;
   font-size: var(--text-xs); font-weight: var(--weight-medium);
@@ -360,6 +376,10 @@
   display: grid; grid-template-columns: repeat(7, 1fr);
   border-top: 1px solid var(--color-border-light);
   border-left: 1px solid var(--color-border-light);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  align-content: start;
 }
 
 .cal-cell {
@@ -424,9 +444,10 @@
 
 /* ===== Legend Bar ===== */
 .cal-legend {
-  display: flex; gap: var(--space-4); margin: var(--space-3) 0 var(--space-4);
+  display: flex; gap: var(--space-4); margin: var(--space-2) 0 0;
   font-size: var(--text-xs); color: var(--color-text-tertiary);
   flex-wrap: wrap; align-items: center;
+  flex-shrink: 0;
 }
 .legend-item { display: flex; align-items: center; gap: 4px; }
 .legend-item::before {
@@ -487,33 +508,38 @@
 /* ===== iCal Section ===== */
 .ical-section {
   margin-top: 0;
-  padding: var(--space-4);
+  padding: var(--space-3);
   background: var(--color-bg-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border-light);
 }
 
 .ical-section-title {
-  font-size: var(--text-base); font-weight: var(--weight-semibold);
+  font-size: var(--text-sm); font-weight: var(--weight-semibold);
   color: var(--color-text-primary); margin-bottom: var(--space-1);
+  flex-shrink: 0;
 }
 .ical-section-desc {
-  font-size: var(--text-xs); color: var(--color-text-secondary);
-  margin-bottom: var(--space-4);
+  font-size: 11px; color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+  flex-shrink: 0;
 }
 
 .ical-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .ical-card {
-  display: flex; flex-direction: column; gap: var(--space-2);
-  padding: var(--space-4);
+  display: flex; flex-direction: column; gap: var(--space-1);
+  padding: var(--space-3);
   background: var(--color-bg-page);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   transition: border-color var(--transition-fast);
 }
 .ical-card:hover { border-color: var(--color-accent-red); }
