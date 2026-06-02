@@ -70,15 +70,24 @@
 
     <div class="main-grid">
       <aside class="magazine-card" id="magazineCard">
-        <div class="magazine-date-block">
-          <span class="magazine-date" id="magazineDate"></span>
-          <span class="today-clock" id="todayClock"></span>
+        <div class="magazine-header">
+          <div class="magazine-date-block">
+            <span class="magazine-date" id="magazineDate"></span>
+            <span class="today-clock" id="todayClock"></span>
+          </div>
+          <div class="magazine-lunar-bar" id="magazineLunarBar"></div>
         </div>
-        <div class="magazine-lunar-bar" id="magazineLunarBar"></div>
+        
+        <div class="magazine-hero">
+          <div class="hero-icon" id="heroIcon">🌙</div>
+          <div class="hero-zodiac" id="heroZodiac"></div>
+        </div>
+        
         <div class="magazine-body">
           <span class="magazine-kicker" id="magazineKicker">今日职场黄历</span>
           <h1 class="magazine-headline" id="magazineHeadline">今天适合...</h1>
           <p class="magazine-subline" id="magazineSubline"></p>
+          
           <div class="magazine-tags-section">
             <div class="magazine-tag-group">
               <span class="magazine-tag-label yi-label">可以推进</span>
@@ -89,8 +98,10 @@
               <div class="magazine-tags caution" id="magazineWarningTags"></div>
             </div>
           </div>
+          
           <div class="magazine-chongsha" id="magazineChongsha"></div>
         </div>
+        
         <div class="magazine-footer">
           <div class="magazine-ai-note" id="magazineAiNote"></div>
           <button class="magazine-share-btn" id="shareWorkdayBtn" type="button">生成今日职场签</button>

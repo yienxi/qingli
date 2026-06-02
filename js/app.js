@@ -57,6 +57,21 @@ function showToast(msg) {
   toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 2000)
 }
 
+const ZODIAC_ICONS = {
+  鼠: '🐀',
+  牛: '🐂',
+  虎: '🐅',
+  兔: '🐇',
+  龙: '🐉',
+  蛇: '🐍',
+  马: '🐴',
+  羊: '🐑',
+  猴: '🐒',
+  鸡: '🐓',
+  狗: '🐕',
+  猪: '🐖',
+}
+
 const YI_TO_WORK = {
   交易: '谈条件',
   开市: '开新坑',
@@ -125,11 +140,21 @@ async function renderWorkdayCard() {
 
   const chongshaInfo = todayData?.chongshaInfo
   const chongshaHtml = chongshaInfo?.text
-    ? `⚠ 今日${todayData.chongSha || ''}，${chongshaInfo.text}`
+    ? `今日${todayData.chongSha || ''}，${chongshaInfo.text}`
     : ''
 
   if (magazineDate) magazineDate.textContent = dateStr
   if (magazineLunarBar) magazineLunarBar.textContent = lunarStr
+  
+  const heroIcon = document.getElementById('heroIcon')
+  const heroZodiac = document.getElementById('heroZodiac')
+  if (heroIcon && todayData?.shengXiao) {
+    heroIcon.textContent = ZODIAC_ICONS[todayData.shengXiao] || '🌙'
+  }
+  if (heroZodiac && todayData?.shengXiao) {
+    heroZodiac.textContent = `${todayData.ganZhiYear}年 · ${todayData.shengXiao}`
+  }
+  
   if (magazineFocusTags) {
     magazineFocusTags.innerHTML = yiFocus.map(item => `<span>${escapeHtml(item)}</span>`).join('')
   }
