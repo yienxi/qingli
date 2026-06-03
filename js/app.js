@@ -309,6 +309,14 @@ function closePanel() {
   isPanelOpen = false
   detailOverlay.classList.remove('open')
   detailPanel.classList.remove('open')
+  clearDateSelection()
+}
+
+function clearDateSelection() {
+  document.querySelectorAll('.cal-cell.is-selected').forEach(cell => cell.classList.remove('is-selected'))
+  cal.selectedDate = null
+  const today = cal.today
+  renderWorkdayCard({ year: today.year, month: today.month, day: today.day })
 }
 
 function markSelectedDate(dateStr) {
