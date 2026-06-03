@@ -47,14 +47,6 @@
   .day-lunar.lunar-term { font-size: 10px; font-weight: var(--weight-semibold); }
   .day-tag { font-size: 8px; padding: 0 3px; }
 
-  .today-head { padding: var(--space-3) var(--space-3) var(--space-2); }
-  .today-lunar-line { padding: 0 var(--space-3) var(--space-2); }
-  .today-body { padding: 0 var(--space-3); }
-  .today-yi-section,
-  .today-ji-section,
-  .today-chongsha-section { padding: var(--space-3) 0; }
-  .yi-ji-tags { margin-left: 28px; gap: 4px; }
-
   .panel-date { font-size: var(--text-xl); }
   .panel-lunar { font-size: var(--text-sm); }
   .panel-yiji { flex-direction: column; padding: var(--space-3) var(--space-2); }
@@ -68,8 +60,7 @@
   .ical-grid { grid-template-columns: 1fr; }
   .ical-card-full { flex-direction: column; align-items: flex-start; }
   .ical-card { padding: var(--space-3); }
-  .ical-calendar-name { font-size: var(--text-sm); }
-  .ical-event-time { font-size: var(--text-xs); }
+
 }
 
 /* ---- 360px 超小屏 ---- */
@@ -77,9 +68,7 @@
   .magazine-card { padding: var(--space-4); }
   .magazine-headline { font-size: 1.75rem; }
 
-  .today-label { font-size: var(--text-sm); }
-  .today-body { padding: 0 var(--space-2); }
-  .yi-ji-tags { margin-left: 0; gap: 3px; }
+
 
   .cal-cell { min-height: 52px; }
   .day-num { font-size: var(--text-xs); }
