@@ -656,6 +656,33 @@ async function shareCanvas(canvas, title, text, fileName) {
   fallback()
 }
 
+const cardModalOverlay = document.getElementById('cardModalOverlay')
+const cardPreviewImg = document.getElementById('cardPreviewImg')
+const cardModalClose = document.getElementById('cardModalClose')
+const cardModalDownload = document.getElementById('cardModalDownload')
+
+let _cardBlobUrl = null
+
+function openCardPreview(dataUrl) {
+  cardPreviewImg.src = dataUrl
+  cardModalOverlay.style.display = 'flex'
+  requestAnimationFrame(() => cardModalOverlay.classList.add('open'))
+}
+
+function closeCardPreview() {
+  cardModalOverlay.classList.remove('open')
+  cardModalOverlay.style.display = 'none'
+  if (_cardBlobUrl) {
+    URL.revokeObjectURL(_cardBlobUrl)
+    _cardBlobUrl = null
+  }
+}
+
+cardModalClose.addEventListener('click', closeCardPreview)
+cardModalOverlay.addEventListener('click', e => {
+  if (e.target === cardModalOverlay) closeCardPreview()
+})
+
 if (shareWorkdayBtn) {
   shareWorkdayBtn.addEventListener('click', async () => {
     if (!currentWorkdayBrief) {
@@ -664,12 +691,25 @@ if (shareWorkdayBtn) {
     }
     const canvas = generateWorkdayShareCard()
     if (!canvas) return
-    try {
-      const d = cal.today
-      await shareCanvas(canvas, '轻历 - 今日卡', `${d.month}月${d.day}日 · 今日轻历`, `qingli-today-${d.month}-${d.day}.png`)
-    } catch (e) {
-      if (e.name !== 'AbortError') console.warn('Share failed:', e)
+    const dataUrl = canvas.toDataURL('image/png')
+    const d = cal.today
+    const fileName = `qingli-today-${d.month}-${d.day}.png`
+
+    if (_cardBlobUrl) URL.revokeObjectURL(_cardBlobUrl)
+    canvas.toBlob(blob => { _cardBlobUrl = URL.createObjectURL(blob) }, 'image/png')
+
+    cardModalDownload.onclick = () => {
+      const a = document.createElement('a')
+      a.href = dataUrl
+      a.download = fileName
+      a.style.display = 'none'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      showToast('卡片已保存')
     }
+
+    openCardPreview(dataUrl)
   })
 }
 

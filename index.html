@@ -239,6 +239,21 @@
 
   <div class="toast" id="toast"></div>
 
+  <div class="card-modal-overlay" id="cardModalOverlay" style="display:none">
+    <div class="card-modal" id="cardModal">
+      <div class="card-modal-header">
+        <span class="card-modal-title">今日卡</span>
+        <button class="card-modal-close" id="cardModalClose" aria-label="关闭">✕</button>
+      </div>
+      <div class="card-modal-body">
+        <img id="cardPreviewImg" alt="今日卡预览">
+      </div>
+      <div class="card-modal-footer">
+        <button class="card-modal-download" id="cardModalDownload">下载图片</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/js/app.js"></script>
 </body>
 </html>

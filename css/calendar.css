@@ -734,6 +734,101 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-text { font-size: var(--text-sm); color: var(--color-text-muted); }
 
+/* ===== Card Preview Modal ===== */
+.card-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+.card-modal-overlay.open {
+  opacity: 1;
+}
+.card-modal {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: min(420px, calc(100vw - 32px));
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.9);
+  transition: transform var(--transition-spring);
+  overflow: hidden;
+}
+.card-modal-overlay.open .card-modal {
+  transform: scale(1);
+}
+.card-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+}
+.card-modal-title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+.card-modal-close {
+  width: 32px; height: 32px;
+  border: none; background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--text-lg);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition-fast);
+}
+.card-modal-close:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+.card-modal-body {
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.card-modal-body img {
+  max-width: 100%;
+  max-height: 65vh;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.card-modal-footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: center;
+}
+.card-modal-download {
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: white;
+  background: var(--color-accent-red);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+.card-modal-download:hover {
+  opacity: 0.85;
+}
+.card-modal-download:active {
+  transform: scale(0.98);
+}
+
 /* ===== Toast ===== */
 .toast {
   position: fixed;
