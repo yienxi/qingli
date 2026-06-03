@@ -61,6 +61,13 @@
   .ical-card-full { flex-direction: column; align-items: flex-start; }
   .ical-card { padding: var(--space-3); }
 
+  .detail-panel {
+    left: 16px; right: 16px; bottom: 16px;
+    width: auto; max-width: none;
+    max-height: 55vh;
+    transform-origin: bottom center;
+  }
+
 }
 
 /* ---- 360px 瓒呭皬灞?---- */
@@ -97,10 +104,8 @@
   .magazine-headline { font-size: clamp(2.25rem, 2rem + 1.5vw, 2.75rem); }
 
   .detail-panel {
-    max-width: 640px; left: 50%; right: auto;
-    transform: translate(-50%, 100%); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    width: 480px; bottom: 32px; right: 32px;
   }
-  .detail-panel.open { transform: translate(-50%, 0); }
 
   .ical-grid { grid-template-columns: repeat(2, 1fr); }
 }

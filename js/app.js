@@ -303,14 +303,12 @@ function openPanel(cellData) {
 
   detailOverlay.classList.add('open')
   detailPanel.classList.add('open')
-  document.body.style.overflow = 'hidden'
 }
 
 function closePanel() {
   isPanelOpen = false
   detailOverlay.classList.remove('open')
   detailPanel.classList.remove('open')
-  document.body.style.overflow = ''
 }
 
 function markSelectedDate(dateStr) {
@@ -373,6 +371,7 @@ eventForm.addEventListener('submit', (e) => {
 
 detailOverlay.addEventListener('click', closePanel)
 panelCloseBtn.addEventListener('click', closePanel)
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isPanelOpen) closePanel() })
 
 cal.onDayClick = (cellData) => {
   if (cellData.isOtherMonth) {
