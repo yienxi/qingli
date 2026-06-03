@@ -310,112 +310,7 @@ class Calendar {
 
     this.hideLoading()
     this.renderGrid(cells)
-    this.updateTodayCard()
     if (this.onRender) this.onRender(cells)
-  }
-
-  updateTodayCard() {
-    const todayData = this.computeLunarData(this.today.year, this.today.month, this.today.day)
-    if (!todayData) return
-    const wdNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-    const wd = new Date(this.today.year, this.today.month - 1, this.today.day).getDay()
-
-    const yearLineEl = document.getElementById('todayYearLine')
-    if (yearLineEl) {
-      yearLineEl.textContent = `${this.today.year}年  ${todayData.ganZhiYear}年 · ${todayData.shengXiao}`
-    }
-
-    const dateHeadEl = document.getElementById('todayCardDateHead')
-    if (dateHeadEl) {
-      const extra = []
-      if (todayData.solarTerm) extra.push(todayData.solarTerm)
-      if (todayData.festival) extra.push(todayData.festival)
-      if (todayData.specialDay) extra.push(todayData.specialDay)
-      const extraStr = extra.length > 0 ? `  ·  ${extra.join(' · ')}` : ''
-      dateHeadEl.textContent = `${this.today.month}月${this.today.day}日  ${wdNames[wd]}${extraStr}`
-    }
-
-    const clockEl = document.getElementById('todayClock')
-    if (clockEl) {
-      const now = new Date()
-      clockEl.textContent = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
-      if (!this._clockInterval) {
-        this._clockInterval = setInterval(() => {
-          const c = document.getElementById('todayClock')
-          if (c) c.textContent = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
-        }, 10000)
-      }
-    }
-
-    const lunarLineEl = document.getElementById('todayCardLunarLine')
-    if (lunarLineEl) {
-      lunarLineEl.textContent = `农历${todayData.lunarMonthStr}月${todayData.lunarDayStr}  |  ${todayData.ganZhiYear}年 · ${todayData.ganZhiMonth}月 · ${todayData.ganZhiDay}日`
-    }
-
-    const yiSectionEl = document.getElementById('todayYiSection')
-    if (yiSectionEl) {
-      if (todayData.yi && todayData.yi.length > 0) {
-        const topYi = todayData.yi.slice(0, 6)
-        const tags = topYi.map((t, i) => {
-          const explain = YIJI_EXPLAIN[t] || ''
-          const title = explain ? ` title="${explain}"` : ''
-          return `<span class="yi-ji-tag yi-tag"${title}>${t}</span>`
-        }).join('')
-        yiSectionEl.innerHTML = `<div class="yi-ji-block yi-block">
-          <div class="yi-ji-header yi-header">宜</div>
-          <div class="yi-ji-tags">${tags}</div>
-        </div>`
-      } else {
-        yiSectionEl.innerHTML = `<div class="yi-ji-block yi-block">
-          <div class="yi-ji-header yi-header">宜</div>
-          <p style="margin-left:32px;color:var(--color-text-muted);font-size:var(--text-xs)">今日无特别宜事，随心而动即可。</p>
-        </div>`
-      }
-    }
-
-    const jiSectionEl = document.getElementById('todayJiSection')
-    if (jiSectionEl) {
-      if (todayData.ji && todayData.ji.length > 0) {
-        const topJi = todayData.ji.slice(0, 5)
-        const tags = topJi.map((t, i) => {
-          const explain = YIJI_EXPLAIN[t] || ''
-          const title = explain ? ` title="${explain}"` : ''
-          return `<span class="yi-ji-tag ji-tag"${title}>${t}</span>`
-        }).join('')
-        jiSectionEl.innerHTML = `<div class="yi-ji-block ji-block">
-          <div class="yi-ji-header ji-header">忌</div>
-          <div class="yi-ji-tags">${tags}</div>
-        </div>`
-      } else {
-        jiSectionEl.innerHTML = `<div class="yi-ji-block ji-block">
-          <div class="yi-ji-header ji-header">忌</div>
-          <p style="margin-left:32px;color:var(--color-text-muted);font-size:var(--text-xs)">百无禁忌，今日诸事可行。</p>
-        </div>`
-      }
-    }
-
-    const chongshaSectionEl = document.getElementById('todayChongshaSection')
-    if (chongshaSectionEl) {
-      const ci = todayData.chongshaInfo
-      if (ci && ci.text) {
-        let chongName = todayData.chongSha || ''
-        let explain = ''
-        if (ci.zodiac) {
-          explain += `今日冲${ci.zodiac}，属${ci.zodiac}的朋友大事多留个心眼——签约付款、远行搬家，能缓则缓。`
-        }
-        if (ci.direction) {
-          explain += `煞气落于${ci.direction}方，动土修造忌朝此向。`
-        }
-        chongshaSectionEl.innerHTML = `<div class="yi-ji-block chongsha-block">
-          <div class="yi-ji-header chongsha-header">冲</div>
-          <div class="yi-ji-tags"><span class="yi-ji-tag chongsha-tag">${chongName}</span></div>
-          <p class="chongsha-explain-text">${explain}</p>
-        </div>`
-        chongshaSectionEl.style.display = ''
-      } else {
-        chongshaSectionEl.style.display = 'none'
-      }
-    }
   }
 
   renderGrid(cells) {
@@ -425,7 +320,7 @@ class Calendar {
     const fragment = document.createDocumentFragment()
     const self = this
 
-    for (const cell of cells) {
+    cells.forEach((cell, i) => {
       const el = document.createElement('div')
       el.className = 'cal-cell'
       if (cell.isOtherMonth) el.classList.add('is-other-month')
@@ -487,8 +382,10 @@ class Calendar {
         }
       })
 
+      el.style.animationDelay = `${i * 20}ms`
+
       fragment.appendChild(el)
-    }
+    })
 
     grid.innerHTML = ''
     grid.appendChild(fragment)

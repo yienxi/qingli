@@ -27,9 +27,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/design-system.css?v=2.7">
-  <link rel="stylesheet" href="/css/calendar.css?v=2.7">
-  <link rel="stylesheet" href="/css/responsive.css?v=2.7">
+  <link rel="stylesheet" href="/css/design-system.css?v=2.8">
+  <link rel="stylesheet" href="/css/calendar.css?v=2.8">
+  <link rel="stylesheet" href="/css/responsive.css?v=2.8">
 </head>
 <body>
   <div class="app" id="app">
@@ -78,13 +78,8 @@
           <div class="magazine-lunar-bar" id="magazineLunarBar"></div>
         </div>
         
-        <div class="magazine-hero">
-          <div class="hero-icon" id="heroIcon">🌙</div>
-          <div class="hero-zodiac" id="heroZodiac"></div>
-        </div>
-        
         <div class="magazine-body">
-          <span class="magazine-kicker" id="magazineKicker">今日职场黄历</span>
+          <span class="magazine-kicker" id="magazineKicker">今日轻历</span>
           <h1 class="magazine-headline" id="magazineHeadline">今天适合...</h1>
           <p class="magazine-subline" id="magazineSubline"></p>
           
@@ -104,7 +99,10 @@
         
         <div class="magazine-footer">
           <div class="magazine-ai-note" id="magazineAiNote"></div>
-          <button class="magazine-share-btn" id="shareWorkdayBtn" type="button">生成今日职场签</button>
+          <div class="magazine-actions">
+            <button class="magazine-share-btn secondary" id="jumpTodayBtn" type="button" hidden>回到今天</button>
+            <button class="magazine-share-btn" id="shareWorkdayBtn" type="button">生成今日卡</button>
+          </div>
         </div>
       </aside>
 
@@ -147,10 +145,17 @@
         </div>
       </section>
 
-      <section class="ical-section">
-        <h2 class="ical-section-title">订阅到你的日历</h2>
-        <p class="ical-section-desc">复制链接，粘贴到 Apple 日历 / Google Calendar / Outlook 的「订阅日历」中，节假日和节气自动同步。</p>
-        <div class="ical-grid">
+      <section class="ical-section" id="icalSection">
+        <button class="ical-toggle" id="icalToggle" type="button" aria-expanded="false">
+          <span>
+            <strong>订阅到你的日历</strong>
+            <small>Apple / Google / Outlook 自动同步节假日和节气</small>
+          </span>
+          <span class="ical-toggle-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="ical-content" id="icalContent" hidden>
+          <p class="ical-section-desc">复制链接，粘贴到 Apple 日历 / Google Calendar / Outlook 的「订阅日历」中。</p>
+          <div class="ical-grid">
           <div class="ical-card ical-card-featured">
             <div class="ical-card-icon">🎉</div>
             <div class="ical-card-title">节日与假期</div>
@@ -179,16 +184,10 @@
             <span class="ical-card-url" id="icalUrlAll" data-url="all">加载中...</span>
             <button class="ical-copy-btn" data-type="all">复制链接</button>
           </div>
+          </div>
         </div>
       </section>
 
-      </div>
-    </div>
-
-    <div class="info-strip" id="infoStrip">
-      <div class="info-strip-inner">
-        <span class="info-strip-label">今日传统</span>
-        <div class="info-strip-items" id="infoStripItems"></div>
       </div>
     </div>
 
@@ -255,6 +254,6 @@
   <div class="toast" id="toast"></div>
 
   <script type="module" src="/js/calendar.js?v=2.7"></script>
-  <script type="module" src="/js/app.js?v=2.7"></script>
+  <script type="module" src="/js/app.js?v=2.8"></script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 import { Calendar, categorizeYiji, interpretChongsha, YIJI_EXPLAIN, YIJI_CATEGORIES } from './calendar.js'
 import { EventStore } from './events.js'
+import { QINGLI_CONFIG } from './config.js'
+import { initAmbientCanvas } from './ambient.js'
 
 const cal = new Calendar()
 const eventStore = new EventStore()
@@ -44,9 +46,15 @@ const magazineLunarBar = document.getElementById('magazineLunarBar')
 const magazineAiNote = document.getElementById('magazineAiNote')
 const jumpTodayBtn = document.getElementById('jumpTodayBtn')
 const shareWorkdayBtn = document.getElementById('shareWorkdayBtn')
-const infoStripItems = document.getElementById('infoStripItems')
+const icalToggle = document.getElementById('icalToggle')
+const icalContent = document.getElementById('icalContent')
 
 let currentWorkdayBrief = null
+let activeCardDate = {
+  year: cal.today.year,
+  month: cal.today.month,
+  day: cal.today.day,
+}
 
 window.qingliEvents = eventStore
 
@@ -55,21 +63,6 @@ function showToast(msg) {
   toast.classList.add('show')
   clearTimeout(toast._hideTimer)
   toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 2000)
-}
-
-const ZODIAC_ICONS = {
-  鼠: '🐀',
-  牛: '🐂',
-  虎: '🐅',
-  兔: '🐇',
-  龙: '🐉',
-  蛇: '🐍',
-  马: '🐴',
-  羊: '🐑',
-  猴: '🐒',
-  鸡: '🐓',
-  狗: '🐕',
-  猪: '🐖',
 }
 
 const YI_TO_WORK = {
@@ -108,14 +101,14 @@ function mapTraditionalTerms(terms, dictionary, fallback) {
   return uniqueList([...mapped, ...fallback]).slice(0, 4)
 }
 
-function getDateMeta(todayData) {
-  const date = new Date(cal.today.year, cal.today.month - 1, cal.today.day)
+function getDateMeta(lunarData, dateParts = activeCardDate) {
+  const date = new Date(dateParts.year, dateParts.month - 1, dateParts.day)
   const weekday = date.getDay()
   const weekdayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
   const markers = []
-  if (todayData?.solarTerm) markers.push(todayData.solarTerm)
-  if (todayData?.festival) markers.push(todayData.festival)
-  if (todayData?.specialDay) markers.push(todayData.specialDay)
+  if (lunarData?.solarTerm) markers.push(lunarData.solarTerm)
+  if (lunarData?.festival) markers.push(lunarData.festival)
+  if (lunarData?.specialDay) markers.push(lunarData.specialDay)
   return {
     weekday,
     weekdayName: weekdayNames[weekday],
@@ -126,101 +119,93 @@ function getDateMeta(todayData) {
   }
 }
 
-async function renderWorkdayCard() {
-  const todayData = cal.computeLunarData(cal.today.year, cal.today.month, cal.today.day)
-  const meta = getDateMeta(todayData)
+function isTodayDate(date) {
+  return date.year === cal.today.year && date.month === cal.today.month && date.day === cal.today.day
+}
 
-  const yiFocus = mapTraditionalTerms(todayData?.yi, YI_TO_WORK, ['排优先级', '推进小事', '确认边界', '收尾旧账'])
-  const jiWarnings = mapTraditionalTerms(todayData?.ji, JI_TO_WORK, ['口头承诺', '临时加塞', '替人背锅', '情绪开麦'])
+function buildDateSummary({ date, lunarData, holidayTag }) {
+  const meta = getDateMeta(lunarData, date)
+  const yiFocus = mapTraditionalTerms(lunarData?.yi, YI_TO_WORK, ['查清安排', '整理节奏', '轻量推进', '留好余地'])
+  const jiWarnings = mapTraditionalTerms(lunarData?.ji, JI_TO_WORK, ['临时拍板', '空口承诺', '过度消耗', '硬凑热闹'])
+  const markers = []
+  if (holidayTag?.name) markers.push(holidayTag.name)
+  markers.push(...meta.markers)
 
-  const dateStr = `${cal.today.month}月${cal.today.day}日 ${meta.weekdayName}`
-  const lunarStr = todayData
-    ? `农历${todayData.lunarMonthStr}月${todayData.lunarDayStr} · ${todayData.ganZhiYear}年 · ${todayData.shengXiao} · 值神${todayData.zhiShen || '--'} · 喜神${todayData.xiShen || '--'} · 财神${todayData.caiShen || '--'}`
+  const dateLine = `${date.month}月${date.day}日 ${meta.weekdayName}`
+  const lunarLine = lunarData
+    ? `农历${lunarData.lunarMonthStr}月${lunarData.lunarDayStr} · ${lunarData.ganZhiYear}年 · ${lunarData.shengXiao}`
+    : ''
+  const markerText = markers.length > 0 ? `今天有 ${markers.join(' · ')}，日程别排太满。` : ''
+  const weekdayText = meta.isWeekend
+    ? '适合把节奏放慢一点，别让休息也像任务。'
+    : meta.isFriday
+      ? '适合收尾和确认边界，新坑可以先别急着开。'
+      : meta.isMonday
+        ? '适合先排优先级，别一上来就把整周塞满。'
+        : '适合稳稳推进，把重要的小事先做清楚。'
+  const headline = markerText || weekdayText
+  const subline = `宜忌来自传统黄历，轻历只负责翻译成人话。`
+  const chongsha = lunarData?.chongshaInfo?.text
+    ? `${lunarData.chongSha || '冲煞'} · ${lunarData.chongshaInfo.text}`
     : ''
 
-  const chongshaInfo = todayData?.chongshaInfo
-  const chongshaHtml = chongshaInfo?.text
-    ? `今日${todayData.chongSha || ''}，${chongshaInfo.text}`
-    : ''
-
-  if (magazineDate) magazineDate.textContent = dateStr
-  if (magazineLunarBar) magazineLunarBar.textContent = lunarStr
-  
-  const heroIcon = document.getElementById('heroIcon')
-  const heroZodiac = document.getElementById('heroZodiac')
-  if (heroIcon && todayData?.shengXiao) {
-    heroIcon.textContent = ZODIAC_ICONS[todayData.shengXiao] || '🌙'
-  }
-  if (heroZodiac && todayData?.shengXiao) {
-    heroZodiac.textContent = `${todayData.ganZhiYear}年 · ${todayData.shengXiao}`
-  }
-  
-  if (magazineFocusTags) {
-    magazineFocusTags.innerHTML = yiFocus.map(item => `<span>${escapeHtml(item)}</span>`).join('')
-  }
-  if (magazineWarningTags) {
-    magazineWarningTags.innerHTML = jiWarnings.map(item => `<span>${escapeHtml(item)}</span>`).join('')
-  }
-  if (magazineChongsha) {
-    magazineChongsha.innerHTML = chongshaHtml
-    magazineChongsha.style.display = chongshaHtml ? '' : 'none'
-  }
-
-  if (infoStripItems && todayData) {
-    const items = [
-      { label: '值神', value: todayData.zhiShen || '-' },
-      { label: '纳音', value: todayData.naYin || '-' },
-      { label: '星宿', value: todayData.xingXiu || '-' },
-      { label: '喜神', value: todayData.xiShen || '-' },
-      { label: '财神', value: todayData.caiShen || '-' },
-    ]
-    infoStripItems.innerHTML = items
-      .map(item => `<span class="info-strip-item"><span class="info-label">${item.label}</span>${item.value}</span>`)
-      .join('')
-  }
-
-  const fallbackHeadline = `今天适合${yiFocus.slice(0, 2).join('、')}，不适合${jiWarnings.slice(0, 2).join('、')}。`
-  if (magazineHeadline) {
-    magazineHeadline.textContent = fallbackHeadline
-    magazineHeadline.classList.add('is-loading')
-  }
-  if (magazineSubline) {
-    magazineSubline.textContent = meta.markers.length > 0
-      ? `今日${meta.markers.join(' · ')}，值得留意。`
-      : ''
-  }
-
-  currentWorkdayBrief = {
-    headline: fallbackHeadline,
-    subline: '',
+  return {
+    headline,
+    subline,
     focus: yiFocus,
     warning: jiWarnings,
-    dateLine: dateStr,
-    lunarLine: lunarStr,
-    chongsha: chongshaHtml,
+    dateLine,
+    lunarLine,
+    chongsha,
+    markers,
+    date,
+    lunarData,
   }
+}
+
+async function renderWorkdayCard(date = activeCardDate, sourceCell = null) {
+  activeCardDate = date
+  const lunarData = sourceCell?.lunarData || cal.computeLunarData(date.year, date.month, date.day)
+  const holidayTag = sourceCell?.holidayTag || await cal.getHoliday(date.year, date.month, date.day)
+  const summary = buildDateSummary({ date, lunarData, holidayTag })
+  currentWorkdayBrief = summary
+
+  if (magazineDate) magazineDate.textContent = `${summary.dateLine}${isTodayDate(date) ? '' : ' · 已选'}`
+  if (magazineLunarBar) magazineLunarBar.textContent = summary.lunarLine
+
+  if (magazineHeadline) {
+    magazineHeadline.textContent = summary.headline
+    magazineHeadline.classList.remove('is-loading')
+  }
+  if (magazineSubline) magazineSubline.textContent = summary.subline
+  if (magazineFocusTags) {
+    magazineFocusTags.innerHTML = summary.focus.map(item => `<span>${escapeHtml(item)}</span>`).join('')
+  }
+  if (magazineWarningTags) {
+    magazineWarningTags.innerHTML = summary.warning.map(item => `<span>${escapeHtml(item)}</span>`).join('')
+  }
+  if (magazineChongsha) {
+    magazineChongsha.textContent = summary.chongsha
+    magazineChongsha.style.display = summary.chongsha ? '' : 'none'
+  }
+  if (magazineAiNote) {
+    magazineAiNote.textContent = QINGLI_CONFIG.aiSummary
+      ? 'AI 摘要已开启，基础日期信息仍由轻历算法提供'
+      : '同一日期内容固定，切换日期才会更新'
+  }
+  if (jumpTodayBtn) jumpTodayBtn.hidden = isTodayDate(date)
+
+  if (!QINGLI_CONFIG.aiSummary) return
 
   try {
-    const dateParam = `${cal.today.year}-${String(cal.today.month).padStart(2, '0')}-${String(cal.today.day).padStart(2, '0')}`
+    const dateParam = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
     const res = await fetch(`/api/ai-summary?date=${dateParam}`)
     const data = await res.json()
-    if (data.summary) {
-      if (magazineHeadline) {
-        magazineHeadline.textContent = data.summary
-        magazineHeadline.classList.remove('is-loading')
-      }
-      if (magazineAiNote) {
-        if (data.generated) {
-          magazineAiNote.textContent = '以上内容由 AI 生成，仅供参考'
-        }
-      }
+    if (data.summary && magazineHeadline) {
+      magazineHeadline.textContent = data.summary
       currentWorkdayBrief.headline = data.summary
-      currentWorkdayBrief.aiNote = data.summary
-    } else {
-      if (magazineHeadline) magazineHeadline.classList.remove('is-loading')
     }
   } catch (e) {
-    if (magazineHeadline) magazineHeadline.classList.remove('is-loading')
     console.warn('AI summary fetch failed:', e)
   }
 }
@@ -328,6 +313,12 @@ function closePanel() {
   document.body.style.overflow = ''
 }
 
+function markSelectedDate(dateStr) {
+  document.querySelectorAll('.cal-cell.is-selected').forEach(cell => cell.classList.remove('is-selected'))
+  const cell = document.querySelector(`.cal-cell[data-date="${dateStr}"]`)
+  if (cell) cell.classList.add('is-selected')
+}
+
 function renderEventsForDate(dateStr) {
   const events = eventStore.getEvents(dateStr)
   if (events.length === 0) {
@@ -389,6 +380,9 @@ cal.onDayClick = (cellData) => {
     cal.month = cellData.month
     cal.render()
   }
+  cal.selectedDate = { year: cellData.year, month: cellData.month, day: cellData.day }
+  renderWorkdayCard({ year: cellData.year, month: cellData.month, day: cellData.day }, cellData)
+  markSelectedDate(cellData.dayDate)
   openPanel(cellData)
 }
 
@@ -464,11 +458,27 @@ function setupIcalLinks() {
 
 setupIcalLinks()
 
+if (icalToggle && icalContent) {
+  const expanded = !QINGLI_CONFIG.icalSectionCollapsed
+  icalContent.hidden = !expanded
+  icalToggle.setAttribute('aria-expanded', String(expanded))
+  icalToggle.querySelector('.ical-toggle-icon').textContent = expanded ? '−' : '+'
+  icalToggle.addEventListener('click', () => {
+    const nextExpanded = icalContent.hidden
+    icalContent.hidden = !nextExpanded
+    icalToggle.setAttribute('aria-expanded', String(nextExpanded))
+    icalToggle.querySelector('.ical-toggle-icon').textContent = nextExpanded ? '−' : '+'
+  })
+}
+
 document.getElementById('prevMonth').addEventListener('click', () => cal.prevMonth())
 document.getElementById('nextMonth').addEventListener('click', () => cal.nextMonth())
 document.getElementById('todayBtn').addEventListener('click', () => cal.goToday())
 if (jumpTodayBtn) {
   jumpTodayBtn.addEventListener('click', () => {
+    activeCardDate = { year: cal.today.year, month: cal.today.month, day: cal.today.day }
+    cal.selectedDate = { ...activeCardDate }
+    renderWorkdayCard(activeCardDate)
     cal.goToday()
     document.getElementById('calendarSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   })
@@ -539,7 +549,7 @@ function generateWorkdayShareCard() {
   ctx.fillStyle = '#8B7355'
   ctx.font = '500 18px "Noto Serif SC", serif'
   ctx.textAlign = 'center'
-  ctx.fillText('🔮 今日职场签', W / 2, 60)
+  ctx.fillText('今日轻历卡', W / 2, 60)
 
   const dateLine = brief.dateLine || ''
   ctx.fillStyle = '#B0A595'
@@ -621,7 +631,7 @@ function generateWorkdayShareCard() {
 
   ctx.fillStyle = '#C4B998'
   ctx.font = '400 12px "Noto Sans SC", sans-serif'
-  ctx.fillText('数据来源：轻历 · 纯天然 · 不含人工香精', W / 2, H - 55)
+  ctx.fillText('数据来源：轻历 · 当日黄历与节气', W / 2, H - 55)
 
   return canvas
 }
@@ -659,7 +669,7 @@ if (shareWorkdayBtn) {
     if (!canvas) return
     try {
       const d = cal.today
-      await shareCanvas(canvas, '轻历 - 今日职场签', `${d.month}月${d.day}日 · 职场签`, `qingli-workday-${d.month}-${d.day}.png`)
+      await shareCanvas(canvas, '轻历 - 今日卡', `${d.month}月${d.day}日 · 今日轻历`, `qingli-today-${d.month}-${d.day}.png`)
     } catch (e) {
       if (e.name !== 'AbortError') console.warn('Share failed:', e)
     }
@@ -803,7 +813,8 @@ if (panelShareBtn) {
 }
 
 initTheme()
-renderWorkdayCard()
+initAmbientCanvas({ enabled: QINGLI_CONFIG.ambientMotion })
+renderWorkdayCard(activeCardDate)
 cal.render()
 
 document.addEventListener('DOMContentLoaded', () => {
