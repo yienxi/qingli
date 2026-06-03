@@ -34,8 +34,6 @@ const eventColorInput = document.getElementById('eventColorInput')
 const panelCloseBtn = document.getElementById('panelCloseBtn')
 const panelShareBtn = document.getElementById('panelShareBtn')
 const toast = document.getElementById('toast')
-const themeToggle = document.getElementById('themeToggle')
-const themeIcon = document.getElementById('themeIcon')
 const magazineHeadline = document.getElementById('magazineHeadline')
 const magazineSubline = document.getElementById('magazineSubline')
 const magazineDate = document.getElementById('magazineDate')
@@ -491,25 +489,6 @@ if (jumpTodayBtn) {
   })
 }
 
-function initTheme() {
-  const stored = localStorage.getItem('qingli_theme')
-  if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.setAttribute('data-theme', 'dark')
-    themeIcon.textContent = '☀️'
-  } else {
-    document.documentElement.setAttribute('data-theme', 'light')
-    themeIcon.textContent = '🌙'
-  }
-}
-
-themeToggle.addEventListener('click', () => {
-  const current = document.documentElement.getAttribute('data-theme')
-  const next = current === 'dark' ? 'light' : 'dark'
-  document.documentElement.setAttribute('data-theme', next)
-  localStorage.setItem('qingli_theme', next)
-  themeIcon.textContent = next === 'dark' ? '☀️' : '🌙'
-})
-
 function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
   const words = text.split('')
   let line = ''
@@ -645,25 +624,36 @@ function generateWorkdayShareCard() {
 
 async function shareCanvas(canvas, title, text, fileName) {
   const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
-  const payload = {
-    title,
-    text,
-    files: [new File([blob], fileName, { type: 'image/png' })],
-  }
-  if (navigator.share && (!navigator.canShare || navigator.canShare(payload))) {
-    await navigator.share(payload)
-    return
-  }
-
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
   a.download = fileName
   a.style.display = 'none'
   document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(a.href)
-  showToast('卡片已保存')
+  const fallback = () => {
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(a.href)
+    showToast('卡片已保存')
+  }
+
+  if (navigator.share) {
+    try {
+      if (!navigator.canShare || navigator.canShare({ files: [new File([blob], fileName, { type: 'image/png' })] })) {
+        await navigator.share({ title, text, files: [new File([blob], fileName, { type: 'image/png' })] })
+        document.body.removeChild(a)
+        URL.revokeObjectURL(a.href)
+        return
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') {
+        document.body.removeChild(a)
+        URL.revokeObjectURL(a.href)
+        return
+      }
+    }
+  }
+
+  fallback()
 }
 
 if (shareWorkdayBtn) {
@@ -819,7 +809,6 @@ if (panelShareBtn) {
   })
 }
 
-initTheme()
 initAmbientCanvas({ enabled: QINGLI_CONFIG.ambientMotion })
 renderWorkdayCard(activeCardDate)
 cal.render()
