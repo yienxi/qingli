@@ -513,111 +513,157 @@ function generateWorkdayShareCard() {
   const brief = currentWorkdayBrief
   if (!brief) return
 
-  const W = 750
-  const H = 1000
+  const W = 1200
+  const H = 900
   const canvas = document.createElement('canvas')
   canvas.width = W
   canvas.height = H
   const ctx = canvas.getContext('2d')
 
-  const gradient = ctx.createLinearGradient(0, 0, W, H)
-  gradient.addColorStop(0, '#FEF9EF')
-  gradient.addColorStop(0.5, '#FFF5E6')
-  gradient.addColorStop(1, '#F5F0E8')
-  ctx.fillStyle = gradient
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, H)
+  bgGrad.addColorStop(0, '#FAF7F0')
+  bgGrad.addColorStop(0.5, '#F7F3EB')
+  bgGrad.addColorStop(1, '#F2EDE2')
+  ctx.fillStyle = bgGrad
   ctx.fillRect(0, 0, W, H)
 
-  ctx.fillStyle = 'rgba(23, 32, 26, 0.03)'
-  for (let i = 0; i < H; i += 8) {
+  ctx.fillStyle = 'rgba(0,0,0,0.015)'
+  for (let i = 0; i < H; i += 12) {
     ctx.fillRect(0, i, W, 1)
   }
 
-  ctx.fillStyle = '#8B7355'
-  ctx.font = '500 18px "Noto Serif SC", serif'
-  ctx.textAlign = 'center'
-  ctx.fillText('今日轻历卡', W / 2, 60)
+  const M = 56
+  const C = '#C73B2B'
+  const COL_W = 380
+  const RIGHT_X = M + COL_W + 48
 
-  const dateLine = brief.dateLine || ''
-  ctx.fillStyle = '#B0A595'
-  ctx.font = '400 14px "Noto Sans SC", sans-serif'
-  ctx.fillText(dateLine, W / 2, 100)
+  ctx.fillStyle = '#C4B998'
+  ctx.font = '400 11px "Noto Sans SC", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('轻历 QINGLI', M, 44)
 
-  ctx.strokeStyle = 'rgba(23, 32, 26, 0.08)'
+  ctx.fillStyle = '#A09585'
+  ctx.font = '400 13px "Noto Sans SC", sans-serif'
+  ctx.textAlign = 'right'
+  ctx.fillText(brief.dateLine || '', W - M, 44)
+  ctx.fillStyle = '#B8ADA0'
+  ctx.font = '400 11px "Noto Sans SC", sans-serif'
+  ctx.fillText(brief.lunarLine?.split(' · ').slice(0, 2).join(' · ') || '', W - M, 62)
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.06)'
   ctx.lineWidth = 1
   ctx.beginPath()
-  ctx.moveTo(80, 125)
-  ctx.lineTo(W - 80, 125)
+  ctx.moveTo(M, 80)
+  ctx.lineTo(W - M, 80)
   ctx.stroke()
 
-  ctx.fillStyle = '#2A2A2A'
-  ctx.font = '700 28px "Ma Shan Zheng", "Noto Serif SC", serif'
-  ctx.textAlign = 'center'
-  drawWrappedText(ctx, brief.headline || '', W / 2, 175, W - 120, 46)
-
-  if (brief.subline) {
-    ctx.fillStyle = '#6B5E52'
-    ctx.font = '400 18px "Noto Sans SC", sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText(brief.subline, W / 2, 260)
-  }
-
-  const focusY = 300
-  ctx.fillStyle = '#D4A574'
-  ctx.font = '600 20px "Noto Sans SC", sans-serif'
+  ctx.fillStyle = C
+  ctx.fillRect(M, 120, 3, 60)
+  const headX = M + 16
+  ctx.fillStyle = '#1A1A1A'
+  ctx.font = '700 32px "Noto Serif SC", serif'
   ctx.textAlign = 'left'
-  ctx.fillText('● 可以推进', 80, focusY)
+  const words = (brief.headline || '').split('')
+  let line = ''
+  let lineY = 130
+  for (let i = 0; i < words.length; i++) {
+    const test = line + words[i]
+    if (ctx.measureText(test).width > COL_W - 32 && i > 0) {
+      ctx.fillText(line, headX, lineY)
+      line = words[i]
+      lineY += 44
+    } else {
+      line = test
+    }
+  }
+  ctx.fillText(line, headX, lineY)
+  const headlineBottom = lineY + 20
+
+  const rightContentTop = 115
+  let ry = rightContentTop
+
+  ctx.fillStyle = C
+  ctx.font = '500 11px "Noto Sans SC", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('YI · 宜', RIGHT_X, ry)
+  ry += 28
 
   if (brief.focus && brief.focus.length > 0) {
-    ctx.font = '400 17px "Noto Sans SC", sans-serif'
-    let fy = focusY + 40
-    brief.focus.forEach(item => {
-      ctx.fillStyle = '#F5F0E8'
-      ctx.fillRect(80, fy - 20, ctx.measureText(item).width + 24, 32)
-      ctx.fillStyle = '#8B6914'
-      ctx.fillText(item, 92, fy + 1)
-      fy += 42
+    let fx = RIGHT_X
+    let fy = ry
+    const maxR = W - M - RIGHT_X
+    brief.focus.forEach((item, idx) => {
+      const w = ctx.measureText(item).width + 24
+      if (fx + w > W - M && fx > RIGHT_X) {
+        fx = RIGHT_X
+        fy += 36
+      }
+      ctx.fillStyle = '#F5EDE0'
+      const r = 14
+      const rh = 28
+      ctx.beginPath()
+      ctx.roundRect(fx, fy - rh / 2, w, rh, r)
+      ctx.fill()
+      ctx.fillStyle = '#7A5F3E'
+      ctx.font = '400 14px "Noto Sans SC", sans-serif'
+      ctx.fillText(item, fx + 12, fy + 5)
+      fx += w + 8
     })
+    ry = fy + 36 + 10
+  } else {
+    ry += 8
   }
 
-  const warnY = focusY + (brief.focus?.length || 2) * 42 + 60
+  ry += 8
+
   ctx.fillStyle = '#8B7E7E'
-  ctx.font = '600 20px "Noto Sans SC", sans-serif'
-  ctx.textAlign = 'left'
-  ctx.fillText('○ 先缓一缓', 80, warnY)
+  ctx.font = '500 11px "Noto Sans SC", sans-serif'
+  ctx.fillText('JI · 忌', RIGHT_X, ry)
+  ry += 28
 
   if (brief.warning && brief.warning.length > 0) {
-    ctx.font = '400 17px "Noto Sans SC", sans-serif'
-    let wy = warnY + 40
-    brief.warning.forEach(item => {
-      ctx.fillStyle = '#F0EBE3'
-      ctx.fillRect(80, wy - 20, ctx.measureText(item).width + 24, 32)
+    let fx = RIGHT_X
+    let fy = ry
+    brief.warning.forEach((item, idx) => {
+      const w = ctx.measureText(item).width + 24
+      if (fx + w > W - M && fx > RIGHT_X) {
+        fx = RIGHT_X
+        fy += 36
+      }
+      ctx.fillStyle = '#EDE8E0'
+      const r = 14
+      const rh = 28
+      ctx.beginPath()
+      ctx.roundRect(fx, fy - rh / 2, w, rh, r)
+      ctx.fill()
       ctx.fillStyle = '#6B5E52'
-      ctx.fillText(item, 92, wy + 1)
-      wy += 38
+      ctx.font = '400 14px "Noto Sans SC", sans-serif'
+      ctx.fillText(item, fx + 12, fy + 5)
+      fx += w + 8
     })
+    ry = fy + 48
+  } else {
+    ry += 8
   }
-
-  ctx.textAlign = 'center'
 
   if (brief.chongsha) {
-    ctx.fillStyle = '#C4A87C'
-    ctx.font = '400 15px "Noto Sans SC", sans-serif'
-    ctx.fillText(brief.chongsha, W / 2, H - 160)
+    ctx.fillStyle = '#B8ADA0'
+    ctx.font = '400 13px "Noto Sans SC", sans-serif'
+    ctx.fillText(brief.chongsha, RIGHT_X, ry)
   }
 
-  ctx.fillStyle = '#B0A595'
-  ctx.font = '400 13px "Noto Sans SC", sans-serif'
-  ctx.fillText(brief.lunarLine || '', W / 2, H - 110)
-
-  ctx.strokeStyle = 'rgba(23, 32, 26, 0.08)'
+  ctx.strokeStyle = 'rgba(0,0,0,0.06)'
   ctx.beginPath()
-  ctx.moveTo(80, H - 85)
-  ctx.lineTo(W - 80, H - 85)
+  ctx.moveTo(M, H - 56)
+  ctx.lineTo(W - M, H - 56)
   ctx.stroke()
 
   ctx.fillStyle = '#C4B998'
-  ctx.font = '400 12px "Noto Sans SC", sans-serif'
-  ctx.fillText('数据来源：轻历 · 当日黄历与节气', W / 2, H - 55)
+  ctx.font = '400 11px "Noto Sans SC", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('轻历 · 当日黄历与节气', M, H - 32)
+  ctx.textAlign = 'right'
+  ctx.fillText('qingli.vercel.app', W - M, H - 32)
 
   return canvas
 }
