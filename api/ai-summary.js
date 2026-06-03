@@ -49,15 +49,15 @@ function buildFallbackSummary(data) {
   return summary
 }
 
-async function generateAISummary(data, apiKey) {
+async function generateAISummary(data, apiKey, dateStr) {
   if (!apiKey || apiKey.length < 10) {
     return null
   }
 
   const yiList = data.yi.slice(0, 6).join('、') || '无'
   const jiList = data.ji.slice(0, 4).join('、') || '无'
-  const now = new Date()
-  const todayStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const dateLabel = `${y}年${m}月${d}日`
 
   let extra = ''
   if (data.festival) extra += `\n今天是${data.festival}。`
@@ -65,7 +65,7 @@ async function generateAISummary(data, apiKey) {
 
   const prompt = `你是一个有趣的黄历解读助手，专门给年轻人看。
 
-今天是${todayStr}，农历${data.lunarMonth}月${data.lunarDay}。
+今天是${dateLabel}，农历${data.lunarMonth}月${data.lunarDay}。
 
 宜：${yiList}
 忌：${jiList}${extra}
@@ -123,7 +123,7 @@ export async function GET(request) {
     let generated = false
 
     if (apiKey) {
-      summary = await generateAISummary(data, apiKey)
+      summary = await generateAISummary(data, apiKey, dateStr)
       if (summary) {
         generated = true
       }

@@ -1,14 +1,7 @@
-const CACHE = 'qingli-v2'
+const CACHE = 'qingli-v3'
 
 const PRECACHE = [
   '/',
-  '/css/design-system.css',
-  '/css/calendar.css',
-  '/css/responsive.css',
-  '/js/holiday-service.js',
-  '/js/calendar.js',
-  '/js/events.js',
-  '/js/app.js',
   '/public/manifest.json',
   '/public/logo.svg',
   '/public/offline.html',
@@ -35,12 +28,12 @@ self.addEventListener('fetch', (event) => {
 
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match('/public/offline.html'))
+      fetch(event.request).catch(() => caches.match('/offline.html'))
     )
     return
   }
 
-  if (url.pathname === '/public/offline.html') {
+  if (url.pathname === '/offline.html') {
     event.respondWith(caches.match(event.request))
     return
   }

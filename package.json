@@ -4,12 +4,16 @@
   "description": "轻历 — 轻量级中国日历工具",
   "type": "module",
   "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel deploy --prod",
-    "build": "echo 'Static site - no build required'",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "vite build && vercel deploy --prod --prebuilt",
     "test": "node --test packages/lunar/test/index.js"
   },
   "dependencies": {
     "lunar-typescript": "^1.8.6"
+  },
+  "devDependencies": {
+    "vite": "^6.3.0"
   }
 }
