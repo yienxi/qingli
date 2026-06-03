@@ -1,7 +1,7 @@
 export const QINGLI_CONFIG = {
   aiSummary: false,
   ambientMotion: true,
-  icalSectionCollapsed: true,
+  icalSectionCollapsed: false,
   pwaBanner: 'deferred',
   todayCardMode: 'date-summary',
   personalEvents: true,
