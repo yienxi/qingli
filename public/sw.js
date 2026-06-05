@@ -1,10 +1,8 @@
-const CACHE = 'qingli-v3'
+const CACHE = 'qingli-v4'
 
 const PRECACHE = [
   '/',
-  '/public/manifest.json',
-  '/public/logo.svg',
-  '/public/offline.html',
+  '/offline.html',
 ]
 
 self.addEventListener('install', (event) => {

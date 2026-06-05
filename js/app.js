@@ -5,6 +5,7 @@ import { initAmbientCanvas } from './ambient.js'
 
 const cal = new Calendar()
 const eventStore = new EventStore()
+let aiSummaryController = null
 
 let selectedCell = null
 let isPanelOpen = false
@@ -195,16 +196,19 @@ async function renderWorkdayCard(date = activeCardDate, sourceCell = null) {
 
   if (!QINGLI_CONFIG.aiSummary) return
 
+  if (aiSummaryController) aiSummaryController.abort()
+  aiSummaryController = new AbortController()
+
   try {
     const dateParam = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
-    const res = await fetch(`/api/ai-summary?date=${dateParam}`)
+    const res = await fetch(`/api/ai-summary?date=${dateParam}`, { signal: aiSummaryController.signal })
     const data = await res.json()
     if (data.summary && magazineHeadline) {
       magazineHeadline.textContent = data.summary
       currentWorkdayBrief.headline = data.summary
     }
   } catch (e) {
-    console.warn('AI summary fetch failed:', e)
+    if (e.name !== 'AbortError') console.warn('AI summary fetch failed:', e)
   }
 }
 
@@ -691,13 +695,11 @@ let _cardBlobUrl = null
 
 function openCardPreview(dataUrl) {
   cardPreviewImg.src = dataUrl
-  cardModalOverlay.style.display = 'flex'
   requestAnimationFrame(() => cardModalOverlay.classList.add('open'))
 }
 
 function closeCardPreview() {
   cardModalOverlay.classList.remove('open')
-  cardModalOverlay.style.display = 'none'
   if (_cardBlobUrl) {
     URL.revokeObjectURL(_cardBlobUrl)
     _cardBlobUrl = null

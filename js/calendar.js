@@ -178,6 +178,11 @@ class Calendar {
   async render() {
     this.showLoading()
 
+    const yearsNeeded = new Set([this.year,
+      this.month === 1 ? this.year - 1 : this.year,
+      this.month === 12 ? this.year + 1 : this.year])
+    await Promise.all([...yearsNeeded].map(y => this.holidayService.getHolidays(y)))
+
     const daysInMonth = this.getDaysInMonth(this.year, this.month)
     const firstDayIndex = this.getFirstDayOfMonth(this.year, this.month)
     const prevMonth = this.month === 1 ? 12 : this.month - 1

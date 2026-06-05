@@ -82,7 +82,7 @@ function generateSolarTermEvents(year) {
   const lookup = buildSolarTermLookup(year)
   for (const [dateKey, termName] of Object.entries(lookup)) {
     const [y, m, d] = dateKey.split('-').map(Number)
-    if (Math.abs(y - year) <= 1) {
+    if (y === year) {
       events += vevent(icalDate(y, m, d), termName, `二十四节气 · ${termName}`)
     }
   }

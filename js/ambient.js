@@ -56,11 +56,25 @@ export function initAmbientCanvas({ enabled = true } = {}) {
 
   resize()
   draw()
+
+  let hidden = false
+  function onVisibilityChange() {
+    if (document.hidden) {
+      hidden = true
+      if (rafId) window.cancelAnimationFrame(rafId)
+    } else if (hidden) {
+      hidden = false
+      draw()
+    }
+  }
+  document.addEventListener('visibilitychange', onVisibilityChange)
+
   window.addEventListener('resize', resize, { passive: true })
 
   return {
     destroy() {
       if (rafId) window.cancelAnimationFrame(rafId)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
       window.removeEventListener('resize', resize)
       canvas.remove()
     },

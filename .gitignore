@@ -3,4 +3,5 @@ dist/
 .env
 *.local
 .vite/
+.vite-temp/
 .vercel

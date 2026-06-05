@@ -14,7 +14,7 @@
   <meta property="og:title" content="轻历 QingLi">
   <meta property="og:description" content="一眼看清农历、节气、节假日、宜忌 — 轻量中国日历">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://qinglin.saunqiu.fun">
+  <meta property="og:url" content="https://qingli.suanqiu.fun">
   <meta property="og:image" content="/public/logo.svg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="轻历 QingLi">
@@ -26,7 +26,7 @@
   <title>轻历 — 轻量中国日历</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="/css/design-system.css">
   <link rel="stylesheet" href="/css/calendar.css">
   <link rel="stylesheet" href="/css/responsive.css">
@@ -114,14 +114,14 @@
           </div>
         </nav>
 
-        <div class="weekday-header">
-          <span class="weekday-cell">一</span>
-          <span class="weekday-cell">二</span>
-          <span class="weekday-cell">三</span>
-          <span class="weekday-cell">四</span>
-          <span class="weekday-cell">五</span>
-          <span class="weekday-cell weekend">六</span>
-          <span class="weekday-cell weekend">日</span>
+        <div class="weekday-header" role="row">
+          <span class="weekday-cell" role="columnheader" scope="col">一</span>
+          <span class="weekday-cell" role="columnheader" scope="col">二</span>
+          <span class="weekday-cell" role="columnheader" scope="col">三</span>
+          <span class="weekday-cell" role="columnheader" scope="col">四</span>
+          <span class="weekday-cell" role="columnheader" scope="col">五</span>
+          <span class="weekday-cell weekend" role="columnheader" scope="col">六</span>
+          <span class="weekday-cell weekend" role="columnheader" scope="col">日</span>
         </div>
         <div class="cal-grid" id="calGrid"></div>
 
